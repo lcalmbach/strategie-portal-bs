@@ -1,1 +1,1 @@
-web: gunicorn src.teach_match.wsgi
+web: gunicorn src.objective_manager.wsgi
