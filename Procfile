@@ -1,1 +1,1 @@
-web: gunicorn objective_manager.wsgi
+web: gunicorn src.objective_manager.wsgi
