@@ -1,1 +1,1 @@
-web: gunicorn src.objective_manager.wsgi
+web: cd src && gunicorn objective_manager.wsgi
