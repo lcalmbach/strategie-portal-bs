@@ -1,0 +1,28 @@
+{% extends "base.html" %} 
+{% block title %}Ziel {{ziel.titel}}{% endblock title %} 
+{% block content %}
+
+    <div class="container">
+        <h1>Ziel {{ziel.titel}}</h1>
+        <br/>
+        <table>
+            <tr>
+                <th>Kürzel</th><td>{{massnahme.kuerzel}}</td>
+            </tr>
+            <tr>
+                <th>Titel</th><td>{{massnahme.titel}}</td>
+            </tr>
+            
+            <tr>
+                <th>Aufwand Personentage Soll</th><td>{{massnahme.aufwand_personen_tage_plan}}</td>
+            </tr>
+            <tr>
+                <th>Finanzieller Aufwand tsd CHF</th><td>{{massnahme.aufwand_tsd_chf_plan}}</td>
+            </tr>
+        </table>
+
+        <br>
+        Beschreibung<br>{{ziel.beschreibung}}
+        <br>
+    </div>
+{% endblock %}

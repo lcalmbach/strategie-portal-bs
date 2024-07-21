@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    {% load django_bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-sm navbar-custom">
+    <div class="container-fluid">
+      <ul class="navbar-nav">        
+        <!--<li class="nav-item">-->
+        <!--  <a class="nav-link {% if request.resolver_match.url_name == 'home_detail' %}active{% endif %}" href="{% url 'home_detail' %}">Home</a>-->
+        <!--</li>-->
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'handlungsfelder_list' %}active{% endif %}" href="{% url 'handlungsfelder_list' %}">Handlungsfelder</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'ziele_list' %}active{% endif %}" href="{% url 'ziele_list' %}">Ziele</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'massnahmen_list' %}active{% endif %}" href="{% url 'massnahmen_list' %}">Massnahmen</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'plan_records_list' %}active{% endif %}" href="{% url 'plan_records_list' %}">Planung</a>
+        </li>
+      </ul>
+      
+      
+    </div>
+  </nav>
+  <br>
+
+  {% block content %}
+  {% endblock %}
+
+  <!-- Footer with version number -->
+  <footer class="footer mt-auto py-3 bg-light">
+    <div class="container text-center">
+      <span class="text-muted">&copy; Statistisches Amt Basel-Stadt<span style="float:right; font-size: smaller;">v0.0.8 (13.7.24)</span></span>
+    </div>
+  </footer>
+
+  {% if messages %}
+    <script>
+        $(document).ready(function() {
+            {% for message in messages %}
+                toastr.options = {
+                    "closeButton": true,
+                    "progressBar": true,
+                }
+                toastr.success("{{ message|escapejs }}");
+            {% endfor %}
+        });
+    </script>
+  {% endif %}
+</body>
+</html>

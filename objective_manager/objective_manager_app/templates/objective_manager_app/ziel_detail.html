@@ -1,0 +1,50 @@
+{% extends "base.html" %} 
+{% block title %}Ziel {{ziel.titel}}{% endblock title %} 
+{% block content %}
+
+    <div class="container">
+        <h1>Ziel {{ziel.titel}}</h1>
+        <br/>
+        <table>
+            <tr>
+                <th>Kürzel</th><td>{{ziel.kuerzel}}</td>
+            </tr>
+            <tr>
+                <th>Titel</th><td>{{ziel.titel}}</td>
+            </tr>
+            
+            <tr>
+                <th>Aufwand Personentage Soll</th><td>{{ziel.aufwand_personen_tage_soll}}</td>
+            </tr>
+            <tr>
+                <th>Finanzieller Aufwand tsd CHF</th><td>{{ziel.aufwand_tsd_chf_soll}}</td>
+            </tr>
+        </table>
+
+        <br>
+        Beschreibung<br>{{ziel.beschreibung}}
+        <br>
+        
+        <br><br>
+        <h4>Massnahmen</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Kürzel</th>
+                    <th>Titel</th>
+                    <th>Beschreibung</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            
+            {% for massnahme in massnahmen %}
+                <tr>
+                    <td><a href="{% url 'massnahme_detail' massnahme.pk %}">{{ massnahme.kuerzel }}</a></td>
+                    <td>{{ massnahme.titel }}</td>
+                    <td>{{ massnahme.beschreibung }}</td>
+                    <td><a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

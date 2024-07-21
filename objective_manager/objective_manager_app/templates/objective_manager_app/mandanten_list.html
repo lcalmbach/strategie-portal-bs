@@ -1,0 +1,25 @@
+{% extends "base.html" %} 
+{% block title %}Mandanten{% endblock title %} 
+{% block content %}
+    <div class="container">
+        <h1>Mandanten</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Kürzel</th>
+                    <th>Bezeichnung</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mandant in mandanten %}
+                <tr>
+                    <td><a href="{% url 'mandant_detail' mandant.pk %}">{{ mandant.kuerzel }}</a></td>
+                    <td>{{ mandant.bezeichnung }}</td>
+                    <td><a href="{% url 'mandant_edit' mandant.pk %}"><i class="fas fa-edit"></i></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

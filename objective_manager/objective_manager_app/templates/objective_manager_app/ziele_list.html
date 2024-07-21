@@ -1,0 +1,27 @@
+{% extends "base.html" %} 
+{% block title %}Ziele{% endblock title %} 
+{% block content %}
+    <div class="container">
+        <h1>Ziele</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Kürzel</th>
+                    <th>Titel</th>
+                    <th>Beschreibung</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ziel in ziele %}
+                <tr>
+                    <td><a href="{% url 'ziel_detail' ziel.pk %}">{{ ziel.kuerzel }}</a></td>
+                    <td>{{ ziel.titel }}</td>
+                    <td>{{ ziel.text }}</td>
+                    <td><a href="{% url 'ziel_edit' ziel.pk %}"><i class="fas fa-edit"></i></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

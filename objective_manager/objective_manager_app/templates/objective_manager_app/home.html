@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to the Objective Manager{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Willkommen beim Strategischen Controlling des Kantons Basel-Stadt</h1>
+    <p>Diese App erlaubt es strategische Handlungsfelder, Ziele und Massnahmen zu verwalten und deren Zielerreichung und der geplante Aufwand zu überwachen.</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="theme">Select a Theme:</label>
+            <select id="theme" name="theme" class="form-control" onchange="updateDescription()">
+                <option value="">-- Select a Theme --</option>
+                {% for theme in themes %}
+                <option value="{{ theme.id }}" data-description="{{ theme.beschreibung }}" {% if selected_theme and theme.id == selected_theme.id %}selected{% endif %}>{{ theme.titel }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Weiter</button>
+    </form>
+    
+    <br>
+    <p id="theme-description">{% if selected_theme %}{{ selected_theme.beschreibung }}{% endif %}</p>
+</div>
+
+<script>
+function updateDescription() {
+    var select = document.getElementById('theme');
+    var description = select.options[select.selectedIndex].getAttribute('data-description');
+    document.getElementById('theme-description').innerText = description;
+}
+</script>
+{% endblock %}

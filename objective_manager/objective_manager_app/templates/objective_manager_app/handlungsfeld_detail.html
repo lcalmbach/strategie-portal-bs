@@ -1,0 +1,62 @@
+{% extends "base.html" %} 
+{% block title %}Handlungsfeld {{handlungsfeld.titel}}{% endblock title %} 
+{% block content %}
+
+    <div class="container">
+        <h1>Handlungsfeld {{handlungsfeld.titel}}</h1>
+        <br/>
+        <table>
+            <tr>
+                <th>Kürzel</th><td>{{handlungsfeld.kuerzel}}</td>
+            </tr>
+            <tr>
+                <th>Titel</th><td>{{handlungsfeld.titel}}</td>
+            </tr>
+            <tr>
+                <th>Beschreibung</th><td>{{handlungsfeld.beschreibung}}</td>
+            </tr>
+        </table>
+        <br><br>
+        <h4>Ziele</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Kürzel</th>
+                    <th>Titel</th>
+                    <th>Beschreibung</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+
+                {% for ziel in ziele %}
+                <tr>
+                    <td><a href="{% url 'ziel_detail' ziel.pk %}">{{ ziel.kuerzel }}</a></td>
+                    <td>{{ ziel.titel }}</td>
+                    <td>{{ ziel.beschreibung }}</td>
+                    <td><a href="{% url 'ziel_edit' ziel.pk %}"><i class="fas fa-edit"></i></a></td>
+                </tr>
+                {% endfor %}
+        </table>
+        <br><br>
+        <h4>Massnahmen</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Kürzel</th>
+                    <th>Titel</th>
+                    <th>Beschreibung</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+
+            {% for massnahme in massnahmen %}
+                <tr>
+                    <td><a href="{% url 'massnahme_detail' massnahme.pk %}">{{ massnahme.kuerzel }}</a></td>
+                    <td>{{ massnahme.titel }}</td>
+                    <td>{{ massnahme.beschreibung }}</td>
+                    <td><a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

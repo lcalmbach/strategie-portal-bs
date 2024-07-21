@@ -1,0 +1,36 @@
+{% extends "base.html" %} 
+{% block title %}Planung & Controlling Planung{% endblock title %} 
+{% block content %}
+    <div class="container">
+        <h1>Planung</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Jahr</th>
+                    <th>Organisation</th>
+                    <th>Massnahme</th>
+                    
+                    <th>Erfüllung Soll</th>
+                    <th>Erfüllung Ist</th>
+                    <th>Aufwand 1000 CHF Soll</th>
+                    <th>Aufwand 1000 CHF Ist</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pr in plan_records %}
+                <tr>
+                    <td><a href="{% url 'plan_record_detail' pr.pk %}">{{pr.jahr}}</a></td>
+                    <td>{{ pr.organisation.kuerzel }}</td>
+                    <td>{{ pr.objekt.titel }}</td>
+                    <td>{{ pr.soll_wert_erreicht_pzt }}</td>
+                    <td>{{ pr.ist_wert_erreicht_pzt }}</td>
+                    <td>{{ pr.soll_wert_erreicht_pzt }}</td>
+                    <td>{{ pr.ist_wert_erreicht_pzt }}</td>
+                    <td><a href="{% url 'plan_record_edit' pr.pk %}"><i class="fas fa-edit"></i></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

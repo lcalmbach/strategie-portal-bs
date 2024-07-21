@@ -1,0 +1,29 @@
+{% extends "base.html" %} 
+{% block title %}Gleichstellung BS: Ziele und Massnahmen{% endblock title %} 
+{% block content %}
+    <div class="container">
+        <h1>Ziele</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Kürzel</th>
+                    <th>Titel</th>
+                    <th>Text</th>
+                    <th>Details</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ziel in ziele %}
+                <tr>
+                    <td>{{ ziel.kuerzel }}</td>
+                    <td>{{ ziel.titel }}</td>
+                    <td>{{ ziel.text }}</td>
+                    <td><a href="{% url 'ziel_detail' ziel.pk %}">Details</a></td>
+                    <td><a href="{% url 'ziel_edit' ziel.pk %}"><i class="fas fa-edit"></i></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %} 
+{% block title %}Planung{% endblock title %} 
+{% block content %}
+    <div class="container">
+        <h3>Planung von Massnahme: {{ massnahme.titel }} ({{ massnahme.jahr_start }} - {{ massnahme.jahr_ende }})</h3>
+        <br>
+        <table>
+            <tr>
+                <th>Jahr</th>
+                <th>Organisation</th>
+                <th>Soll<br>Erfüllungsgrad</th>
+                <th>Ist<br>Erfüllungsgrad</th>
+                <th>Soll<br>Personentage</th>
+                <th>Ist<br>Personentage</th>
+                <th>Soll Aufwand<br>1000 CHF</th>
+                <th>Ist Aufwand<br>1000 CHF</th>
+            </tr>
+                
+            {% for plan_record in plan_records %}
+                <tr>
+                    <td>{{ plan_record.jahr }}</td>
+                    <td>{{ plan_record.organisation.kuerzel }}</td>
+                    <td>{{ plan_record.soll_wert_erreicht_pzt }}</td>
+                    <td class="{% if plan_record.ist_wert_erreicht_pzt >= plan_record.soll_wert_erreicht_pzt %}green-bg{% else %}orange-bg{% endif %}">{{ plan_record.ist_wert_erreicht_pzt }}</td>
+                    <td>{{ plan_record.aufwand_personen_tage_plan }}</td>
+                    <td>{{ plan_record.aufwand_personen_tage_ist }}</td>
+                    <td>{{ plan_record.aufwand_tsd_chf_plan }}</td>
+                    <td>{{ plan_record.aufwand_tsd_chf_ist }}</td>
+                </tr>
+            {% endfor %}
+        </table>    
+        <br><br>
+        {% if plan_record.beschreibung %} 
+            Beschreibung:<br>
+            {{ plan_record.beschreibung }}      
+        {% endif %}
+        <div>
+            {{ plot_div|safe }}
+        </div>
+    </div>
+    
+{% endblock %}
