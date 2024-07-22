@@ -48,7 +48,7 @@
             <tbody>
                 {% for pr in plan_records %}
                 <tr>
-                    <td><a href="{% url 'plan_record_detail' pr.pk %}">{{pr.jahr}}</a></td>
+                    <td>{{pr.jahr}}</td>
                     <td>{{ pr.organisation.kuerzel }}</td>
                     <td>{{ pr.objekt.titel }}</td>
                     <td>{{ pr.soll_wert_erreicht_pzt }}</td>
