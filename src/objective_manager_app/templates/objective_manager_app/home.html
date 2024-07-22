@@ -4,21 +4,22 @@
 
 {% block content %}
 <div class="container">
-    <h1>Willkommen beim Strategischen Controlling des Kantons Basel-Stadt</h1>
-    <p>Diese App erlaubt es strategische Handlungsfelder, Ziele und Massnahmen zu verwalten und deren Zielerreichung und der geplante Aufwand zu überwachen.</p>
+    <h1>🚧Willkommen beim Strategischen Controlling des Kantons Basel-Stadt🚧</h1>
+    <p>Diese App ermöglicht es, strategische Handlungsfelder, Ziele und Maßnahmen zu verwalten sowie deren Zielerreichung und den geplanten Aufwand zu überwachen. Die App befindet sich derzeit in der Entwicklung. Handlungsfelder, Ziele und Maßnahmen entsprechen realen Vorhaben, während alle Planungsdaten erfunden sind. Nur Das Thema Gleichstellung ist aktuelle mit Daten hinterlegt.
+    </p>
     
-    <form method="post">
+    <form method="post" onsubmit="return validateForm()">
         {% csrf_token %}
         <div class="form-group">
             <label for="theme">Select a Theme:</label>
-            <select id="theme" name="theme" class="form-control" onchange="updateDescription()">
-                <option value="">-- Select a Theme --</option>
+            <select id="theme" name="theme" class="form-control" onchange="updateDescription(); updateButtonState();">
+                <option value="">-- Wähle ein Thema --</option>
                 {% for theme in themes %}
                 <option value="{{ theme.id }}" data-description="{{ theme.beschreibung }}" {% if selected_theme and theme.id == selected_theme.id %}selected{% endif %}>{{ theme.titel }}</option>
                 {% endfor %}
             </select>
         </div>
-        <button type="submit" class="btn btn-primary mt-3">Weiter</button>
+        <button type="submit" class="btn btn-primary mt-3" id="submitButton" disabled>Weiter</button>
     </form>
     
     <br>
@@ -26,10 +27,36 @@
 </div>
 
 <script>
-function updateDescription() {
-    var select = document.getElementById('theme');
-    var description = select.options[select.selectedIndex].getAttribute('data-description');
-    document.getElementById('theme-description').innerText = description;
-}
+    function updateDescription() {
+        var select = document.getElementById('theme');
+        var description = select.options[select.selectedIndex].getAttribute('data-description');
+        document.getElementById('theme-description').innerText = description;
+    }
+
+    function updateButtonState() {
+        var selectElement = document.getElementById('theme');
+        var submitButton = document.getElementById('submitButton');
+        
+        if (selectElement.value) {
+            submitButton.disabled = false;
+        } else {
+            submitButton.disabled = true;
+        }
+    }
+
+    function validateForm() {
+        var selectElement = document.getElementById('theme');
+        if (selectElement.value === "") {
+            selectElement.value = null;
+        }
+        return true;  // Formular absenden
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+    
+    // Initial call to set the button state based on the current selection
+    updateButtonState();
 </script>
 {% endblock %}

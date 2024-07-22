@@ -3,7 +3,10 @@
 {% block content %}
 
     <div class="container">
-        <h1>Ziel {{ziel.titel}}</h1>
+        <!-- Back Button -->
+        
+
+        <h3>Massnahme {{massnahme.titel}}</h3>
         <br/>
         <table>
             <tr>
@@ -14,15 +17,33 @@
             </tr>
             
             <tr>
-                <th>Aufwand Personentage Soll</th><td>{{massnahme.aufwand_personen_tage_plan}}</td>
+                <th>Aufwand Personentage</th><td>{{massnahme.aufwand_personen_tage_plan}}</td>
             </tr>
             <tr>
-                <th>Finanzieller Aufwand tsd CHF</th><td>{{massnahme.aufwand_tsd_chf_plan}}</td>
+                <th>kosten 1000 CHF</th><td>{{massnahme.aufwand_tsd_chf_plan}}</td>
+            </tr>
+            <tr>
+                <th>Von</th><td>{{massnahme.jahr_start}}</td>
+            </tr>
+            <tr>
+                <th>Bis</th><td>{{massnahme.jahr_ende}}</td>
             </tr>
         </table>
-
+        {% if massnahme.beschreibung %}
+            <br>
+            <b>Beschreibung</b><br>{{massnahme.beschreibung}}
+            <br>
+        {% endif %}
         <br>
-        Beschreibung<br>{{ziel.beschreibung}}
-        <br>
+         <!-- Back Button -->
+        <button onclick="goBack()" class="btn btn-secondary mt-3">
+            <i class="fas fa-arrow-left"></i> Zurück
+        </button>
     </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
 {% endblock %}

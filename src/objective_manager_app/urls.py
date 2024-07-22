@@ -17,7 +17,6 @@ urlpatterns = [
     path("ziel/<int:pk>/", views.ziel_detail, name="ziel_detail"),
     path("massnahme/<int:pk>/", views.massnahme_detail, name="massnahme_detail"),
     path("plan_record/<int:pk>/", views.plan_record_detail, name="plan_record_detail"),
-    path("thema/<int:pk>/edit/", views.thema_edit, name="thema_edit"),
     path(
         "handlungsfeld/<int:pk>/edit/",
         views.handlungsfeld_edit,

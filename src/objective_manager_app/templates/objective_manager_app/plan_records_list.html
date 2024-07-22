@@ -3,13 +3,41 @@
 {% block content %}
     <div class="container">
         <h1>Planung</h1>
+        
+        <!-- Filterformular -->
+        <form method="get">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Jahr</th>
+                        <th>Organisation</th>
+                        <th>Massnahme</th>
+                        <th>Erfüllung Soll</th>
+                        <th>Erfüllung Ist</th>
+                        <th>Aufwand 1000 CHF Soll</th>
+                        <th>Aufwand 1000 CHF Ist</th>
+                        <th>Edit</th>
+                    </tr>
+                    <tr>
+                        <th><input type="text" name="jahr" class="form-control" placeholder="Filter Jahr" value="{{ request.GET.jahr }}"></th>
+                        <th><input type="text" name="organisation" class="form-control" placeholder="Filter Organisation" value="{{ request.GET.organisation }}"></th>
+                        <th><input type="text" name="massnahme" class="form-control" placeholder="Filter Massnahme" value="{{ request.GET.massnahme }}"></th>
+                        <th><input type="text" name="erfuellung_soll" class="form-control" placeholder="Filter Erfüllung Soll" value="{{ request.GET.erfuellung_soll }}"></th>
+                        <th><input type="text" name="erfuellung_ist" class="form-control" placeholder="Filter Erfüllung Ist" value="{{ request.GET.erfuellung_ist }}"></th>
+                        <th><input type="text" name="aufwand_soll" class="form-control" placeholder="Filter Aufwand Soll" value="{{ request.GET.aufwand_soll }}"></th>
+                        <th><input type="text" name="aufwand_ist" class="form-control" placeholder="Filter Aufwand Ist" value="{{ request.GET.aufwand_ist }}"></th>
+                        <th><button type="submit" class="btn btn-primary">Filtern</button></th>
+                    </tr>
+                </thead>
+            </table>
+        </form>
+
         <table class="table">
             <thead>
                 <tr>
                     <th>Jahr</th>
                     <th>Organisation</th>
                     <th>Massnahme</th>
-                    
                     <th>Erfüllung Soll</th>
                     <th>Erfüllung Ist</th>
                     <th>Aufwand 1000 CHF Soll</th>

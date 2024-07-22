@@ -34,6 +34,37 @@ def massnahmen_list(request):
 
 def plan_records_list(request):
     plan_records = PlanRecord.objects.all()
+    
+    # Filter basierend auf GET-Parameter
+    jahr = request.GET.get('jahr')
+    print(jahr)
+    if jahr:
+        plan_records = plan_records.filter(jahr__icontains=jahr)
+    
+    organisation = request.GET.get('organisation')
+    if organisation:
+        plan_records = plan_records.filter(organisation__kuerzel__icontains=organisation)
+    
+    massnahme = request.GET.get('massnahme')
+    if massnahme:
+        plan_records = plan_records.filter(objekt__titel__icontains=massnahme)
+    
+    erfuellung_soll = request.GET.get('erfuellung_soll')
+    if erfuellung_soll:
+        plan_records = plan_records.filter(soll_wert_erreicht_pzt__icontains=erfuellung_soll)
+    
+    erfuellung_ist = request.GET.get('erfuellung_ist')
+    if erfuellung_ist:
+        plan_records = plan_records.filter(ist_wert_erreicht_pzt__icontains=erfuellung_ist)
+    
+    aufwand_soll = request.GET.get('aufwand_soll')
+    if aufwand_soll:
+        plan_records = plan_records.filter(soll_wert_erreicht_pzt__icontains=aufwand_soll)
+    
+    aufwand_ist = request.GET.get('aufwand_ist')
+    if aufwand_ist:
+        plan_records = plan_records.filter(ist_wert_erreicht_pzt__icontains=aufwand_ist)
+    
     return render(
         request,
         "objective_manager_app/plan_records_list.html",
@@ -43,6 +74,7 @@ def plan_records_list(request):
 
 # Detail Views
 def thema_detail(request, pk):
+    print(pk)
     thema = get_object_or_404(BusinessObject.themen, pk=pk)
     return render(request, "objective_manager_app/thema_detail.html", {"thema": thema})
 
@@ -109,6 +141,12 @@ def plan_record_detail(request, pk):
 
     plot_div = fig.to_html(full_html=False)
 
+    
+    context = {
+        'plan_records': plan_records
+    }
+    return render(request, 'dein_template_name.html', context)
+
     return render(
         request,
         "objective_manager_app/plan_record_detail.html",
@@ -121,28 +159,16 @@ def home_detail(request):
     selected_theme = None
 
     if request.method == "POST":
+        print("POST Data:", request.POST)
         selected_theme_id = request.POST.get("theme")
+        print(selected_theme_id)
         request.session["selected_theme_id"] = selected_theme_id
         selected_theme = BusinessObject.themen.get(id=selected_theme_id)
-
     return render(
         request,
         "objective_manager_app/home.html",
         {"themes": themes, "selected_theme": selected_theme},
     )
-
-
-# Edit Views
-def thema_edit(request, pk):
-    thema = get_object_or_404(BusinessObject.themen, pk=pk)
-    if request.method == "POST":
-        form = BusinessObjectForm(request.POST, instance=thema)
-        if form.is_valid():
-            form.save()
-            return redirect("thema_detail", pk=thema.pk)
-    else:
-        form = BusinessObjectForm(instance=thema)
-    return render(request, "objective_manager_app/thema_edit.html", {"form": form})
 
 
 def handlungsfeld_edit(request, pk):
