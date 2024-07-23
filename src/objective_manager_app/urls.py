@@ -8,6 +8,9 @@ urlpatterns = [
     path("ziele/", views.ziele_list, name="ziele_list"),
     path("massnahmen/", views.massnahmen_list, name="massnahmen_list"),
     path("plan_records/", views.plan_records_list, name="plan_records_list"),
+    path("personen/", views.personen_list, name="personen_list"),
+    path("organisationen/", views.organisationen_list, name="organisationen_list"),
+
     path("thema/<int:pk>/", views.thema_detail, name="thema_detail"),
     path(
         "handlungsfeld/<int:pk>/",
@@ -25,4 +28,6 @@ urlpatterns = [
     path("ziel/<int:pk>/edit/", views.ziel_edit, name="ziel_edit"),
     path("massnahme/<int:pk>/edit/", views.massnahme_edit, name="massnahme_edit"),
     path("plan_record/<int:pk>/edit/", views.plan_record_edit, name="plan_record_edit"),
+    path("person/<int:pk>/edit/", views.person_edit, name="person_edit"),
+    path('person/<int:pk>/delete/', views.person_delete, name='person_delete'),
 ]

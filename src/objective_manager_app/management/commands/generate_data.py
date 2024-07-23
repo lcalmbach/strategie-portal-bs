@@ -1,6 +1,6 @@
 import random
 from django.core.management.base import BaseCommand
-from objective_manager_app.models import CodeKategorie, Code, BusinessObject
+from objective_manager_app.models import CodeKategorie, Code, BusinessObject, Person, Organisation
 from django.contrib.auth.models import User
 from faker import Faker
 import pandas as pd
@@ -12,6 +12,34 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         faker = Faker('de_DE')
+
+
+        def generate_personen():
+            code_filename = os.path.join(settings.BASE_DIR, 'objective_manager_app', 'data', 'person.csv')
+            person_df = pd.read_csv(code_filename, sep=';')
+            for person in person_df.itertuples():
+                Person.objects.create(
+                    id=person.id,
+                    vorname=person.vorname,
+                    nachname=person.nachname,
+                )
+        
+        def generate_organisationen():
+            code_filename = os.path.join(settings.BASE_DIR, 'objective_manager_app', 'data', 'organisation.csv')
+            organisation_df = pd.read_csv(code_filename, sep=';')
+            for organisation in organisation_df.itertuples():
+                print(organisation)
+                Organisation.objects.create(
+                    id=organisation.id,
+                    departement=organisation.departement,
+                    bereich=organisation.bereich,
+                    dienststelle=organisation.dienststelle,
+
+                    departement_kuerzel=organisation.departement_kuerzel,
+                    bereich_kuerzel=organisation.bereich_kuerzel,
+                    dienststelle_kuerzel=organisation.dienststelle_kuerzel
+                )
+
 
         def generate_codes():
             code_filename = os.path.join(settings.BASE_DIR, 'objective_manager_app', 'data', 'code.csv')
@@ -96,11 +124,13 @@ class Command(BaseCommand):
                 )
         
 
-        generate_codes()
+        #generate_codes()
         #BusinessObject.objects.all().delete()
-        generate_themen()
-        generate_handlungsfelder()
-        generate_ziele()
-        generate_massnahmen()
+        #generate_themen()
+        #generate_handlungsfelder()
+        #generate_ziele()
+        #generate_massnahmen()
+        #generate_personen()
+        generate_organisationen()
 
         self.stdout.write(self.style.SUCCESS('Successfully generated fake data.'))

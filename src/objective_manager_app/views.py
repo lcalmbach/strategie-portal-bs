@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld
-from .forms import BusinessObjectForm, PlanRecordForm
+from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation
+from .forms import BusinessObjectForm, PlanRecordForm, PersonForm
 import plotly.graph_objs as go
 
 # List Views
@@ -30,6 +30,14 @@ def massnahmen_list(request):
         "objective_manager_app/massnahmen_list.html",
         {"massnahmen": massnahmen},
     )
+
+def personen_list(request):
+    personen = Person.objects.all().order_by('nachname', 'vorname')
+    return render(request, "objective_manager_app/personen_list.html", {"personen": personen})
+
+def organisationen_list(request):
+    organisationen = Person.objects.all()
+    return render(request, "objective_manager_app/organisationen_list.html", {"organisationen": organisationen})
 
 
 def plan_records_list(request):
@@ -219,3 +227,25 @@ def plan_record_edit(request, pk):
     else:
         form = PlanRecordForm(instance=plan_record)
     return render(request, "objective_manager_app/plan_record_edit.html", {"form": form})
+
+
+def person_edit(request, pk):
+    person = get_object_or_404(Person, pk=pk)
+    if request.method == "POST":
+        form = PersonForm(request.POST, instance=person)
+        if form.is_valid():
+            form.save()
+            return redirect("personen_list")
+    else:
+        form = PersonForm(instance=person)
+    return render(request, "objective_manager_app/person_edit.html", {"form": form})
+
+# -----------------------------------
+# delete views
+#------------------------------------
+
+def person_delete(request, pk):
+    person = get_object_or_404(Person, pk=pk)
+    if request.method == "POST":
+        person.delete()
+        return redirect('personen_list')

@@ -1,3 +1,4 @@
 id;titel;beschreibung
 1;tracker_objekt_typ;thema, Handlungsfeld, Ziel, Masssnahmen
-2;organisation;StatA, PD, FD ... 
+2;bestehend/neu;Massnahem ist bestehend oder neu
+3;Rolle;Rolle in Thema oder Massnahme 

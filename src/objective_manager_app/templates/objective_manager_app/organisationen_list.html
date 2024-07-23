@@ -1,0 +1,23 @@
+{% extends "base.html" %} 
+{% block title %}Personen{% endblock title %} 
+{% block content %}
+    <div class="container">
+        <h1>Ziele</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nachname</th>
+                    <th>Vorname</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for person in personen %}
+                <tr>
+                    <td>{{ person.nachname }}</td>
+                    <td>{{ person.vorname }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

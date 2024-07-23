@@ -1,0 +1,33 @@
+{% extends "base.html" %} 
+{% load crispy_forms_tags %}  <!-- Load Crispy Forms tags -->
+{% block title %}Gleichstellung BS: Ziele und Massnahmen{% endblock title %} 
+{% block content %}
+
+<div class="container">
+    <h1>Person bearbeiten</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Speichern</button>
+        <button type="button" class="btn btn-secondary" onclick="window.history.back()">Zurück</button>
+        <button type="button" class="btn btn-danger" onclick="confirmDelete({{ form.instance.id }})">Löschen</button>
+    </form>
+</div>
+
+<script type="text/javascript">
+    function confirmDelete(personId) {
+        if (confirm('Bist du sicher, dass du diese Person löschen möchtest?')) {
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{% url "person_delete" form.instance.id %}';
+            var csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = 'csrfmiddlewaretoken';
+            csrfToken.value = '{{ csrf_token }}';
+            form.appendChild(csrfToken);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %} 
+{% block title %}Personen{% endblock title %} 
+{% block content %}
+    <div class="container">
+        <h1>Personen</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nachname</th>
+                    <th>Vorname</th>
+                    <th>Departement</th>
+                    <th>Organisation</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for person in personen %}
+                <tr>
+                    <td>{{ person.nachname }}</td>
+                    <td>{{ person.vorname }}</td>
+                    <td>{{ person.organisation.departement_kuerzel }}</td>
+                    <td>{{ person.organisation }}</td>
+                    <td><a href="{% url 'person_edit' person.pk %}"><i class="fas fa-edit"></i></a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

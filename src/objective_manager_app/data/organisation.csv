@@ -1,0 +1,8 @@
+id;departement;dienststelle;bereich;departement_kuerzel;dienststelle_kuerzel;bereich_kuerzel
+1;Justiz- und Sicherheits Departement;Gewaltschutz und Opferhilfe;Gewaltschutz und Opferhilfe;JSD;G&O;G&O
+2;Präsidialdepartement;Kantonale Stadtteilentwicklung;Kantonale Stadtteilentwicklung;PD;KSTE;KSTE
+3;Präsidialdepartement;Statistisches Amt;Statistisches Amt;PD;StatA;StatA
+4;Gesundheitsdepartement;Institut für Rechtsmedizin;Institut für Rechtsmedizin;GD;IRM;IRM
+5;Bau- und Verkehrsdepartement;Tiefbauamt;Tiefbauamt;BVD;TBA;TBA
+6;Justiz- und Sicherheits Departement;Kantonspolizei;Polizeiwissenschaften;JSD;KP;KP
+7;Staatskanzlei;Staatskanzlei;Staatskanzlei;STK;STK;STK

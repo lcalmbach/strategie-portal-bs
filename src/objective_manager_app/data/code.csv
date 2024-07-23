@@ -3,10 +3,8 @@ id;kategorie_id;kuerzel;titel;beschreibung
 2;1;;Handlungsfeld;Oberstes elment innerhalb eines Themas
 3;1;;Ziel;Oberstes Element innerhalb eines Handlungsfeldes
 4;1;;Massnahme;Oberstes Elment innerhalb eines Ziels
-5;2;PD;Präsidialdepartement;Präsidialdepartement
-6;2;JSD;Justiz- und Sicherheitsdepartement;ustiz- und Sicherheitsdepartement
-7;2;GD;Gesundheitsdepartement;Gesundheitsdepartement
-8;2;BVD;Bau- und Verkehrsdepartement;Bau- und Verkehrsdepartement
-9;2;FD;Finanzdepartement;Finanzdepartement
-10;2;ED;Erziehungsdepartement;Erziehungsdepartement
-11;2;WSU;Departement für Wirtschaft;Departement für Wirtschaft
+5;2;;neu;neue Massnahme
+6;2;;bestehend;bestehende Massnahme
+7;3;;Projektleitung;Person, die für die Umsetzung der Massnahme verantwortlich ist
+8;3;;Mitwirkung;Mitwirkung bei Massnahme
+

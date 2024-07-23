@@ -34,6 +34,12 @@
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'plan_records_list' %}active{% endif %}" href="{% url 'plan_records_list' %}">Planung</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'personen_list' %}active{% endif %}" href="{% url 'personen_list' %}">Personen</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'organisationen_list' %}active{% endif %}" href="{% url 'organisationen_list' %}">Organisationen</a>
+        </li>
       </ul>
       
       
