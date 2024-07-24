@@ -34,9 +34,11 @@
             <a class="nav-link {% if request.resolver_match.url_name == 'massnahmen_list' %}active{% endif %}" href="{% url 'massnahmen_list' %}">Massnahmen</a>
           </li>
         {% endif %}
+        {% if request.user|is_in_group:"operators" %}
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'plan_records_list' %}active{% endif %}" href="{% url 'plan_records_list' %}">Planung</a>
         </li>
+        {% endif %}
         {% if request.user|is_in_group:"admins" %}
           <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'personen_list' %}active{% endif %}" href="{% url 'personen_list' %}">Personen</a>
