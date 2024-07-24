@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -28,20 +29,45 @@
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'ziele_list' %}active{% endif %}" href="{% url 'ziele_list' %}">Ziele</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'massnahmen_list' %}active{% endif %}" href="{% url 'massnahmen_list' %}">Massnahmen</a>
-        </li>
+        {% if request.user|is_in_group:"admins" %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'massnahmen_list' %}active{% endif %}" href="{% url 'massnahmen_list' %}">Massnahmen</a>
+          </li>
+        {% endif %}
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'plan_records_list' %}active{% endif %}" href="{% url 'plan_records_list' %}">Planung</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'personen_list' %}active{% endif %}" href="{% url 'personen_list' %}">Personen</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'organisationen_list' %}active{% endif %}" href="{% url 'organisationen_list' %}">Organisationen</a>
-        </li>
+        {% if request.user|is_in_group:"admins" %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'personen_list' %}active{% endif %}" href="{% url 'personen_list' %}">Personen</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'organisationen_list' %}active{% endif %}" href="{% url 'organisationen_list' %}">Organisationen</a>
+          </li>
+        {% endif %}
       </ul>
-      
+
+
+      <!-- Right-aligned items -->
+      <ul class="navbar-nav ms-auto">
+        {% if not request.user.is_authenticated %}
+          <!-- User is not logged in -->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login_account:login' %}">Login</a>
+          </li>
+          <!--<li class="nav-item">
+            <a class="nav-link" href="{% url 'login_account:signup' %}">Sign Up</a>
+          </li>-->
+        {% else %}
+          <!-- User is logged in -->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login_account:profile' %}">{{request.user.first_name.0|upper}}{{request.user.last_name.0|upper}}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login_account:logout' %}">Logout</a>
+          </li>
+        {% endif %}
+      </ul>
       
     </div>
   </nav>
@@ -53,7 +79,7 @@
   <!-- Footer with version number -->
   <footer class="footer mt-auto py-3 bg-light">
     <div class="container text-center">
-      <span class="text-muted">&copy; Statistisches Amt Basel-Stadt<span style="float:right; font-size: smaller;">v0.0.2 (23.7.2024)</span></span>
+      <span class="text-muted">&copy; Statistisches Amt Basel-Stadt<span style="float:right; font-size: smaller;">v0.0.3 (24.7.2024)</span></span>
     </div>
   </footer>
 

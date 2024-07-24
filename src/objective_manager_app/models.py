@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect
 from datetime import datetime
-
+from django.contrib.auth.models import User
 
 class CodeKategorie(models.Model):
     titel = models.CharField(max_length=100)
@@ -24,6 +24,7 @@ class Organisation(models.Model):
         return self.bereich if self.bereich else self.dienststelle
 
 class Person(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     vorname = models.CharField(verbose_name= 'Vorname', max_length=200)
     nachname = models.CharField(verbose_name= 'Nachname', max_length=200)
     email = models.EmailField(verbose_name= 'Email', max_length=200, null=True, blank=True)
