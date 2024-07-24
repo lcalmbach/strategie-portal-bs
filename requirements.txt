@@ -9,4 +9,3 @@ gunicorn==22.0.0
 django-heroku==0.3.1
 plotly==5.22.0
 Psycopg2-binary
-django-widget-tweaks
