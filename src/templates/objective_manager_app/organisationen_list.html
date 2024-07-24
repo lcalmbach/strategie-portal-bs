@@ -1,20 +1,27 @@
 {% extends "base.html" %} 
+{% load custom_filters%}
 {% block title %}Personen{% endblock title %} 
 {% block content %}
     <div class="container">
-        <h1>Ziele</h1>
+        <h1>Organisationen</h1>
         <table class="table">
             <thead>
                 <tr>
-                    <th>Nachname</th>
-                    <th>Vorname</th>
+                    <th>Departement</th>
+                    <th>Dienststelle</th>
+                    <th>Bereich</th>
+                    <th>Edit</th>
                 </tr>
             </thead>
             <tbody>
-                {% for person in personen %}
+                {% for organisation in organisationen %}
                 <tr>
-                    <td>{{ person.nachname }}</td>
-                    <td>{{ person.vorname }}</td>
+                    <td>{{ organisation.departement }} ({{ organisation.departement_kuerzel }})</td>
+                    <td>{{ organisation.dienststelle }} ({{ organisation.dienststelle_kuerzel }})</td>
+                    <td>{{ organisation.bereich }} ({{ organisation.bereich_kuerzel }})</td>
+                    {% if request.user|is_in_group:"admins" %}
+                        <td><a href="{% url 'organisation_edit' organisation.pk %}"><i class="fas fa-edit"></i></a></td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>

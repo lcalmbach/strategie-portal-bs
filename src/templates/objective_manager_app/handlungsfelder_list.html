@@ -1,15 +1,18 @@
 {% extends "base.html" %} 
+{% load custom_filters %}
 {% block title %}Handlungsfelder{% endblock title %} 
 {% block content %}
     <div class="container">
-        <h1>Handlungsfelder</h1>
+        <h1>Handlungsfelder  ({{ handlungsfelder|length}})</h1>
         <table class="table">
             <thead>
                 <tr>
                     <th>Kürzel</th>
                     <th>Handlungsfeld</th>
                     <th>Beschreibung</th>
-                    <th>Edit</th>
+                    {% if request.user|is_in_group:"admins" %}
+                        <th>Edit</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -18,7 +21,9 @@
                     <td><a href="{% url 'handlungsfeld_detail' handlungsfeld.pk %}">{{ handlungsfeld.kuerzel }}</a></td>
                     <td>{{ handlungsfeld.titel }}</td>
                     <td>{{ handlungsfeld.beschreibung }}</td>
-                    <td><a href="{% url 'handlungsfeld_edit' handlungsfeld.pk %}"><i class="fas fa-edit"></i></a></td>
+                    {% if request.user|is_in_group:"admins" %}
+                        <td><a href="{% url 'handlungsfeld_edit' handlungsfeld.pk %}"><i class="fas fa-edit"></i></a></td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>

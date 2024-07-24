@@ -2,26 +2,30 @@
 {% load crispy_forms_tags %}  <!-- Load Crispy Forms tags -->
 {% block title %}Gleichstellung BS: Ziele und Massnahmen{% endblock title %} 
 {% block content %}
+
 <div class="container">
-    <h1>Ziel bearbeiten</h1>
+    <h1>Organisation bearbeiten</h1>
+    {{organisation.pk}}
     <form method="post">
         {% csrf_token %}
         {{ form|crispy }}
+        
         <button type="submit" class="btn btn-primary">Speichern</button>
         <button type="button" class="btn btn-secondary" onclick="window.history.back()">Zurück</button>
         {% if form.instance.pk %}
             <button type="button" class="btn btn-danger" onclick="confirmDelete({{ form.instance.id }})">Löschen</button>
         {% endif %}
-        <button type="button" class="btn btn-success" onclick="window.location.href='{% url "organisation_create" %}'">Neu</button>
+        <button type="button" class="btn btn-success" onclick="window.location.href='{% url "organisation_create" %}'">Neue Organisation</button>
+        
     </form>
 </div>
 
 <script type="text/javascript">
     function confirmDelete(organisationId) {
-        if (confirm('Bist du sicher, dass du dieses Ziel löschen möchtest?')) {
+        if (confirm('Bist du sicher, dass du diese Organisation löschen möchtest?')) {
             var form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/ziel/delete/' + organisationId + '/';  // Construct the URL dynamically
+            form.action = '/organisation/delete/' + organisationId + '/';  // Construct the URL dynamically
             var csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
             csrfToken.name = 'csrfmiddlewaretoken';
@@ -32,5 +36,4 @@
         }
     } 
 </script>
-
 {% endblock %}

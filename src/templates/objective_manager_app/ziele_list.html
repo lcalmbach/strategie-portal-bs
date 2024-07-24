@@ -1,15 +1,18 @@
 {% extends "base.html" %} 
+{% load custom_filters %}
 {% block title %}Ziele{% endblock title %} 
 {% block content %}
     <div class="container">
-        <h1>Ziele</h1>
+        <h1>Ziele  ({{ ziele|length }})</h1>
         <table class="table">
             <thead>
                 <tr>
                     <th>Kürzel</th>
                     <th>Titel</th>
                     <th>Beschreibung</th>
-                    <th>Edit</th>
+                    {% if request.user|is_in_group:"admins" %}
+                        <th>Edit</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -18,7 +21,9 @@
                     <td><a href="{% url 'ziel_detail' ziel.pk %}">{{ ziel.kuerzel }}</a></td>
                     <td>{{ ziel.titel }}</td>
                     <td>{{ ziel.text }}</td>
-                    <td><a href="{% url 'ziel_edit' ziel.pk %}"><i class="fas fa-edit"></i></a></td>
+                    {% if request.user|is_in_group:"admins" %}
+                        <td><a href="{% url 'ziel_edit' ziel.pk %}"><i class="fas fa-edit"></i></a></td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>

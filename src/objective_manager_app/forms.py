@@ -1,5 +1,5 @@
 from django import forms
-from .models import BusinessObject, PlanRecord, Person
+from .models import BusinessObject, PlanRecord, Person, Organisation
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
@@ -26,3 +26,9 @@ class PersonForm(forms.ModelForm):
     class Meta:
         model = Person
         fields = '__all__'
+
+class OrganisationForm(forms.ModelForm):
+    class Meta:
+        model = Organisation
+        fields = '__all__'
+

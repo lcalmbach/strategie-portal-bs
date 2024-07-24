@@ -1,8 +1,9 @@
 {% extends "base.html" %} 
+{% load custom_filters %}
 {% block title %}Massnahmen{% endblock title %} 
 {% block content %}
     <div class="container">
-        <h1>Massnahmen</h1>
+        <h1>Massnahmen  ({{ massnahmen|length}})</h1>
         <table class="table">
             <thead>
                 <tr>
@@ -10,7 +11,9 @@
                     <th>Kürzel</th>
                     <th>Titel</th>
                     <th>Beschreibung</th>
-                    <th>Edit</th>
+                    {% if request.user|is_in_group:"admins" %}
+                        <th>Edit</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -20,10 +23,13 @@
                     <td><a href="{% url 'massnahme_detail' massnahme.pk %}">{{ massnahme.kuerzel }}</a></td>
                     <td>{{ massnahme.titel }}</td>
                     <td>{{ massnahme.text }}</td>
-                    <td><a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a></td>
+                    {% if request.user|is_in_group:"admins" %}
+                        <td><a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a></td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <button type="button" class="btn btn-success" onclick="window.location.href='{% url "massnahme_create" %}'">Neue Massnahme</button>
     </div>
 {% endblock %}

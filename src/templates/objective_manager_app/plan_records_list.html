@@ -2,7 +2,7 @@
 {% block title %}Planung & Controlling Planung{% endblock title %} 
 {% block content %}
     <div class="container">
-        <h1>Planung</h1>
+        <h1>Planung  ({{ plan_records|length}})</h1>
         
         <!-- Filterformular -->
         <form method="get">
@@ -26,13 +26,10 @@
                         <th><input type="text" name="erfuellung_ist" class="form-control" placeholder="Filter Erfüllung Ist" value="{{ request.GET.erfuellung_ist }}"></th>
                         <th><input type="text" name="aufwand_soll" class="form-control" placeholder="Filter Aufwand Soll" value="{{ request.GET.aufwand_soll }}"></th>
                         <th><input type="text" name="aufwand_ist" class="form-control" placeholder="Filter Aufwand Ist" value="{{ request.GET.aufwand_ist }}"></th>
-                        <th><button type="submit" class="btn btn-primary">Filtern</button></th>
+                        <th><button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i></button></th>
                     </tr>
                 </thead>
-            </table>
         </form>
-
-        <table class="table">
             <thead>
                 <tr>
                     <th>Jahr</th>

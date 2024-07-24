@@ -1,7 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation
-from .forms import BusinessObjectForm, PlanRecordForm, PersonForm
+from .forms import BusinessObjectForm, PlanRecordForm, PersonForm, OrganisationForm
 import plotly.graph_objs as go
+from .templatetags.custom_filters import is_in_group
+from django.contrib.auth.decorators import user_passes_test
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
+
+def is_in_group_decorator(group_name):
+    return user_passes_test(lambda u: is_in_group(u, group_name))
 
 # List Views
 def themen_list(request):
@@ -35,8 +42,9 @@ def personen_list(request):
     personen = Person.objects.all().order_by('nachname', 'vorname')
     return render(request, "objective_manager_app/personen_list.html", {"personen": personen})
 
+
 def organisationen_list(request):
-    organisationen = Person.objects.all()
+    organisationen = Organisation.objects.all()
     return render(request, "objective_manager_app/organisationen_list.html", {"organisationen": organisationen})
 
 
@@ -178,7 +186,23 @@ def home_detail(request):
         {"themes": themes, "selected_theme": selected_theme},
     )
 
+def admin_detail(request):
+    themes = BusinessObject.themen.all()
+    selected_theme = None
 
+    if request.method == "POST":
+        print("POST Data:", request.POST)
+        selected_theme_id = request.POST.get("theme")
+        print(selected_theme_id)
+        request.session["selected_theme_id"] = selected_theme_id
+        selected_theme = BusinessObject.themen.get(id=selected_theme_id)
+    return render(
+        request,
+        "objective_manager_app/home.html",
+        {"themes": themes, "selected_theme": selected_theme},
+    )
+
+@is_in_group_decorator('admins')
 def handlungsfeld_edit(request, pk):
     handlungsfeld = get_object_or_404(BusinessObject.handlungsfelder, pk=pk)
     if request.method == "POST":
@@ -192,7 +216,7 @@ def handlungsfeld_edit(request, pk):
         request, "objective_manager_app/handlungsfeld_edit.html", {"form": form}
     )
 
-
+@is_in_group_decorator('admins')
 def ziel_edit(request, pk):
     ziel = get_object_or_404(BusinessObject.ziele, pk=pk)
     if request.method == "POST":
@@ -205,6 +229,7 @@ def ziel_edit(request, pk):
     return render(request, "objective_manager_app/ziel_edit.html", {"form": form})
 
 
+@is_in_group_decorator('admins')
 def massnahme_edit(request, pk):
     massnahme = get_object_or_404(BusinessObject.massnahmen, pk=pk)
     if request.method == "POST":
@@ -217,6 +242,7 @@ def massnahme_edit(request, pk):
     return render(request, "objective_manager_app/massnahme_edit.html", {"form": form})
 
 
+@is_in_group_decorator('operators')
 def plan_record_edit(request, pk):
     plan_record = get_object_or_404(PlanRecord, pk=pk)
     if request.method == "POST":
@@ -228,7 +254,7 @@ def plan_record_edit(request, pk):
         form = PlanRecordForm(instance=plan_record)
     return render(request, "objective_manager_app/plan_record_edit.html", {"form": form})
 
-
+@is_in_group_decorator('admins')
 def person_edit(request, pk):
     person = get_object_or_404(Person, pk=pk)
     if request.method == "POST":
@@ -240,6 +266,19 @@ def person_edit(request, pk):
         form = PersonForm(instance=person)
     return render(request, "objective_manager_app/person_edit.html", {"form": form})
 
+
+@is_in_group_decorator('admins')
+def organisation_edit(request, pk):
+    organisation = get_object_or_404(Organisation, pk=pk)
+    if request.method == "POST":
+        form = OrganisationForm(request.POST, instance=organisation)
+        if form.is_valid():
+            form.save()
+            return redirect("organisationen_list")
+    else:
+        form = OrganisationForm(instance=organisation)
+    return render(request, "objective_manager_app/organisation_edit.html", {"form": form})
+
 # -----------------------------------
 # delete views
 #------------------------------------
@@ -249,3 +288,49 @@ def person_delete(request, pk):
     if request.method == "POST":
         person.delete()
         return redirect('personen_list')
+    
+def organisation_delete(request, pk):
+    organisation = get_object_or_404(Organisation, pk=pk)
+    if request.method == "POST":
+        organisation.delete()
+        return redirect('organisationen_list')
+
+# -----------------------------------
+# add views
+#------------------------------------
+    
+class OrganizationCreateView(CreateView):
+    model = Organisation
+    form_class = OrganisationForm
+    template_name = 'objective_manager_app/organisation_edit.html'
+    success_url = reverse_lazy('organisationen_list')  
+
+class MassnahmeCreateView(CreateView):
+    model = Massnahme
+    form_class = BusinessObjectForm
+    template_name = 'objective_manager_app/massnahme_edit.html'
+    success_url = reverse_lazy('massnahmen_list') 
+
+class ZielCreateView(CreateView):
+    model = Ziel
+    form_class = BusinessObjectForm
+    template_name = 'objective_manager_app/ziel_edit.html'
+    success_url = reverse_lazy('ziele_list') 
+
+class HandlungsfeldCreateView(CreateView):
+    model = Handlungsfeld
+    form_class = BusinessObjectForm
+    template_name = 'objective_manager_app/handlungsfeld_edit.html'
+    success_url = reverse_lazy('handlungsfelder_list') 
+
+class PersonCreateView(CreateView):
+    model = Person
+    form_class = PersonForm
+    template_name = 'objective_manager_app/person_edit.html'
+    success_url = reverse_lazy('personen_list') 
+
+class PlanRecordCreateView(CreateView):
+    model = PlanRecord
+    form_class = PlanRecordForm
+    template_name = 'objective_manager_app/plan_record_edit.html'
+    success_url = reverse_lazy('plan_records_list') 
