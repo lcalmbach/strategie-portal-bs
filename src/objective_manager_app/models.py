@@ -82,7 +82,7 @@ class BusinessObject(models.Model):
     titel = models.CharField(max_length=200, verbose_name="Titel")
     beschreibung = models.TextField(verbose_name="Beschreibung")
     erstellt_am = models.DateTimeField(auto_now_add=True, verbose_name="Erstellt am")
-    erstellt_von = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Erstellt von")
+    erstellt_von = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Erstellt von", blank=True)
     aufwand_personen_tage_plan = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Aufwand Personentage", default=0)
     aufwand_tsd_chf_plan = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Aufwand tsd CHF", default=0)
     jahr_start = models.IntegerField(verbose_name="Jahr Start", default=datetime.now().year)
@@ -147,12 +147,16 @@ class Massnahme(BusinessObject):
         proxy = True
 
 
-class Thema(models.Model):
+class Strategie(models.Model):
     titel = models.CharField(max_length=200)
-    beschreibung = models.TextField()
+    
+    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
     kontakt = models.CharField(max_length=200)
-    jahr_start = models.IntegerField(verbose_name="Jahr Start", default = datetime.now().year +1)    
-    jahr_ende = models.IntegerField(verbose_name="Jahr Ende", default = datetime.now().year + 5)    
+    gueltigkeit_jahr_start = models.IntegerField(verbose_name="Jahr Start", default = datetime.now().year +1)    
+    gueltigkeit_jahr_ende = models.IntegerField(verbose_name="Jahr Ende", default = datetime.now().year + 5)    
+    planungs_frequenz_monate = models.IntegerField(verbose_name="Planungsfrequenz (Monate)", default=12)
+    beschreibung_intern = models.TextField(verbose_name="Beschreibung für Beteiligte", max_length=1000, null=True, blank=True)
+    beschreibung_extern = models.TextField(verbose_name="Beschreibung für Externe", max_length=1000, null=True, blank=True)
 
     def __str__(self):
         return self.titel
@@ -163,11 +167,12 @@ class PlanRecord(models.Model):
     #organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, verbose_name="Organisation")
     jahr = models.IntegerField(verbose_name="Jahr", default=datetime.now().year)
     monat = models.IntegerField()
+    faellig_am = models.DateField(verbose_name="Fällig am", blank=True, null=True)
     soll_wert_erreicht_pzt = models.IntegerField(verbose_name="Zielerreichungsgrad (Soll, %)")
     ist_wert_erreicht_pzt = models.IntegerField(verbose_name="Zielerreichungsgrad (Ist, %)")
     aufwand_personen_tage_plan = models.IntegerField(verbose_name='Aufwand Personentage (Soll)')
-    aufwand_tsd_chf_plan = models.IntegerField(verbose_name='Aufwand tsd CHF (Soll)')
     aufwand_personen_tage_ist = models.IntegerField(default=0, verbose_name='Aufwand Personentage (Ist)')
+    aufwand_tsd_chf_plan = models.IntegerField(verbose_name='Aufwand tsd CHF (Soll)')
     aufwand_tsd_chf_ist = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Aufwand tsd CHF (Ist)')
     beschreibung = models.TextField(verbose_name="Beschreibung",null=True, blank=True)
     
@@ -176,9 +181,3 @@ class PlanRecord(models.Model):
 
     def __str__(self):
         return f"{self.objekt.titel} {self.jahr}"
-
-def person_delete(request, pk):
-    person = get_object_or_404(Person, pk=pk)
-    if request.method == "POST":
-        person.delete()
-        return redirect('personen_list')

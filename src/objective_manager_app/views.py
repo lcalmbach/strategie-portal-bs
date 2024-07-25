@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation
-from .forms import BusinessObjectForm, PlanRecordForm, PersonForm, OrganisationForm
+from .forms import BusinessObjectForm, PlanRecordForm, PersonForm, OrganisationForm,ZielForm
 import plotly.graph_objs as go
 from .templatetags.custom_filters import is_in_group
 from django.contrib.auth.decorators import user_passes_test
@@ -222,10 +222,12 @@ def ziel_edit(request, pk):
     if request.method == "POST":
         form = BusinessObjectForm(request.POST, instance=ziel)
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.erstellt_von = request.user
+            obj.save()
             return redirect("ziel_detail", pk=ziel.pk)
     else:
-        form = BusinessObjectForm(instance=ziel)
+        form = ZielForm(instance=ziel)
     return render(request, "objective_manager_app/ziel_edit.html", {"form": form})
 
 
@@ -248,11 +250,14 @@ def plan_record_edit(request, pk):
     if request.method == "POST":
         form = PlanRecordForm(request.POST, instance=plan_record)
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.erstellt_von = request.user
+            obj.save()
             return redirect("plan_record_detail", pk=plan_record.pk)
     else:
         form = PlanRecordForm(instance=plan_record)
     return render(request, "objective_manager_app/plan_record_edit.html", {"form": form})
+
 
 @is_in_group_decorator('admins')
 def person_edit(request, pk):

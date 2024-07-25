@@ -7,12 +7,14 @@
     <form method="post">
         {% csrf_token %}
         {{ form|crispy }}
+        <hr>
         <button type="submit" class="btn btn-primary">Speichern</button>
-        <button type="button" class="btn btn-secondary" onclick="window.history.back()">Zurück</button>
-        {% if form.instance.pk %}
-            <button type="button" class="btn btn-danger" onclick="confirmDelete({{ form.instance.id }})">Löschen</button>
-        {% endif %}
         <button type="button" class="btn btn-success" onclick="window.location.href='{% url "organisation_create" %}'">Neu</button>
+        <button type="button" class="btn btn-secondary" onclick="window.history.back()">Zurück</button>
+        
+        {% if form.instance.pk %}
+            <button type="button" class="btn btn-danger btn-float-right" onclick="confirmDelete({{ form.instance.id }})">Löschen</button>
+        {% endif %}
     </form>
 </div>
 
@@ -32,5 +34,11 @@
         }
     } 
 </script>
+<!-- todo: warum wird stlye aus styles.css nicht verwendet?-->
+<style>
+    .btn-float-right {
+        float: right;
+    }
+</style>
 
 {% endblock %}

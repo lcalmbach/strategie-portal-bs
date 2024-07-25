@@ -84,7 +84,13 @@ td.button-cell {
     margin: 5px; 
   }
 
+.btn-float-right {
+    float: right;
+    margin-left: 10px;  
+}
+
 
 .faint-green-bg {
     background-color: #e0ffe0 !important;
 }
+

@@ -16,6 +16,12 @@ class BusinessObjectForm(forms.ModelForm):
             "erstellt_von",
         ]
 
+class ZielForm(forms.ModelForm):
+    class Meta:
+        model = BusinessObject
+        exclude = ['erstellt_von','anmerkung_initialisierung','bestehende_massnahme','messbarkeit']
+
+
 class PlanRecordForm(forms.ModelForm):
     class Meta:
         model = PlanRecord
