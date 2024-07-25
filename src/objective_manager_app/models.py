@@ -76,7 +76,8 @@ class MassnahmeManager(models.Manager):
 
 
 class BusinessObject(models.Model):
-    typ = models.ForeignKey(Code, on_delete=models.CASCADE)
+    strategie = models.ForeignKey("Strategie", on_delete=models.CASCADE)
+    typ = models.ForeignKey("Code", on_delete=models.CASCADE)
     vorgaenger = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True)
     kuerzel = models.CharField(max_length=10)
     titel = models.CharField(max_length=200, verbose_name="Titel")
