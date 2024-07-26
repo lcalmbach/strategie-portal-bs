@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation
+from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation, Strategie
 from .forms import BusinessObjectForm, PlanRecordForm, PersonForm, OrganisationForm,ZielForm
 import plotly.graph_objs as go
 from .templatetags.custom_filters import is_in_group
@@ -171,20 +171,21 @@ def plan_record_detail(request, pk):
 
 
 def home_detail(request):
-    themes = BusinessObject.themen.all()
-    selected_theme = None
-
     if request.method == "POST":
-        print("POST Data:", request.POST)
-        selected_theme_id = request.POST.get("theme")
-        print(selected_theme_id)
-        request.session["selected_theme_id"] = selected_theme_id
-        selected_theme = BusinessObject.themen.get(id=selected_theme_id)
+        request.session['strategie_id'] = request.POST.get('strategie_auswahl')
+        strategie_auswahl = Strategie.objects.get(id=request.session['strategie_id'])
+    else:
+        if not 'strategie_id' in request.session:
+            request.session['strategie_id'] = Strategie.objects.first().id
+        strategie_auswahl = Strategie.objects.get(id=request.session['strategie_id'])
+
+    strategieen = Strategie.objects.all()
     return render(
         request,
         "objective_manager_app/home.html",
-        {"themes": themes, "selected_theme": selected_theme},
+        {"strategie_auswahl": strategie_auswahl, 'strategieen': strategieen},
     )
+
 
 def admin_detail(request):
     themes = BusinessObject.themen.all()
@@ -339,3 +340,21 @@ class PlanRecordCreateView(CreateView):
     form_class = PlanRecordForm
     template_name = 'objective_manager_app/plan_record_edit.html'
     success_url = reverse_lazy('plan_records_list') 
+
+# -----------------------------------
+# other views
+#------------------------------------
+
+def strategie_auswahl(request):
+    if request.method == 'POST':
+        selected_strategie = request.POST.get('theme')
+        if selected_strategie:
+            request.session['strategie'] = selected_strategie
+        return redirect('home_detail')  
+
+    strategieen = Strategie.objects.all()  
+    selected_strategie = None
+    if 'strategy' in request.session:
+        selected_theme = Strategie.objects.get(id=request.session['strategie'])
+
+    return render(request, 'home.html', {'strategieen': strategieen, 'selected_strategie': selected_strategie})

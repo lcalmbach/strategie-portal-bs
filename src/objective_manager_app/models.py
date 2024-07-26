@@ -23,6 +23,8 @@ class Organisation(models.Model):
     def __str__(self):
         return self.bereich if self.bereich else self.dienststelle
 
+
+
 class Person(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
     vorname = models.CharField(verbose_name= 'Vorname', max_length=200)
@@ -32,6 +34,12 @@ class Person(models.Model):
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
     erstellt_am = models.DateTimeField(auto_now_add=True)
 
+    def vorname_nachname(self):
+        return f"{self.vorname} {self.nachname}"
+    
+    def nachname_vorname(self):
+        return f"{self.nachname} {self.vorname}"
+    
     def __str__(self):
         return f"{self.vorname} {self.nachname}"
 
@@ -125,8 +133,6 @@ class NeuBestehend(BusinessObject):
         proxy = True
 
 
-
-
 class Handlungsfeld(BusinessObject):
     objects = HandlungsfeldManager()
 
@@ -151,8 +157,8 @@ class Massnahme(BusinessObject):
 class Strategie(models.Model):
     titel = models.CharField(max_length=200)
     
-    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
-    kontakt = models.CharField(max_length=200)
+    organisation = models.ForeignKey('Organisation', on_delete=models.CASCADE)
+    kontakt = models.ForeignKey('Person', on_delete=models.CASCADE)
     gueltigkeit_jahr_start = models.IntegerField(verbose_name="Jahr Start", default = datetime.now().year +1)    
     gueltigkeit_jahr_ende = models.IntegerField(verbose_name="Jahr Ende", default = datetime.now().year + 5)    
     planungs_frequenz_monate = models.IntegerField(verbose_name="Planungsfrequenz (Monate)", default=12)

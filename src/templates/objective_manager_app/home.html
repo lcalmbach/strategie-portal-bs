@@ -8,34 +8,67 @@
     <br>
     <p>Diese App ermöglicht es, strategische Handlungsfelder, Ziele und Massnahmen zu verwalten sowie deren Zielerreichung und den geplanten Aufwand zu überwachen. Die App befindet sich derzeit in der Entwicklung. Handlungsfelder, Ziele und Maßnahmen entsprechen realen Vorhaben, während alle Planungsdaten erfunden sind. Nur Das Thema Gleichstellung ist aktuelle mit Daten hinterlegt.
     </p>
-    
-    <form method="post" onsubmit="return validateForm()">
+    <h3>Strategie</h3>
+    <form method="post" onsubmit="return validateForm()" class="d-flex align-items-center">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="theme">Select a Theme:</label>
-            <select id="theme" name="theme" class="form-control" onchange="updateDescription(); updateButtonState();">
-                <option value="">-- Wähle ein Thema --</option>
-                {% for theme in themes %}
-                <option value="{{ theme.id }}" data-description="{{ theme.beschreibung }}" {% if selected_theme and theme.id == selected_theme.id %}selected{% endif %}>{{ theme.titel }}</option>
+        <div class="form-group mb-0 mr-2 flex-grow-1">
+            <select id="strategie_auswahl" name="strategie_auswahl" class="form-control full-width-select" onchange="updateDescription(); updateButtonState();">
+                {% for strategie in strategieen %}
+                <option value="{{ strategie.id }}" data-description="{{ strategie.beschreibung }}" {% if strategie.id == strategie_auswahl.id %}selected{% endif %}>{{ strategie.titel }}</option>
                 {% endfor %}
             </select>
         </div>
-        <button type="submit" class="btn btn-primary mt-3" id="submitButton" disabled>Weiter</button>
+        <button type="submit" class="btn btn-primary ml-2" id="submitButton">
+            <i class="fas fa-sync-alt"></i>  <!-- Font Awesome Icon -->
+        </button>
     </form>
-    
     <br>
-    <p id="theme-description">{% if selected_theme %}{{ selected_theme.beschreibung }}{% endif %}</p>
+    <hr>
+    <p> {{ strategie_auswahl.beschreibung_extern }} </p>
+    <table class="table table-striped">
+        <tr>
+            <th>Verantwortliche Stelle</th>
+            <td>{{strategie_auswahl.organisation}}</td>
+        <tr>
+        <tr>
+            <th>Von</th>
+            <td>{{strategie_auswahl.gueltigkeit_jahr_start}}</td>
+        <tr>
+            <th>Bis</th>
+            <td>{{strategie_auswahl.gueltigkeit_jahr_ende}}</td>
+        </tr>
+        <tr>
+            <th>Anzahl Handlungsfelder</th>
+            <td>{{6}}</td>
+        </tr>
+        <tr>
+            <th>Anzahl Ziele</th>
+            <td>{{12}}</td>
+        </tr>
+        <tr>
+            <th>Anzahl Massnahmen</th>
+            <td>{{81}}</td>
+        </tr>
+        <tr>
+            <th>Beteiligte Personen</th>
+            <td>{{12}}</td>
+        </tr>
+        <tr>
+            <th>Kontakt</th>
+            <td>{{strategie_auswahl.kontakt.vorname_nachname}}</td>
+        </tr>
+    </table>    
 </div>
 
 <script>
     function updateDescription() {
-        var select = document.getElementById('theme');
+        var select = document.getElementById('strategie_auswahl');
         var description = select.options[select.selectedIndex].getAttribute('data-description');
         document.getElementById('theme-description').innerText = description;
     }
 
     function updateButtonState() {
-        var selectElement = document.getElementById('theme');
+        var selectElement = document.getElementById('strategie_auswahl');
         var submitButton = document.getElementById('submitButton');
         
         if (selectElement.value) {
@@ -46,7 +79,7 @@
     }
 
     function validateForm() {
-        var selectElement = document.getElementById('theme');
+        var selectElement = document.getElementById('strategie_auswahl');
         if (selectElement.value === "") {
             selectElement.value = null;
         }
@@ -60,4 +93,24 @@
     // Initial call to set the button state based on the current selection
     updateButtonState();
 </script>
+<style>
+    .form-group {
+        margin-bottom: 0;
+        flex-grow: 1;
+    }
+    .d-flex {
+        display: flex;
+        align-items: center;
+    }
+    .mr-2 {
+        margin-right: 0.5rem;
+    }
+    .ml-2 {
+        margin-left: 0.5rem;
+    }
+    .full-width-select {
+        width: 100%;
+    }
+</style>
+
 {% endblock %}
