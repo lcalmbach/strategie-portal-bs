@@ -8,21 +8,24 @@
     <form method="post">
         {% csrf_token %}
         {{ form|crispy }}
+        <hr>
         <button type="submit" class="btn btn-primary">Speichern</button>
+        {% if form.instance.pk %}
+            <button type="button" class="btn btn-success" onclick="window.location.href='{% url "massnahme_create" form.instance.vorgaenger.id %}'">Neu</button>
+        {% endif %}
         <button type="button" class="btn btn-secondary" onclick="window.history.back()">Zurück</button>
         {% if form.instance.pk %}
-            <button type="button" class="btn btn-danger" onclick="confirmDelete({{ form.instance.id }})">Löschen</button>
+            <button type="button" class="btn btn-danger btn-float-right" onclick="confirmDelete({{ form.instance.id }})">Löschen</button>
         {% endif %}
-        <button type="button" class="btn btn-success" onclick="window.location.href='{% url "massnahme_create" %}'">Neu</button>
     </form>
 </div>
 
 <script type="text/javascript">
-    function confirmDelete(organisationId) {
+    function confirmDelete(zielId) {
         if (confirm('Bist du sicher, dass du diese Massnahme löschen möchtest?')) {
             var form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/massnahme/delete/' + organisationId + '/';  // Construct the URL dynamically
+            form.action = '/massname/delete/' + massnahmeId + '/';  // Construct the URL dynamically
             var csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
             csrfToken.name = 'csrfmiddlewaretoken';
@@ -33,5 +36,11 @@
         }
     } 
 </script>
+<!-- todo: warum wird stlye aus styles.css nicht verwendet?-->
+<style>
+    .btn-float-right {
+        float: right;
+    }
+</style>
 
 {% endblock %}

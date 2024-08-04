@@ -15,20 +15,24 @@ class ZielForm(forms.ModelForm):
         model = Ziel
         exclude = ['erstellt_von', 'strategie', 'typ', 'vorgaenger', 'anmerkung_initialisierung','bestehende_massnahme']
 
+
 class MassnahmeForm(forms.ModelForm):
     class Meta:
         model = Massnahme
-        exclude = ['erstellt_von']
+        exclude = ['erstellt_von', 'strategie', 'typ', 'vorgaenger']
+
 
 class PlanRecordForm(forms.ModelForm):
     class Meta:
         model = PlanRecord
         exclude = [ 'strategie', 'verantwortlich', 'erstellt_von', 'jahr', 'monat']
 
+
 class PersonForm(forms.ModelForm):
     class Meta:
         model = Person
         fields = '__all__'
+
 
 class OrganisationForm(forms.ModelForm):
     class Meta:

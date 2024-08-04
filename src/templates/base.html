@@ -16,29 +16,7 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <style>
         /* Add custom styles directly in the HTML or in your styles.css file */
-        .navbar-select {
-            background-color: #28a745; /* Green background color */
-            color: white; /* White text color for better contrast */
-            border: none;
-        }
         
-        .navbar-select option {
-            color: black; /* Black text color inside the dropdown options */
-        }
-
-        .navbar-select:focus {
-            outline: none;
-            box-shadow: none;
-        }
-
-        /* Ensure alignment */
-        .nav-item.d-flex {
-            margin-right: 15px; /* Space between strategy select and next nav item */
-        }
-
-        .nav-link {
-            padding: 0 8px;
-        }
     </style>
 </head>
 <body>
@@ -50,20 +28,25 @@
         </li>
         
         <!-- Strategie Selection Box -->
-        <li class="nav-item d-flex align-items-center">
-          <span class="nav-link" style="padding-right: 0;">Strategie:&nbsp;</span>
-          <form method="post" action="{% url 'home_detail' %}" class="d-flex align-items-center" style="margin-bottom: 0;">
-            {% csrf_token %}
-            <div class="form-group mb-0 flex-grow-1">
-              <select id="strategie_auswahl" name="strategie_auswahl" class="form-control full-width-select navbar-select" onchange="this.form.submit();">
-                {% for strategie in strategieen %}
-                  <option value="{{ strategie.id }}" data-description="{{ strategie.beschreibung }}" {% if strategie.id == strategie_auswahl.id %}selected{% endif %}>{{ strategie.titel }}</option>
-                {% endfor %}
-              </select>
-            </div>
-          </form>
-        </li>
-
+        {% if request.resolver_match.url_name == 'home_detail' %}
+          <li class="nav-item d-flex align-items-center">
+            <span class="nav-link" style="padding-right: 0;">Strategie:&nbsp;</span>
+            <form method="post" action="{% url 'home_detail' %}" class="d-flex align-items-center" style="margin-bottom: 0;">
+              {% csrf_token %}
+              <div class="form-group mb-0 flex-grow-1">
+                <select id="strategie_auswahl" name="strategie_auswahl" class="form-control full-width-select navbar-select" onchange="this.form.submit();">
+                  {% for strategie in strategieen %}
+                    <option value="{{ strategie.id }}" data-description="{{ strategie.beschreibung }}" {% if strategie.id == strategie_auswahl.id %}selected{% endif %}>{{ strategie.titel }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </form>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <span class="nav-link">Strategie:&nbsp;<b>{{ strategie.titel_kurz }}</b></span>
+          </li>
+        {% endif %}
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'handlungsfelder_list' %}active{% endif %}" href="{% url 'handlungsfelder_list' %}">Handlungsfelder</a>
         </li>

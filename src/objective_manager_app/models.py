@@ -80,12 +80,12 @@ class HandlungsfeldManager(models.Manager):
 
 class ZielManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(typ_id=3, vorgaenger__typ_id=2)
+        return super().get_queryset().filter(typ_id=3)
 
 
 class MassnahmeManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(typ_id=4, vorgaenger__typ_id=3)
+        return super().get_queryset().filter(typ_id=4)
 
 
 class BusinessObject(models.Model):
@@ -103,7 +103,7 @@ class BusinessObject(models.Model):
     jahr_ende = models.IntegerField(verbose_name="Jahr Ende", default=datetime.now().year)
     anmerkung_initialisierung = models.TextField(verbose_name="Pol. Vorstoss", null=True, blank=True)
     # messbarkeit = models.CharField(max_length=200, verbose_name="Messbarkeit")  
-    bestehende_massnahme = models.ForeignKey("NeuBestehend", on_delete=models.CASCADE, blank=True, null=True, default=5, related_name="bestehende_massnahme")
+    bestehende_massnahme = models.ForeignKey("NeuBestehend", on_delete=models.CASCADE, blank=True, null=True, default=5, related_name="bestehende_massnahme", verbose_name="Bestehende/Neue Massnahme")
     # kontakt_verantwortlich = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name="Kontakt verantwortlich")
 
     objects = models.Manager()
@@ -169,17 +169,14 @@ class Ziel(BusinessObject):
 
 class Massnahme(BusinessObject):
     objects = MassnahmeManager()
-
-    def ziele(self):
-        return self.vorgaenger
     
     class Meta:
         proxy = True
 
 
 class Strategie(models.Model):
-    titel = models.CharField(max_length=200)
-    
+    titel = models.CharField(max_length=200, verbose_name="Titel")
+    titel_kurz = models.CharField(max_length=200, verbose_name="Kurztitel", default='', null=True, blank=True)
     organisation = models.ForeignKey('Organisation', on_delete=models.CASCADE)
     kontakt = models.ForeignKey('Person', on_delete=models.CASCADE)
     gueltigkeit_jahr_start = models.IntegerField(verbose_name="Jahr Start", default = datetime.now().year +1)    
@@ -188,16 +185,6 @@ class Strategie(models.Model):
     beschreibung_intern = models.TextField(verbose_name="Beschreibung für Beteiligte", max_length=1000, null=True, blank=True)
     beschreibung_extern = models.TextField(verbose_name="Beschreibung für Externe", max_length=1000, null=True, blank=True)
 
-    def handlungsfelder(self):
-        print(len(BusinessObject.objects.filter(typ_id=2, strategie=self)))
-        return ['a','b','c']
-
-    def ziele(self):
-        return BusinessObject.objects.filter(typ_id=3, strategie=self)
-    
-    def massnahmen(self):
-        return BusinessObject.objects.filter(typ_id=4, strategie=self)
-    
     def __str__(self):
         return self.titel
 
