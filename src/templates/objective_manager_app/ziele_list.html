@@ -20,7 +20,7 @@
                 <tr>
                     <td><a href="{% url 'ziel_detail' ziel.pk %}">{{ ziel.kuerzel }}</a></td>
                     <td>{{ ziel.titel }}</td>
-                    <td>{{ ziel.text }}</td>
+                    <td>{{ ziel.beschreibung }}</td>
                     {% if request.user|is_in_group:"admins" %}
                         <td><a href="{% url 'ziel_edit' ziel.pk %}"><i class="fas fa-edit"></i></a></td>
                     {% endif %}

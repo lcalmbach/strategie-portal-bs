@@ -3,9 +3,9 @@
 {% block content %}
 
     <div class="container">
-        <h1>Ziel {{ziel.titel}}</h1>
+        <h3>Ziel: {{ziel.titel}}</h3>
         <br/>
-        <table>
+        <table class="table">
             <tr>
                 <th>Kürzel</th><td>{{ziel.kuerzel}}</td>
             </tr>
@@ -22,7 +22,8 @@
         </table>
 
         <br>
-        Beschreibung<br>{{ziel.beschreibung}}
+        <b>Beschreibung:</b>
+        <br>{{ziel.beschreibung}}
         <br>
         
         <br><br>

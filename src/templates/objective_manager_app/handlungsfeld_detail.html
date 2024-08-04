@@ -5,7 +5,7 @@
     <div class="container">
         <h1>Handlungsfeld {{handlungsfeld.titel}}</h1>
         <br/>
-        <table>
+        <table class="table">
             <tr>
                 <th>Kürzel</th><td>{{handlungsfeld.kuerzel}}</td>
             </tr>
@@ -37,26 +37,7 @@
                 </tr>
                 {% endfor %}
         </table>
+        <button type="button" class="btn btn-success" onclick="window.location.href='{% url "ziel_create" handlungsfeld.pk %}'">Neues Ziel</button>
         <br><br>
-        <h4>Massnahmen</h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Kürzel</th>
-                    <th>Titel</th>
-                    <th>Beschreibung</th>
-                    <th>Edit</th>
-                </tr>
-            </thead>
-
-            {% for massnahme in massnahmen %}
-                <tr>
-                    <td><a href="{% url 'massnahme_detail' massnahme.pk %}">{{ massnahme.kuerzel }}</a></td>
-                    <td>{{ massnahme.titel }}</td>
-                    <td>{{ massnahme.beschreibung }}</td>
-                    <td><a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a></td>
-                </tr>
-            {% endfor %}
-        </table>
     </div>
 {% endblock %}

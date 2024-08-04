@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load strategie_filters %}
 
 {% block title %}Welcome to the Objective Manager{% endblock %}
 
@@ -6,93 +7,68 @@
 <div class="container">
     <h1>🚧Portal für Strategisches Controlling des Kantons Basel-Stadt🚧</h1>
     <br>
-    <p>Diese App ermöglicht es, strategische Handlungsfelder, Ziele und Massnahmen zu verwalten sowie deren Zielerreichung und den geplanten Aufwand zu überwachen. Die App befindet sich derzeit in der Entwicklung. Handlungsfelder, Ziele und Maßnahmen entsprechen realen Vorhaben, während alle Planungsdaten erfunden sind. Nur Das Thema Gleichstellung ist aktuelle mit Daten hinterlegt.
-    </p>
-    <h3>Strategie</h3>
-    <form method="post" onsubmit="return validateForm()" class="d-flex align-items-center">
-        {% csrf_token %}
-        <div class="form-group mb-0 mr-2 flex-grow-1">
-            <select id="strategie_auswahl" name="strategie_auswahl" class="form-control full-width-select" onchange="updateDescription(); updateButtonState();">
-                {% for strategie in strategieen %}
-                <option value="{{ strategie.id }}" data-description="{{ strategie.beschreibung }}" {% if strategie.id == strategie_auswahl.id %}selected{% endif %}>{{ strategie.titel }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary ml-2" id="submitButton">
-            <i class="fas fa-sync-alt"></i>  <!-- Font Awesome Icon -->
-        </button>
-    </form>
+    <p>Diese App ermöglicht es, strategische Handlungsfelder, Ziele und Massnahmen zu verwalten sowie deren Zielerreichung und den geplanten Aufwand zu überwachen. Die App befindet sich derzeit in der Entwicklung. Handlungsfelder, Ziele und Maßnahmen entsprechen realen Vorhaben, während alle Planungsdaten erfunden sind. Nur das Thema Gleichstellung ist aktuell mit Daten hinterlegt.</p>
     <br>
     <hr>
-    <p> {{ strategie_auswahl.beschreibung_extern }} </p>
-    <table class="table table-striped">
+    <h2>{{ strategie_auswahl.titel }}</h2>
+    <p>{{ strategie_auswahl.beschreibung_extern }}</p>
+    <table class="table">
         <tr>
             <th>Verantwortliche Stelle</th>
             <td>{{strategie_auswahl.organisation}}</td>
-        <tr>
+        </tr>
         <tr>
             <th>Von</th>
             <td>{{strategie_auswahl.gueltigkeit_jahr_start}}</td>
+        </tr>
         <tr>
             <th>Bis</th>
             <td>{{strategie_auswahl.gueltigkeit_jahr_ende}}</td>
         </tr>
         <tr>
             <th>Anzahl Handlungsfelder</th>
-            <td>{{6}}</td>
+            <td>{{ strategie_auswahl|handlungsfelder|length }}</td>
         </tr>
         <tr>
             <th>Anzahl Ziele</th>
-            <td>{{12}}</td>
+            <td>{{ strategie_auswahl | ziele | length }}</td>
         </tr>
         <tr>
             <th>Anzahl Massnahmen</th>
-            <td>{{81}}</td>
+            <td>{{ strategie_auswahl | massnahmen | length }}</td>
         </tr>
         <tr>
             <th>Beteiligte Personen</th>
-            <td>{{12}}</td>
+            <td>{{ strategie_auswahl | personen| length }}</td>
         </tr>
         <tr>
             <th>Kontakt</th>
-            <td>{{strategie_auswahl.kontakt.vorname_nachname}}</td>
+            <td>{{ strategie_auswahl.kontakt.vorname_nachname }}</td>
         </tr>
     </table>    
+    <br>
+    <b>Dokumente</b>
+    <ul>
+        {% for dokument in strategie_auswahl.dokumente.all %}
+            <li><a href="{{ dokument.url_feld }}">{{ dokument.titel_dokument }}</a></li>
+        {% endfor %}
+    </ul>
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        updateDescription();  // Ensure the description is set initially
+    });
+
     function updateDescription() {
         var select = document.getElementById('strategie_auswahl');
-        var description = select.options[select.selectedIndex].getAttribute('data-description');
-        document.getElementById('theme-description').innerText = description;
-    }
-
-    function updateButtonState() {
-        var selectElement = document.getElementById('strategie_auswahl');
-        var submitButton = document.getElementById('submitButton');
-        
-        if (selectElement.value) {
-            submitButton.disabled = false;
-        } else {
-            submitButton.disabled = true;
+        if (select) {
+            var description = select.options[select.selectedIndex].getAttribute('data-description');
+            document.getElementById('theme-description').innerText = description;
         }
     }
-
-    function validateForm() {
-        var selectElement = document.getElementById('strategie_auswahl');
-        if (selectElement.value === "") {
-            selectElement.value = null;
-        }
-        return true;  // Formular absenden
-    }
-
-    function goBack() {
-        window.history.back();
-    }
-    
-    // Initial call to set the button state based on the current selection
-    updateButtonState();
 </script>
+
 <style>
     .form-group {
         margin-bottom: 0;

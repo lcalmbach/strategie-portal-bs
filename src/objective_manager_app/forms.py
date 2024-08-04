@@ -1,32 +1,29 @@
 from django import forms
-from .models import BusinessObject, PlanRecord, Person, Organisation
+from .models import PlanRecord, Person, Organisation, Handlungsfeld, Ziel, Massnahme
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
 
-class BusinessObjectForm(forms.ModelForm):
+class HandlungsfeldForm(forms.ModelForm):
     class Meta:
-        model = BusinessObject
-        fields = [
-            "typ",
-            "vorgaenger",
-            "kuerzel",
-            "titel",
-            "beschreibung",
-            "erstellt_von",
-        ]
+        model = Handlungsfeld
+        exclude = ['erstellt_von', 'strategie', 'typ', 'vorgaenger', 'aufwand_personen_tage_plan','aufwand_tsd_chf_plan','jahr_start','jahr_ende','anmerkung_initialisierung','bestehende_massnahme']
+        
 
 class ZielForm(forms.ModelForm):
     class Meta:
-        model = BusinessObject
-        exclude = ['erstellt_von','anmerkung_initialisierung','bestehende_massnahme','messbarkeit']
+        model = Ziel
+        exclude = ['erstellt_von', 'strategie', 'typ', 'vorgaenger', 'anmerkung_initialisierung','bestehende_massnahme']
 
+class MassnahmeForm(forms.ModelForm):
+    class Meta:
+        model = Massnahme
+        exclude = ['erstellt_von']
 
 class PlanRecordForm(forms.ModelForm):
     class Meta:
         model = PlanRecord
-        exclude = ['objekt']
-        exclude = ['organisation']
+        exclude = [ 'strategie', 'verantwortlich', 'erstellt_von', 'jahr', 'monat']
 
 class PersonForm(forms.ModelForm):
     class Meta:

@@ -4,7 +4,6 @@ from . import views
 urlpatterns = [
     path("", views.home_detail, name="home_detail"),
     path("", views.admin_detail, name="admin_detail"),
-    path("themen/", views.themen_list, name="themen_list"),
     # Listen
     path("handlungsfelder/", views.handlungsfelder_list, name="handlungsfelder_list"),
     path("ziele/", views.ziele_list, name="ziele_list"),
@@ -24,12 +23,8 @@ urlpatterns = [
     path("plan_record/<int:pk>/", views.plan_record_detail, name="plan_record_detail"),
     
     # Edit Masken
-    path(
-        "handlungsfeld/<int:pk>/edit/",
-        views.handlungsfeld_edit,
-        name="handlungsfeld_edit",
-    ),
-    path("ziel/<int:pk>/edit/", views.ziel_edit, name="ziel_edit"),
+    path("handlungsfeld/<int:pk>/edit/", views.HandlungsfeldEditView.as_view(), name="handlungsfeld_edit"),
+    path("ziel/<int:pk>/edit/", views.ZielEditView.as_view(), name="ziel_edit"),
     path("massnahme/<int:pk>/edit/", views.massnahme_edit, name="massnahme_edit"),
     path("plan_record/<int:pk>/edit/", views.plan_record_edit, name="plan_record_edit"),
     path("person/<int:pk>/edit/", views.person_edit, name="person_edit"),
@@ -37,11 +32,12 @@ urlpatterns = [
     # Delete Masken
     path('person/<int:pk>/delete/', views.person_delete, name='person_delete'),
     path('organisation/<int:pk>/delete/', views.organisation_delete, name='organisation_delete'),
+    path('handlungsfeld/<int:pk>/delete/', views.handlungsfeld_delete, name='handlungsfeld_delete'),
     # add Record Masken
     path('organisation/create/', views.OrganizationCreateView.as_view(), name='organisation_create'),
     path('massnahme/create/', views.MassnahmeCreateView.as_view(), name='massnahme_create'),
     path('handlungsfeld/create/', views.HandlungsfeldCreateView.as_view(), name='handlungsfeld_create'),
-    path('ziel/create/', views.ZielCreateView.as_view(), name='ziel_create'),
+    path('ziel/create/<int:handlungsfeld_id>/', views.ZielCreateView.as_view(), name='ziel_create'),
     path('person/create/', views.PersonCreateView.as_view(), name='person_create'),
     path('plan_record/create/', views.PlanRecordCreateView.as_view(), name='planrecord_create'),
 ]

@@ -1,9 +1,9 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% load custom_filters %}
-{% block title %}Handlungsfelder{% endblock title %} 
+{% block title %}Handlungsfelder{% endblock title %}
 {% block content %}
     <div class="container">
-        <h1>Handlungsfelder  ({{ handlungsfelder|length}})</h1>
+        <h1>Handlungsfelder ({{ handlungsfelder|length }})</h1>
         <table class="table">
             <thead>
                 <tr>
@@ -11,22 +11,57 @@
                     <th>Handlungsfeld</th>
                     <th>Beschreibung</th>
                     {% if request.user|is_in_group:"admins" %}
-                        <th>Edit</th>
+                        <th>Actions</th>
                     {% endif %}
                 </tr>
             </thead>
             <tbody>
                 {% for handlungsfeld in handlungsfelder %}
                 <tr>
-                    <td><a href="{% url 'handlungsfeld_detail' handlungsfeld.pk %}">{{ handlungsfeld.kuerzel }}</a></td>
+                    <td>
+                        <a href="{% url 'handlungsfeld_detail' handlungsfeld.pk %}">{{ handlungsfeld.kuerzel }}</a>
+                    </td>
                     <td>{{ handlungsfeld.titel }}</td>
                     <td>{{ handlungsfeld.beschreibung }}</td>
                     {% if request.user|is_in_group:"admins" %}
-                        <td><a href="{% url 'handlungsfeld_edit' handlungsfeld.pk %}"><i class="fas fa-edit"></i></a></td>
+                        <td>
+                            <a href="{% url 'handlungsfeld_edit' handlungsfeld.pk %}" class="btn btn-link">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <!-- Button to trigger modal -->
+                            <button type="button" class="btn btn-link text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ handlungsfeld.pk }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="deleteModal{{ handlungsfeld.pk }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ handlungsfeld.pk }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel{{ handlungsfeld.pk }}">Confirm Delete</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete "{{ handlungsfeld.titel }}"?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <form method="post" action="{% url 'handlungsfeld_delete' handlungsfeld.pk %}" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
                     {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <button type="button" class="btn btn-success" onclick="window.location.href='{% url "handlungsfeld_create" %}'">Neues Handlungsfeld</button>
     </div>
+
+    <!-- Include Bootstrap JS for modal functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

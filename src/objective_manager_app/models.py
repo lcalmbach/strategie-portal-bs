@@ -23,6 +23,8 @@ class Organisation(models.Model):
     def __str__(self):
         return self.bereich if self.bereich else self.dienststelle
 
+    class Meta:
+        ordering = ['departement_kuerzel', 'dienststelle'] 
 
 
 class Person(models.Model):
@@ -34,6 +36,9 @@ class Person(models.Model):
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
     erstellt_am = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['nachname', 'vorname'] 
+
     def vorname_nachname(self):
         return f"{self.vorname} {self.nachname}"
     
@@ -41,9 +46,13 @@ class Person(models.Model):
         return f"{self.nachname} {self.vorname}"
     
     def __str__(self):
-        return f"{self.vorname} {self.nachname}"
+        return f"{self.nachname} {self.vorname}"
 
 
+class BusinessObjectTypManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(kategorie_id=1)
+    
 class NeuBestehendManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(kategorie_id=2)
@@ -64,19 +73,15 @@ class Code(models.Model):
         return self.titel
 
 
-class ThemaManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(typ_id=1)
-
-
 class HandlungsfeldManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(typ_id=2, vorgaenger__typ_id=1)
+        return super().get_queryset().filter(typ_id=2)
 
 
 class ZielManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(typ_id=3, vorgaenger__typ_id=2)
+
 
 class MassnahmeManager(models.Manager):
     def get_queryset(self):
@@ -85,7 +90,7 @@ class MassnahmeManager(models.Manager):
 
 class BusinessObject(models.Model):
     strategie = models.ForeignKey("Strategie", on_delete=models.CASCADE)
-    typ = models.ForeignKey("Code", on_delete=models.CASCADE)
+    typ = models.ForeignKey("BusinessObjectTyp", on_delete=models.CASCADE, related_name="typ")
     vorgaenger = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True)
     kuerzel = models.CharField(max_length=10)
     titel = models.CharField(max_length=200, verbose_name="Titel")
@@ -97,36 +102,51 @@ class BusinessObject(models.Model):
     jahr_start = models.IntegerField(verbose_name="Jahr Start", default=datetime.now().year)
     jahr_ende = models.IntegerField(verbose_name="Jahr Ende", default=datetime.now().year)
     anmerkung_initialisierung = models.TextField(verbose_name="Pol. Vorstoss", null=True, blank=True)
-    messbarkeit = models.CharField(max_length=200, verbose_name="Messbarkeit")  
-    bestehende_massnahme = models.CharField(max_length=200, verbose_name="Bestehende Massnahme")
-    kontakt_verantwortlich = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name="Kontakt verantwortlich")
+    # messbarkeit = models.CharField(max_length=200, verbose_name="Messbarkeit")  
+    bestehende_massnahme = models.ForeignKey("NeuBestehend", on_delete=models.CASCADE, blank=True, null=True, default=5, related_name="bestehende_massnahme")
+    # kontakt_verantwortlich = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name="Kontakt verantwortlich")
 
     objects = models.Manager()
-    themen = ThemaManager()
     handlungsfelder = HandlungsfeldManager()
     ziele = ZielManager()
     massnahmen = MassnahmeManager()
+    
 
     def __str__(self):
         return self.titel
 
+class StrategieDokument(models.Model):
+    strategie = models.ForeignKey("Strategie", on_delete=models.CASCADE,related_name='dokumente')
+    titel_dokument = models.TextField(verbose_name="Titel Dokument", max_length=200)
+    url_feld = models.URLField(max_length=500, verbose_name="Webseite")
 
+    def __str__(self):
+        return self.titel_dokument
+    
 class MassnahmeOrganisation(models.Model):
     massnahme = models.ForeignKey(BusinessObject, on_delete=models.CASCADE)
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, default=1)
 
     def __str__(self):
         return self.massnahme.titel
 
 
-class Rolle(BusinessObject):
+class Rolle(Code):
     objects = RolleManager()
 
     class Meta:
         proxy = True
 
 
-class NeuBestehend(BusinessObject):
+class BusinessObjectTyp(Code):
+    objects = BusinessObjectTypManager()
+
+    class Meta:
+        proxy = True
+
+
+class NeuBestehend(Code):
     objects = NeuBestehendManager()
 
     class Meta:
@@ -150,6 +170,9 @@ class Ziel(BusinessObject):
 class Massnahme(BusinessObject):
     objects = MassnahmeManager()
 
+    def ziele(self):
+        return self.vorgaenger
+    
     class Meta:
         proxy = True
 
@@ -165,23 +188,33 @@ class Strategie(models.Model):
     beschreibung_intern = models.TextField(verbose_name="Beschreibung für Beteiligte", max_length=1000, null=True, blank=True)
     beschreibung_extern = models.TextField(verbose_name="Beschreibung für Externe", max_length=1000, null=True, blank=True)
 
+    def handlungsfelder(self):
+        print(len(BusinessObject.objects.filter(typ_id=2, strategie=self)))
+        return ['a','b','c']
+
+    def ziele(self):
+        return BusinessObject.objects.filter(typ_id=3, strategie=self)
+    
+    def massnahmen(self):
+        return BusinessObject.objects.filter(typ_id=4, strategie=self)
+    
     def __str__(self):
         return self.titel
 
 
 class PlanRecord(models.Model):
-    objekt = models.ForeignKey(BusinessObject, on_delete=models.CASCADE,verbose_name="Massnahme")
-    #organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, verbose_name="Organisation")
+    strategie = models.ForeignKey(Strategie, on_delete=models.CASCADE)
+    verantwortlich = models.ForeignKey(MassnahmeOrganisation, on_delete=models.CASCADE,verbose_name="Massnahme")
     jahr = models.IntegerField(verbose_name="Jahr", default=datetime.now().year)
     monat = models.IntegerField()
     faellig_am = models.DateField(verbose_name="Fällig am", blank=True, null=True)
-    soll_wert_erreicht_pzt = models.IntegerField(verbose_name="Zielerreichungsgrad (Soll, %)")
-    ist_wert_erreicht_pzt = models.IntegerField(verbose_name="Zielerreichungsgrad (Ist, %)")
-    aufwand_personen_tage_plan = models.IntegerField(verbose_name='Aufwand Personentage (Soll)')
+    fortschritt_pzt_plan = models.IntegerField(verbose_name="Zielerreichungsgrad (Soll, %)")
+    fortschritt_pzt_ist = models.IntegerField(verbose_name="Zielerreichungsgrad (Ist, %)", default=0)
+    aufwand_personen_tage_plan = models.IntegerField(verbose_name='Aufwand Personentage (Soll)', default=20)
     aufwand_personen_tage_ist = models.IntegerField(default=0, verbose_name='Aufwand Personentage (Ist)')
-    aufwand_tsd_chf_plan = models.IntegerField(verbose_name='Aufwand tsd CHF (Soll)')
+    aufwand_tsd_chf_plan = models.IntegerField(verbose_name='Aufwand tsd CHF (Soll)', default=0)
     aufwand_tsd_chf_ist = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Aufwand tsd CHF (Ist)')
-    beschreibung = models.TextField(verbose_name="Beschreibung",null=True, blank=True)
+    kommentar = models.TextField(verbose_name="Kommentar",null=True, blank=True)
     
     erstellt_am = models.DateTimeField(auto_now_add=True,verbose_name='Erstellt am')
     erstellt_von = models.ForeignKey(User, on_delete=models.CASCADE,verbose_name='Erstellt von')

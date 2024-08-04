@@ -6,3 +6,35 @@ id;departement;dienststelle;bereich;departement_kuerzel;dienststelle_kuerzel;ber
 5;Bau- und Verkehrsdepartement;Tiefbauamt;Tiefbauamt;BVD;TBA;TBA
 6;Justiz- und Sicherheits Departement;Kantonspolizei;Polizeiwissenschaften;JSD;KP;KP
 7;Staatskanzlei;Staatskanzlei;Staatskanzlei;STK;STK;STK
+8;Gesundheitsdepartement;Gesundheitsversorgung;Langzeitpflege;GD;GSV;GSV
+9;Erziehungsdepartement;MUBB;Leitung MB;ED;MUBB;MUBB
+10;Finanzdepartement;Immobilien-Basel;Finanzdepartement;FD;IBS;IBS
+11;Erziehungsdepartement;JFS;JFS;ED;JFS;JFS
+12;Gesundheitsdepartement;Medizinische Dienste;Prävention;GD;MD;Präv
+13;Departement für Wirtschaft;Amt für Sozialbeiträge;WSU;ASB;BH
+14;Erziehungsdepartement;JFS;Sportamt;ED;JFS;SA
+15;Bau- und Verkehrsdepartement;Tiefbauamt;Allmendverwaltung;BVD;TBA;AV
+16;Justiz- und Sicherheits Departement;Generalsekretariat;Gewaltschutz und Opferhilfe;JSD;GS;FSOH
+17;Bau- und Verkehrsdepartement;Hochbauamt;Städetbau & Architektur;BVD;HBA;S&A
+18;Finanzdepartement;Human Resources;POE;FD;HR;POE
+19;Erziehungsdepartement;Volksschulen;Stab;ED;VS;VSS
+20;Präsidialdepartement;Fachstelle Gleichstellung und Diversität;Gleichstellung und Diversität;PD;FGS;G&D
+21;Justiz- und Sicherheits Departement;Bevölkerungsamt;Bevölkerungsdienste und Migration;JSD;Bev?;BdM
+22;Erziehungsdepartement;Mittelschulen;Mittelschulen;ED;MS;MS
+23;Gesundheitsdepartement;Gesundheitsversorgung;Geschäftsstelle;GD;GSV;GS
+24;Erziehungsdepartement;Volksschulen;Schulsozialarbeit;ED;VS;SSA
+25;Finanzdepartement;Informatik Basel-Stadt;Leitung;FD;ITBS;ITBS
+26;Erziehungsdepartement;HS;PZ.BS;ED;HS;PZ.BS
+27;Departement für Wirtschaft;Amt für Wirtschaft und Arbeit;Bereich Arbeitsbedingungen;WSU;AWA;ABed?
+28;Finanzdepartement;Human Resources Basel-Stadt;VGM;FD;HRBS;VGM
+29;Bau- und Verkehrsdepartement;Tiefbauamt;Generalsekretariat;BVD;TBA;GS
+30;Erziehungsdepartement;MB;Lehreraufsicht;ED;MB;LA?
+31;Präsidialdepartement;Abteilung Kultur;Abteilung Kultur;PD;AK;AK
+32;Präsidialdepartement;Abteilung Kultur;Kulturprojekte / Kulturinstitutionen;PD;AK;KPKI?
+33;Präsidialdepartement;Generalsekretariat;Human Resources;PD;GS PD;HR PD
+34;Erziehungsdepartement;Volksschulen;Fachstelle Pädagogik / berufliche Orientierung;ED;VS;FPBO
+35;Departement für Wirtschaft;Generalsekretariat;Human Resources;WSU;GS WSU;HR WSU
+36;Finanzdepartement;Generalsekretariat;Human Resources;GS FD;GS FD;HR FD
+37;Bau- und Verkehrsdepartement;Generalsekretariat;Human Resources;BVD;GS BVD;HR BVD
+38;Finanzdepartement;Human Resources;Vergütungsmanagement;FD;HR BS;VGM?
+39;Finanzdepartement;Generalsekretariat;Generalsekretariat;FD;GS;GS

@@ -4,7 +4,8 @@
 {% block content %}
 
 <div class="container">
-    <h1>Planung</h1>
+    <h1>Planung {{ plan_record.jahr }}</h1>
+    <b>Massnahme:</b> {{ plan_record.verantwortlich.massnahme }}<br>
     <form method="post">
         {% csrf_token %}
         {{ form|crispy }}

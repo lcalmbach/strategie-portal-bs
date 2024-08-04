@@ -1,0 +1,96 @@
+kuerzel_massnahme;dep_verantwortlich;dienststelle;bereich;verantwortlich_massnahme;org_id;pers_id
+1.1.1;JSD;Gewaltschutz und Opferhilfe;;Sonja Roest;16;1
+1.1.2;JSD;Gewaltschutz und Opferhilfe;;Sonja Roest;16;1
+1.1.2;PD;KSTE;KSTE;Nicole Fretz;2;2
+1.1.3;JSD;Gewaltschutz und Opferhilfe;;Sonja Roest;16;1
+1.1.3;GD;IRM;;Eva Scheurer;4;3
+1.1.4;JSD;Gewaltschutz und Opferhilfe/MB;;Sonja Roest;16;1
+1.1.4;ED;MUBB;Leitung;Anja Grönvold;9;4
+1.1.5;JSD;Gewaltschutz und Opferhilfe;RMB;Sonja Roest;16;1
+1.1.5;JSD;Gewaltschutz und Opferhilfe;RMB;Natalie Berger;16;5
+1.1.6;JSD;Gewaltschutz und Opferhilfe;;Sonja Roest;16;1
+1.2.1;BVD;Tiefbauamt;;Roger Reinauer;29;6
+1.2.1;BVD;Tiefbauamt;;Daniel Arni;15;7
+1.2.2;JSD;Gewaltschutz und Opferhilfe;;Sonja Roest;16;1
+1.2.3;JSD;Gewaltschutz und Opferhilfe;;Sonja Roest;16;1
+1.2.4;JSD;Kantonspolizei;Polizeiwissenschaften;Silvia Staubli;6;8
+1.2.5;JSD;Kantonspolizei;Polizeiwissenschaften;Silvia Staubli;6;8
+2.1.1;STK;Staatskanzlei;Staatskanzlei;Barbara Schüpbach;7;9
+2.1.2;PD;AK;;Sabina Brocal;31;10
+2.1.3;PD;AK;;Sabina Brocal;31;10
+2.1.4;BVD;Hochbauamt;Städetbau & Architektur;Esther Righetti;17;12
+2.1.5;PD;Statistisches Amt;;Catherine Zwahlen;2;13
+2.1.6;PD;G&D;FGS;Leila Straumann;20;33
+2.2.1;JSD;BdM;Bevölkerungsamt;Fritz Schütz;21;15
+2.2.2;JSD;BdM;Bevölkerungsamt;Fritz Schütz;21;15
+2.2.3;PD;KSTE;Stadtteilentwicklung;Roland Frank;2;16
+2.2.4;PD;AK;Kulturprojekte / Kulturinstitutionen;Sabina Brocal;32;10
+2.2.5;FD;IBS;IBS;Barbara Rentsch;10;17
+2.2.6;FD;GS;GS;Toya Krummenacher;39;45
+2.2.6;FD;IBS;GS;Toya Krummenacher;10;45
+2.2.6;BVD;S&A;GS;Toya Krummenacher;17;45
+2.3.1;STK;Staatskanzlei;;Marco Greiner;7;19
+2.3.2;PD;G&D;FGS;Sim Eggler;20;20
+2.3.3;PD;G&D;FGS;Sim Eggler;20;20
+2.3.4;PD;G&D;FGS;Sim Eggler;20;20
+2.3.5;PD;G&D;FGS;Sim Eggler;20;20
+3.1.1;ED;VS;Stab;Friederike Heitmann;19;31
+3.1.2;ED;VS;Stab;Friederike Heitmann;19;31
+3.1.3;ED;VS;Stab;Friederike Heitmann;19;31
+3.1.4;ED;VS;Schulsozialarbeit;Lotti Lienhard;24;21
+3.1.5;ED;HS;PZ.BS;Melanie Thönen;22;26
+3.2.1;ED;VS;Fachstelle Pädagogik / berufliche Orientierung;Sonia Torsello;23;34
+3.2.2;FD;HR BS;;Eva Palaiologos;18;47
+3.2.3;ED;VS;Fachstelle Pädagogik / berufliche Orientierung;Sonia Torsello;23;34
+3.3.1;ED;JFS;Sportamt;Corinne Lüdi;14;24
+3.3.2;ED;JFS;Sportamt;Corinne Lüdi;14;24
+3.3.3;ED;JFS;Sportamt;Corinne Lüdi;14;24
+3.3.4;ED;JFS;Sportamt;Corinne Lüdi;14;24
+3.4.1;GD;Medizinische Dienste;Prävention;Christina Karpf;12;26
+3.4.2;GD;Medizinische Dienste;Geschäftsstelle;Petra Huser;12;25
+3.4.3;GD;Medizinische Dienste;Geschäftsstelle;Petra Huser;12;25
+3.4.4;GD;Medizinische Dienste;Prävention;Christina Karpf;12;26
+3.4.5;GD;Medizinische Dienste;Prävention;Christina Karpf;12;26
+3.4.6;ED;Volkschulen;VolkschulenMittelschulenG&D/FGS;Leila Straumann;19;33
+3.4.6;ED;Mittelschulen;Volkschulen;Leila Straumann;19;33
+3.4.6;ED;G&D;G&D;Leila Straumann;20;33
+4.1.1;ED;JFS; Stab;Chantal Müller;11;30
+4.1.2;GD;Bereich Gesundheitsversorgung;Geschäftsstelle;Lilian Buchmann;23;27
+4.1.3;WSU;AWA;Bereich Arbeitsbedingungen;Michael Mauerhofer;27;32
+4.2.1;PD;G&D;FGS;Saskia Jaeggi;20;37
+4.2.2;PD;G&D;FGS;Saskia Jaeggi;20;37
+4.2.3;PD;G&D;FGS;Saskia Jaeggi;20;37
+4.2.4;PD;G&D;FGS;Saskia Jaeggi;20;37
+4.2.5;GD;Gesundheitsversorgung;Langzeitpflege;Amélie Pilgram;8;28
+4.2.6;GD;Gesundheitsversorgung;Langzeitpflege;Amélie Pilgram;8;28
+4.2.7;WSU;ASB;Behindertenhilfe;Christoph Fenner;13;29
+4.2.8;WSU;ASB;Behindertenhilfe;Christoph Fenner;13;29
+5.1.1;ED;JFS;Stab;Chantal Müller;11;30
+5.1.2;ED;VS;Stab;Friederike Heitmann;19;31
+5.1.3;ED;VS;Stab;Friederike Heitmann;19;31
+5.1.4;WSU;AWA;Bereich Arbeitsbedingungen;Michael Mauerhofer;27;32
+5.1.5;PD;G&D;FGS;Leila Straumann;20;33
+5.2.1;PD;G&D;FGS;Livia Büchler;20;34
+5.2.2;PD;G&D;FGS;Livia Büchler;20;34
+5.2.3;PD;G&D;FGS;Livia Büchler;20;34
+5.2.4;ED;MB;Lehraufsicht;Cristoforo Graziano;30;35
+5.2.4;ED;MB;Lehraufsicht;Nicole Thoma;30;36
+5.2.5;PD;G&D;FGS;Flavia Grossmann;20;38
+5.2.6;PD;G&D;FGS;Flavia Grossmann;20;38
+6.1.1;alle Departemente*;HR BS**;POE;Eva Palaiologos;18;47
+6.1.2;alle Departemente*;HR BS**;POE;Eva Palaiologos;18;47
+6.1.3;alle Departemente*;HR BS**;VGM;Martin Leppich;28;39
+6.1.4;FD;GS FD;GS FD;Toya Krummenacher;39;45
+6.1.4;FD;HR BS;Vergütungsmanagement;Martin Leppich, VGM;38;39
+6.1.5;alle Departemente*;HR BS**;POE;Eva Palaiologos;18;47
+6.2.1;alle Departemente*;HR BS**;POE;Eva Palaiologos;18;47
+6.2.2;BVD;GS BVD;HR BVD;Alan Lopez;37;40
+6.2.2;FD;HR FD;HR FD;Carine Nussbaumer;36;41
+6.2.2;PD;GS PD;HR PD;Sibylle Blum;33;42
+6.2.2;WSU;HR WSU ;HR WSU ;Doess;35;44
+6.2.3;FD;ITBS;;Mario Magnanelli, IT BS;25;46
+6.2.3;FD;GS;HR FD;Toya Krummenacher;36;45
+6.3.1;alle Departemente*;HR BS**;POE;Eva Palaiologos;18;47
+6.3.2;alle Departemente*;HR BS**;POE;Eva Palaiologos;18;47
+6.3.3;alle Departemente*;HR BS**;POE;Eva Palaiologos;18;47
+6.3.4;alle Departemente*;HR BS**;POE;Eva Palaiologos;18;47
