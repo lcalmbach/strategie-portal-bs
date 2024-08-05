@@ -1,8 +1,8 @@
 from enum import Enum
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy   
-from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation, Strategie
-from .forms import PlanRecordForm, PersonForm, OrganisationForm,ZielForm,HandlungsfeldForm, MassnahmeForm
+from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation, Strategie, MassnahmeOrganisation
+from .forms import PlanRecordForm, PersonForm, OrganisationForm,ZielForm,HandlungsfeldForm, MassnahmeForm, MassnahmeOrganisationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 import plotly.graph_objs as go
 from .templatetags.custom_filters import is_in_group
@@ -168,11 +168,15 @@ def ziel_detail(request, pk):
 
 def massnahme_detail(request, pk):
     massnahme = get_object_or_404(BusinessObject, pk=pk)
-
+    massnahme_orgs = MassnahmeOrganisation.objects.filter(massnahme=massnahme)
+    context = {
+        'massnahme': massnahme,
+        'massnahme_orgs': massnahme_orgs,
+    }
     return render(
         request,
         "objective_manager_app/massnahme_detail.html",
-        {"massnahme": massnahme},
+        context,
     )
 
 
@@ -422,6 +426,32 @@ class MassnahmeCreateView(CreateView):
     def get_success_url(self):
         # Reverse the URL to the edit page for the newly created Ziel
         return reverse('massnahme_edit', kwargs={'pk': self.object.pk})
+
+class MassnahmeOrgCreateView(CreateView):
+    model = MassnahmeOrganisation
+    form_class = MassnahmeOrganisationForm
+    template_name = 'objective_manager_app/massnahme_organisation_edit.html'
+
+    def get_initial(self):
+        initial = super().get_initial()
+        # Pre-fill form fields with initial values, if needed
+        initial['strategie'] = self.request.session.get('strategie_id')
+        return initial
+
+    def form_valid(self, form):
+        # Assign additional fields before saving the object
+        obj = form.save(commit=False)
+        obj.erstellt_von = self.request.user
+        obj.strategie_id = self.request.session.get('strategie_id')
+        ziel_id = self.kwargs['massnahme_id']
+        obj.vorgaenger = get_object_or_404(BusinessObject, pk=ziel_id)
+        messages.success(self.request, "Die Zuweisung wurde erfolgreich in der Datenbank gespeichert.")
+        obj.save()
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        # Reverse the URL to the edit page for the newly created Ziel
+        return reverse('massnahme_organisation_edit', kwargs={'pk': self.object.pk})
 
 class ZielCreateView(CreateView):
     model = BusinessObject

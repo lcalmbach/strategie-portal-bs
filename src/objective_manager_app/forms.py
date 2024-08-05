@@ -1,5 +1,5 @@
 from django import forms
-from .models import PlanRecord, Person, Organisation, Handlungsfeld, Ziel, Massnahme
+from .models import PlanRecord, Person, Organisation, Handlungsfeld, Ziel, Massnahme, MassnahmeOrganisation
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
@@ -20,6 +20,12 @@ class MassnahmeForm(forms.ModelForm):
     class Meta:
         model = Massnahme
         exclude = ['erstellt_von', 'strategie', 'typ', 'vorgaenger']
+
+
+class MassnahmeOrganisationForm(forms.ModelForm):
+    class Meta:
+        model = MassnahmeOrganisation
+        exclude = ['massnahme']
 
 
 class PlanRecordForm(forms.ModelForm):

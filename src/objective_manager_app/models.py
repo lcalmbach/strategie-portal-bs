@@ -111,7 +111,6 @@ class BusinessObject(models.Model):
     ziele = ZielManager()
     massnahmen = MassnahmeManager()
     
-
     def __str__(self):
         return self.titel
 
@@ -127,6 +126,7 @@ class MassnahmeOrganisation(models.Model):
     massnahme = models.ForeignKey(BusinessObject, on_delete=models.CASCADE)
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
     person = models.ForeignKey(Person, on_delete=models.CASCADE, default=1)
+    bemerkungen = models.TextField(max_length=500, verbose_name="Bemerkungen", null=True, blank=True)
 
     def __str__(self):
         return self.massnahme.titel
@@ -184,7 +184,8 @@ class Strategie(models.Model):
     planungs_frequenz_monate = models.IntegerField(verbose_name="Planungsfrequenz (Monate)", default=12)
     beschreibung_intern = models.TextField(verbose_name="Beschreibung für Beteiligte", max_length=1000, null=True, blank=True)
     beschreibung_extern = models.TextField(verbose_name="Beschreibung für Externe", max_length=1000, null=True, blank=True)
-
+    settings = models.JSONField(verbose_name="Einstellungen", null=True, blank=True, default=dict)
+    
     def __str__(self):
         return self.titel
 
@@ -202,6 +203,13 @@ class PlanRecord(models.Model):
     aufwand_tsd_chf_plan = models.IntegerField(verbose_name='Aufwand tsd CHF (Soll)', default=0)
     aufwand_tsd_chf_ist = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name='Aufwand tsd CHF (Ist)')
     kommentar = models.TextField(verbose_name="Kommentar",null=True, blank=True)
+
+    ergebnisse = models.TextField(verbose_name="Ergebnisse/Erfolge",null=True, blank=True, help_text="Liste der umgesetzten Elemente für diese Massnahme und deren Erfolge")
+    zufriedenheit_note = models.IntegerField(verbose_name="Zufriedenheit (1-5)",null=True, blank=True, help_text="Einstufung der Zufriedenheit mit der Umsetzung der Massnahme von 1 (sehr unzufrieden) bis 5 (sehr zufrieden)")
+    zufriedenheit_text = models.TextField(verbose_name="Zufriedenheit",null=True, blank=True, help_text="Zufriedenheit mit der Umsetzung der Massnahme")
+    schwierigkeiten_note = models.TextField(verbose_name="Schwierigkeiten (1-5)",null=True, blank=True, help_text="Einstufung der Schwierigkeiten bei der Umsetzung von 1 (keine) bis 5 (sehr grosse)")
+    schwierigkeiten = models.TextField(verbose_name="Schwierigkeiten",null=True, blank=True, help_text="Beschreibung der Schwierigkeiten bei der Umsetzung der Massnahme")
+    bedarf_unterstuetzung = models.TextField(verbose_name="Unterstützung",null=True, blank=True, help_text="Benötigest du Beratung oder Unterstützung zur Umsetzung der Massnahme?")
     
     erstellt_am = models.DateTimeField(auto_now_add=True,verbose_name='Erstellt am')
     erstellt_von = models.ForeignKey(User, on_delete=models.CASCADE,verbose_name='Erstellt von')

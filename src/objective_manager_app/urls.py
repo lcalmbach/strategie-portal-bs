@@ -35,6 +35,8 @@ urlpatterns = [
     # add Record Masken
     path('organisation/create/', views.OrganizationCreateView.as_view(), name='organisation_create'),
     path('massnahme/create/<int:ziel_id>/', views.MassnahmeCreateView.as_view(), name='massnahme_create'),
+    path('massnahme_org/create/<int:ziel_id>/', views.MassnahmeOrgCreateView.as_view(), name='massnahme_org_create'),
+    
     path('handlungsfeld/create/', views.HandlungsfeldCreateView.as_view(), name='handlungsfeld_create'),
     path('ziel/create/<int:handlungsfeld_id>/', views.ZielCreateView.as_view(), name='ziel_create'),
     path('person/create/', views.PersonCreateView.as_view(), name='person_create'),

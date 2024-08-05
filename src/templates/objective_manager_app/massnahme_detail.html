@@ -8,7 +8,7 @@
 
         <h3>Massnahme {{massnahme.titel}}</h3>
         <br/>
-        <table>
+        <table class="table">
             <tr>
                 <th>Kürzel</th><td>{{massnahme.kuerzel}}</td>
             </tr>
@@ -39,6 +39,32 @@
         <button onclick="goBack()" class="btn btn-secondary mt-3">
             <i class="fas fa-arrow-left"></i> Zurück
         </button>
+        <br>
+        <hr>
+        <h3>Verantwortliche Stellen/Personen</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Departement</th>
+                    <th>Organisation</th>
+                    <th>Person</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            
+            {% for mo in massnahme_orgs %}
+                <tr>
+                    <td>{{ mo.organisation.departement_kuerzel }}</td>
+                    <td>{{ mo.organisation.bereich }}</td>
+                    <td>{{ mo.person }}</td>
+                    <td>
+                        <a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a><br>
+                        <a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <button type="button" class="btn btn-success" onclick="window.location.href='{% url "massnahme_org_create" massnahme.pk %}'">Organisation Zuweisen</button>
     </div>
 
     <script>
