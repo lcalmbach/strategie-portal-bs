@@ -1,12 +1,13 @@
 {% extends "base.html" %} 
-{% block title %}Ziel {{ziel.titel}}{% endblock title %} 
+{% block title %}{{massnahme.titel}}{% endblock title %} 
+{% load custom_filters %}
 {% block content %}
 
     <div class="container">
         <!-- Back Button -->
         
 
-        <h3>Massnahme {{massnahme.titel}}</h3>
+        <h3>Massnahme: {{massnahme.titel}}</h3>
         <br/>
         <table class="table">
             <tr>
@@ -20,7 +21,7 @@
                 <th>Aufwand Personentage</th><td>{{massnahme.aufwand_personen_tage_plan}}</td>
             </tr>
             <tr>
-                <th>kosten 1000 CHF</th><td>{{massnahme.aufwand_tsd_chf_plan}}</td>
+                <th>Kosten 1000 CHF</th><td>{{massnahme.aufwand_tsd_chf_plan}}</td>
             </tr>
             <tr>
                 <th>Von</th><td>{{massnahme.jahr_start}}</td>
@@ -48,7 +49,9 @@
                     <th>Departement</th>
                     <th>Organisation</th>
                     <th>Person</th>
-                    <th>Edit</th>
+                    {% if request.user|is_in_group:"admins" %}
+                        <th>Edit</th>
+                    {% endif %}
                 </tr>
             </thead>
             
@@ -57,10 +60,12 @@
                     <td>{{ mo.organisation.departement_kuerzel }}</td>
                     <td>{{ mo.organisation.bereich }}</td>
                     <td>{{ mo.person }}</td>
-                    <td>
-                        <a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a><br>
-                        <a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-trash"></i></a>
-                    </td>
+                    {% if request.user|is_in_group:"admins" %}
+                        <td>
+                            <a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a><br>
+                            <a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-trash"></i></a>
+                        </td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </table>

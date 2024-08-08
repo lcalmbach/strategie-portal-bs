@@ -1,5 +1,6 @@
 {% extends "base.html" %} 
 {% block title %}Ziel {{ziel.titel}}{% endblock title %} 
+{% load custom_filters %}
 {% block content %}
 
     <div class="container">
@@ -34,7 +35,9 @@
                     <th>Kürzel</th>
                     <th>Titel</th>
                     <th>Beschreibung</th>
-                    <th>Edit</th>
+                    {% if request.user|is_in_group:"admins" %}
+                        <th>Edit</th>
+                    {% endif %}
                 </tr>
             </thead>
             
@@ -43,7 +46,9 @@
                     <td><a href="{% url 'massnahme_detail' massnahme.pk %}">{{ massnahme.kuerzel }}</a></td>
                     <td>{{ massnahme.titel }}</td>
                     <td>{{ massnahme.beschreibung }}</td>
-                    <td><a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a></td>
+                    {% if request.user|is_in_group:"admins" %}
+                        <td><a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a></td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </table>

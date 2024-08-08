@@ -41,13 +41,17 @@ def user_login(request):
     else:
         form = LoginForm()
 
-    return render(request, 'login_account/login.html', {'form': form, 'strategie': strategie})
-
+    context = { 
+        'form': form,
+        'strategie': strategie
+    }
+    return render(request, 'login_account/login.html', context)
 
 
 @login_required
 def user_logout(request):
     user = request.user
+    strategie = get_object_or_404(Strategie, id=request.session['strategie_id']) 
     try:
         person = Person.objects.get(user=user)
         logout(request)
@@ -55,7 +59,7 @@ def user_logout(request):
     except Person.DoesNotExist:
         logout(request)
         messages.info(request, f"Auf Wiedersehen.")
-    return redirect('')
+    return redirect('home', pk=strategie.pk)  # Pass `pk` to the redirect
 
 @login_required
 def user_profile(request):
@@ -94,15 +98,3 @@ def user_profile(request):
         'form': form,
         'password_change_form': password_change_form
     })
-
-def user_signup(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            person = Person.objects.get(user=user)
-            login(request, user)
-            return redirect('home')  # Redirect to a home page or other appropriate page
-    else:
-        form = SignUpForm()
-    return render(request, 'login_account/signup.html', {'form': form})
