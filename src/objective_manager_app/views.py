@@ -23,14 +23,15 @@ class ObjectType(Enum):
 def is_in_group_decorator(group_name):
     return user_passes_test(lambda u: is_in_group(u, group_name))
 
+def get_strategie(request):
+    strategie_auswahl_id = request.session.get('strategie_id', None)
+    return Strategie.objects.get(id=strategie_auswahl_id) if strategie_auswahl_id else None
 
 def handlungsfelder_list(request):
     handlungsfelder = Handlungsfeld.objects.filter(strategie_id=request.session['strategie_id'])
-    strategie_auswahl_id = request.session.get('strategie_id', None)
-    strategie_auswahl = Strategie.objects.get(id=strategie_auswahl_id) if strategie_auswahl_id else None
     context = {
         'handlungsfelder': handlungsfelder,
-        'strategie': strategie_auswahl,
+        'strategie': get_strategie(request),
     }
     return render(
         request,
@@ -41,18 +42,15 @@ def handlungsfelder_list(request):
 
 def ziele_list(request):
     ziele = Ziel.objects.filter(strategie_id=request.session['strategie_id'])
-    strategie_auswahl_id = request.session.get('strategie_id', None)
-    strategie_auswahl = Strategie.objects.get(id=strategie_auswahl_id) if strategie_auswahl_id else None
     context = {
         'ziele': ziele,
-        'strategie': strategie_auswahl,
+        'strategie': get_strategie(request)
     }
     return render(request, "objective_manager_app/ziele_list.html", context)
 
 
 def massnahmen_list(request):
     massnahmen = Massnahme.objects.filter(strategie_id=request.session['strategie_id'])
-    print(massnahmen)
     strategie_auswahl_id = request.session.get('strategie_id', None)
     strategie_auswahl = Strategie.objects.get(id=strategie_auswahl_id) if strategie_auswahl_id else None
     context = {
@@ -64,6 +62,7 @@ def massnahmen_list(request):
         "objective_manager_app/massnahmen_list.html",
         context,
     )
+
 
 def personen_list(request):
     personen = Person.objects.all()
@@ -151,6 +150,7 @@ def handlungsfeld_detail(request, pk):
         'handlungsfeld': handlungsfeld,
         'ziele': ziele,
         'massnahmen': massnahmen,
+        'strategie': handlungsfeld.strategie
     }
     return render(request, 'objective_manager_app/handlungsfeld_detail.html', context)
 
@@ -161,6 +161,7 @@ def ziel_detail(request, pk):
     context = {
         'ziel': ziel,
         'massnahmen': massnahmen,
+        'strategie': ziel.strategie
     }
 
     return render(request, 'objective_manager_app/ziel_detail.html', context)
@@ -172,6 +173,7 @@ def massnahme_detail(request, pk):
     context = {
         'massnahme': massnahme,
         'massnahme_orgs': massnahme_orgs,
+        'strategie': massnahme.strategie
     }
     return render(
         request,
@@ -209,7 +211,8 @@ def plan_record_detail(request, pk):
 
     
     context = {
-        'plan_records': plan_records
+        'plan_records': plan_records,
+        'strategie': Strategie.objects.get(request.session['strategie_id'])
     }
     return render(request, 'dein_template_name.html', context)
 
@@ -217,6 +220,22 @@ def plan_record_detail(request, pk):
         request,
         "objective_manager_app/plan_record_detail.html",
         {"plan_records": plan_records, "plot_div": plot_div, 'massnahme': massnahme},
+    )
+
+
+def home(request, pk):
+    if request.method == "POST":
+        request.session['strategie_id'] = request.POST.get('strategie_auswahl')
+        strategie_auswahl = Strategie.objects.get(id=request.session['strategie_id'])
+    else:
+        request.session['strategie_id'] = pk
+    
+    strategie = get_object_or_404(Strategie, pk=pk)
+    
+    return render(
+        request,
+        "objective_manager_app/home.html",
+        {"strategie": strategie},
     )
 
 
@@ -242,9 +261,7 @@ def admin_detail(request):
     selected_theme = None
 
     if request.method == "POST":
-        print("POST Data:", request.POST)
         selected_theme_id = request.POST.get("theme")
-        print(selected_theme_id)
         request.session["selected_theme_id"] = selected_theme_id
         selected_theme = BusinessObject.themen.get(id=selected_theme_id)
     return render(
@@ -264,7 +281,6 @@ class HandlungsfeldEditView(UpdateView):
         return reverse_lazy('handlungsfeld_detail', kwargs={'pk': self.object.pk})
 
     def form_valid(self, form):
-        print(123)
         # This method is called when valid form data has been POSTed
         obj = form.save(commit=False)
         obj.erstellt_von = self.request.user  # Ensure the correct user is set
@@ -273,7 +289,8 @@ class HandlungsfeldEditView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['ziel'] = self.object.vorgaenger  # Add the vorgaenger (handlungsfeld) to the context
+        context['ziel'] = self.object.vorgaenger 
+        context['strategie'] = self.object.strategie  
         return context
 
 
@@ -288,7 +305,6 @@ class ZielEditView(UpdateView):
         return reverse_lazy('ziel_detail', kwargs={'pk': self.object.pk})
 
     def form_valid(self, form):
-        print(123)
         # This method is called when valid form data has been POSTed
         obj = form.save(commit=False)
         obj.erstellt_von = self.request.user  # Ensure the correct user is set
@@ -298,6 +314,7 @@ class ZielEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['handlungsfeld'] = self.object.vorgaenger  # Add the vorgaenger (handlungsfeld) to the context
+        context['strategie'] = self.object.strategie
         return context
 
 
@@ -321,6 +338,7 @@ class MassnahmeEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['ziel'] = self.object.vorgaenger  
+        context['strategie'] = self.object.strategie
         return context
 
 
@@ -339,7 +357,8 @@ def plan_record_edit(request, pk):
     
     context = {
         "form": form,
-        "plan_record": plan_record
+        "plan_record": plan_record,
+        "strategie": get_strategie(request)
     }
     return render(request, "objective_manager_app/plan_record_edit.html", context)
 
@@ -353,7 +372,11 @@ def person_edit(request, pk):
             return redirect("personen_list")
     else:
         form = PersonForm(instance=person)
-    return render(request, "objective_manager_app/person_edit.html", {"form": form})
+    context = {
+        "form": form,
+        "strategie": get_strategie(request)
+    }
+    return render(request, "objective_manager_app/person_edit.html", context)
 
 
 @is_in_group_decorator('admins')
@@ -366,7 +389,11 @@ def organisation_edit(request, pk):
             return redirect("organisationen_list")
     else:
         form = OrganisationForm(instance=organisation)
-    return render(request, "objective_manager_app/organisation_edit.html", {"form": form})
+    context = {
+        "form": form,
+        "strategie": get_strategie(request)
+    }
+    return render(request, "objective_manager_app/organisation_edit.html", context)
 
 # -----------------------------------
 # delete views
@@ -505,7 +532,7 @@ class HandlungsfeldCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         # Add additional context data if necessary
         context = super().get_context_data(**kwargs)
-        context['additional_data'] = 'some value'  # Add any extra context data here
+        context['strategie'] = get_strategie(self.request)
         return context
 
 class PersonCreateView(CreateView):

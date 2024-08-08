@@ -24,8 +24,29 @@
     <div class="container-fluid">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' pk=strategie.pk %}">Home</a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'home_detail' %}active{% endif %}" href="{% url 'home_detail' %}">Home</a>
         </li>
+        
+        <!-- Strategie Selection Box -->
+        {% if request.resolver_match.url_name == 'home_detail' %}
+          <li class="nav-item d-flex align-items-center">
+            <span class="nav-link" style="padding-right: 0;">Strategie:&nbsp;</span>
+            <form method="post" action="{% url 'home_detail' %}" class="d-flex align-items-center" style="margin-bottom: 0;">
+              {% csrf_token %}
+              <div class="form-group mb-0 flex-grow-1">
+                <select id="strategie_auswahl" name="strategie_auswahl" class="form-control full-width-select navbar-select" onchange="this.form.submit();">
+                  {% for strategie in strategieen %}
+                    <option value="{{ strategie.id }}" data-description="{{ strategie.beschreibung }}" {% if strategie.id == strategie_auswahl.id %}selected{% endif %}>{{ strategie.titel }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </form>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <span class="nav-link">Strategie:&nbsp;<b>{{ strategie.titel_kurz }}</b></span>
+          </li>
+        {% endif %}
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'handlungsfelder_list' %}active{% endif %}" href="{% url 'handlungsfelder_list' %}">Handlungsfelder</a>
         </li>

@@ -94,3 +94,28 @@ td.button-cell {
     background-color: #e0ffe0 !important;
 }
 
+.form-group {
+    margin-bottom: 0;
+    flex-grow: 1;
+}
+.d-flex {
+    display: flex;
+    align-items: center;
+}
+.mr-2 {
+    margin-right: 0.5rem;
+}
+.ml-2 {
+    margin-left: 0.5rem;
+}
+.full-width-select {
+    width: 100%;
+}
+.image-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.centered-image {
+    max-width: 100%;
+    height: auto;
+}

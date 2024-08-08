@@ -1,9 +1,15 @@
 from django.urls import path
+from django.views.generic.base import RedirectView
 from . import views
 
 urlpatterns = [
-    path("", views.home_detail, name="home_detail"),
-    path("", views.admin_detail, name="admin_detail"),
+    path('', RedirectView.as_view(url='/strategie/2/', permanent=True)),
+    path('strategie/<int:pk>/', views.home, name='home'),
+    path('datenstrategie/', RedirectView.as_view(url='/strategie/1/', permanent=True)),
+    path('gleichstellungsplan/', RedirectView.as_view(url='/strategie/2/', permanent=True)),
+    path('klimaschutzstrategie', RedirectView.as_view(url='/strategie/3/', permanent=True)),    
+    path('stata-strategie', RedirectView.as_view(url='/strategie/4/', permanent=True)),
+    
     # Listen
     path("handlungsfelder/", views.handlungsfelder_list, name="handlungsfelder_list"),
     path("ziele/", views.ziele_list, name="ziele_list"),

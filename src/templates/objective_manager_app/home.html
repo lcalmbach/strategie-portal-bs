@@ -1,55 +1,56 @@
 {% extends "base.html" %}
+{% load static %}
 {% load strategie_filters %}
 
-{% block title %}Welcome to the Objective Manager{% endblock %}
+{% block title %}{{ strategie.titel_kurz }}{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1>🚧Portal für Strategisches Controlling des Kantons Basel-Stadt🚧</h1>
+    <h1>{{strategie.titel}}</h1>
+    <div class="image-container">
+        <img src="{% static 'images/' %}{{ strategie.home_image }}" alt="Strategie Image" class="centered-image">
+    </div>
     <br>
-    <p>Diese App ermöglicht es, strategische Handlungsfelder, Ziele und Massnahmen zu verwalten sowie deren Zielerreichung und den geplanten Aufwand zu überwachen. Die App befindet sich derzeit in der Entwicklung. Handlungsfelder, Ziele und Maßnahmen entsprechen realen Vorhaben, während alle Planungsdaten erfunden sind. Nur das Thema Gleichstellung ist aktuell mit Daten hinterlegt.</p>
+    <p>{{strategie.beschreibung_extern}}</p>
     <br>
-    <hr>
-    <h2>{{ strategie_auswahl.titel }}</h2>
-    <p>{{ strategie_auswahl.beschreibung_extern }}</p>
     <table class="table">
         <tr>
             <th>Verantwortliche Stelle</th>
-            <td>{{strategie_auswahl.organisation}}</td>
+            <td>{{strategie.organisation}}</td>
         </tr>
         <tr>
             <th>Von</th>
-            <td>{{strategie_auswahl.gueltigkeit_jahr_start}}</td>
+            <td>{{strategie.gueltigkeit_jahr_start}}</td>
         </tr>
         <tr>
             <th>Bis</th>
-            <td>{{strategie_auswahl.gueltigkeit_jahr_ende}}</td>
+            <td>{{strategie.gueltigkeit_jahr_ende}}</td>
         </tr>
         <tr>
             <th>Anzahl Handlungsfelder</th>
-            <td>{{ strategie_auswahl|handlungsfelder|length }}</td>
+            <td>{{ strategie|handlungsfelder|length }}</td>
         </tr>
         <tr>
             <th>Anzahl Ziele</th>
-            <td>{{ strategie_auswahl | ziele | length }}</td>
+            <td>{{ strategie | ziele | length }}</td>
         </tr>
         <tr>
             <th>Anzahl Massnahmen</th>
-            <td>{{ strategie_auswahl | massnahmen | length }}</td>
+            <td>{{ strategie | massnahmen | length }}</td>
         </tr>
         <tr>
             <th>Beteiligte Personen</th>
-            <td>{{ strategie_auswahl | personen| length }}</td>
+            <td>{{ strategie | personen| length }}</td>
         </tr>
         <tr>
             <th>Kontakt</th>
-            <td>{{ strategie_auswahl.kontakt.vorname_nachname }}</td>
+            <td>{{ strategie.kontakt.vorname_nachname }}</td>
         </tr>
     </table>    
     <br>
     <b>Dokumente</b>
     <ul>
-        {% for dokument in strategie_auswahl.dokumente.all %}
+        {% for dokument in strategie.dokumente.all %}
             <li><a href="{{ dokument.url_feld }}">{{ dokument.titel_dokument }}</a></li>
         {% endfor %}
     </ul>
@@ -61,7 +62,7 @@
     });
 
     function updateDescription() {
-        var select = document.getElementById('strategie_auswahl');
+        var select = document.getElementById('strategie');
         if (select) {
             var description = select.options[select.selectedIndex].getAttribute('data-description');
             document.getElementById('theme-description').innerText = description;
@@ -69,24 +70,6 @@
     }
 </script>
 
-<style>
-    .form-group {
-        margin-bottom: 0;
-        flex-grow: 1;
-    }
-    .d-flex {
-        display: flex;
-        align-items: center;
-    }
-    .mr-2 {
-        margin-right: 0.5rem;
-    }
-    .ml-2 {
-        margin-left: 0.5rem;
-    }
-    .full-width-select {
-        width: 100%;
-    }
-</style>
+
 
 {% endblock %}

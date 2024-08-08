@@ -185,7 +185,8 @@ class Strategie(models.Model):
     beschreibung_intern = models.TextField(verbose_name="Beschreibung für Beteiligte", max_length=1000, null=True, blank=True)
     beschreibung_extern = models.TextField(verbose_name="Beschreibung für Externe", max_length=1000, null=True, blank=True)
     settings = models.JSONField(verbose_name="Einstellungen", null=True, blank=True, default=dict)
-    
+    home_image = models.TextField(verbose_name="Bildpfad", null=True, blank=True)
+
     def __str__(self):
         return self.titel
 
