@@ -16,7 +16,12 @@
             <tr>
                 <th>Titel</th><td>{{massnahme.titel}}</td>
             </tr>
-            
+            <tr>
+                <th>Pol. Vorstoss / Anmerkung </th><td>{{massnahme.anmerkung_initialisierung}}</td>
+            </tr>
+            <tr>
+                <th>Messbarkeit</th><td>{{massnahme.mess_groesse}}</td>
+            </tr>
             <tr>
                 <th>Aufwand Personentage</th><td>{{massnahme.aufwand_personen_tage_plan}}</td>
             </tr>
@@ -24,11 +29,9 @@
                 <th>Kosten 1000 CHF</th><td>{{massnahme.aufwand_tsd_chf_plan}}</td>
             </tr>
             <tr>
-                <th>Von</th><td>{{massnahme.jahr_start}}</td>
+                <th>Dauer</th><td>{{massnahme.jahr_start}} bis {{massnahme.jahr_ende}}</td>
             </tr>
-            <tr>
-                <th>Bis</th><td>{{massnahme.jahr_ende}}</td>
-            </tr>
+            
         </table>
         {% if massnahme.beschreibung %}
             <br>

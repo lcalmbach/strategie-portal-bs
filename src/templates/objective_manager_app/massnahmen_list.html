@@ -4,31 +4,46 @@
 {% block content %}
     <div class="container">
         <h1>Massnahmen  ({{ massnahmen|length}})</h1>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Ziel</th>
-                    <th>Kürzel</th>
-                    <th>Titel</th>
-                    <th>Beschreibung</th>
-                    {% if request.user|is_in_group:"admins" %}
-                        <th>Edit</th>
-                    {% endif %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for massnahme in massnahmen %}
-                <tr>
-                    <td>{{massnahme.vorgaenger.kuerzel}} {{massnahme.vorgaenger.titel}}</a></td>
-                    <td><a href="{% url 'massnahme_detail' massnahme.pk %}">{{ massnahme.kuerzel }}</a></td>
-                    <td>{{ massnahme.titel }}</td>
-                    <td>{{ massnahme.text }}</td>
-                    {% if request.user|is_in_group:"admins" %}
-                        <td><a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a></td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <form method="get">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Ziel</th>
+                        <th>Kürzel</th>
+                        <th>Titel</th>
+                        {% if request.user|is_in_group:"admins" %}
+                            <th>Edit</th>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th>
+                            <input type="text" name="filterZiel" value="{{ request.GET.filterZiel }}" placeholder="Filter Ziel">
+                        </th>
+                        <th>
+                            <input type="text" name="filterKuerzel" value="{{ request.GET.filterKuerzel }}" placeholder="Filter Kürzel">
+                        </th>
+                        <th>
+                            <input type="text" name="filterTitel" value="{{ request.GET.filterTitel }}" placeholder="Filter Titel">
+                        </th>
+                        <th>
+                            <button type="submit" class="btn btn-primary">Filtern</button>
+                        </form>
+                    </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for massnahme in massnahmen %}
+                    <tr>
+                        <td>{{massnahme.vorgaenger.kuerzel}} {{massnahme.vorgaenger.titel}}</td>
+                        <td><a href="{% url 'massnahme_detail' massnahme.pk %}">{{ massnahme.kuerzel }}</a></td>
+                        <td>{{ massnahme.titel }}</td>
+                        {% if request.user|is_in_group:"admins" %}
+                            <td><a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a></td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
     </div>
 {% endblock %}

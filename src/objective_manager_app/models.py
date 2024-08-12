@@ -102,9 +102,9 @@ class BusinessObject(models.Model):
     jahr_start = models.IntegerField(verbose_name="Jahr Start", default=datetime.now().year)
     jahr_ende = models.IntegerField(verbose_name="Jahr Ende", default=datetime.now().year)
     anmerkung_initialisierung = models.TextField(verbose_name="Pol. Vorstoss", null=True, blank=True)
+    mess_groesse = models.CharField(max_length=200, verbose_name="Messbarkeit", blank=True, null=True)
     # messbarkeit = models.CharField(max_length=200, verbose_name="Messbarkeit")  
     bestehende_massnahme = models.ForeignKey("NeuBestehend", on_delete=models.CASCADE, blank=True, null=True, default=5, related_name="bestehende_massnahme", verbose_name="Bestehende/Neue Massnahme")
-    # kontakt_verantwortlich = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name="Kontakt verantwortlich")
 
     objects = models.Manager()
     handlungsfelder = HandlungsfeldManager()

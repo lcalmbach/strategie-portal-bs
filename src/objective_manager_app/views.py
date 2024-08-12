@@ -50,19 +50,47 @@ def ziele_list(request):
 
 
 def massnahmen_list(request):
-    massnahmen = Massnahme.objects.filter(strategie_id=request.session['strategie_id'])
+    # Retrieve the strategy ID from the session
     strategie_auswahl_id = request.session.get('strategie_id', None)
     strategie_auswahl = Strategie.objects.get(id=strategie_auswahl_id) if strategie_auswahl_id else None
+    
+    # Base queryset filtered by strategie_id
+    massnahmen = Massnahme.objects.filter(strategie_id=strategie_auswahl_id)
+
+    # Get filter values from the request
+    filter_ziel = request.GET.get('filterZiel', '')
+    filter_kuerzel = request.GET.get('filterKuerzel', '')
+    filter_titel = request.GET.get('filterTitel', '')
+    filter_beschreibung = request.GET.get('filterBeschreibung', '')
+
+    # Apply additional filters if provided
+    if filter_ziel:
+        massnahmen = massnahmen.filter(vorgaenger__kuerzel__icontains=filter_ziel) | massnahmen.filter(vorgaenger__titel__icontains=filter_ziel)
+    
+    if filter_kuerzel:
+        massnahmen = massnahmen.filter(kuerzel__icontains=filter_kuerzel)
+    
+    if filter_titel:
+        massnahmen = massnahmen.filter(titel__icontains=filter_titel)
+    
+    if filter_beschreibung:
+        massnahmen = massnahmen.filter(text__icontains=filter_beschreibung)
+
+    # Prepare the context with the filtered queryset
     context = {
         'massnahmen': massnahmen,
         'strategie': strategie_auswahl,
+        'filterZiel': filter_ziel,
+        'filterKuerzel': filter_kuerzel,
+        'filterTitel': filter_titel,
+        'filterBeschreibung': filter_beschreibung,
     }
+
     return render(
         request,
         "objective_manager_app/massnahmen_list.html",
         context,
     )
-
 
 def personen_list(request):
     personen = Person.objects.all()
