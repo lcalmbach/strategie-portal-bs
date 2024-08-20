@@ -9,6 +9,7 @@
                 <thead>
                     <tr>
                         <th>Jahr</th>
+                        <th>Departement</th>
                         <th>Organisation</th>
                         <th>Massnahme</th>
                         <th>Fortschritt Soll %</th>
@@ -48,6 +49,7 @@
                 <tr>
                     <td>{{pr.jahr}}</td>
                     <td>{{ pr.verantwortlich.organisation.departement_kuerzel }}</td>
+                    <td>{{ pr.verantwortlich.organisation.dienststelle }}</td>
                     <td>{{ pr.verantwortlich.massnahme.kuerzel }}</td>
                     <td>{{ pr.fortschritt_pzt_plan }}</td>
                     <td>{{ pr.fortschritt_pzt_ist }}</td>
