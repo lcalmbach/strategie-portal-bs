@@ -42,3 +42,7 @@
     outline: none;
     box-shadow: none;
 }
+
+.top-aligned {
+    align-items: flex-start;
+  }

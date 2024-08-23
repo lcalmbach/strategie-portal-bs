@@ -6,25 +6,13 @@
     <div class="container">
         <h1>Handlungsfeld: {{handlungsfeld.titel}}</h1>
         <br/>
-        <table class="table">
-            <tr>
-                <th>Kürzel</th><td>{{handlungsfeld.kuerzel}}</td>
-            </tr>
-            <tr>
-                <th>Titel</th><td>{{handlungsfeld.titel}}</td>
-            </tr>
-            <tr>
-                <th>Beschreibung</th><td>{{handlungsfeld.beschreibung}}</td>
-            </tr>
-        </table>
-        <br><br>
         <h4>Ziele</h4>
         <table class="table">
             <thead>
                 <tr>
-                    <th>Kürzel</th>
+                    <th>Nummer</th>
                     <th>Titel</th>
-                    <th>Beschreibung</th>
+                    <th>Ziel</th>
                     {% if request.user|is_in_group:"admins" %}
                         <th>Edit</th>
                     {% endif %}
@@ -42,6 +30,9 @@
                 </tr>
                 {% endfor %}
         </table>
+        <button onclick="goBack()" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Zurück
+        </button>&nbsp;
         <button type="button" class="btn btn-success" onclick="window.location.href='{% url "ziel_create" handlungsfeld.pk %}'">Neues Ziel</button>
         <br><br>
     </div>

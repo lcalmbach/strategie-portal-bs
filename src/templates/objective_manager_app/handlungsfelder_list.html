@@ -7,11 +7,11 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Kürzel</th>
+                    <th>Nummer</th>
                     <th>Handlungsfeld</th>
-                    <th>Beschreibung</th>
+                    <th>Ziel</th>
                     {% if request.user|is_in_group:"admins" %}
-                        <th>Actions</th>
+                        <th></th>
                     {% endif %}
                 </tr>
             </thead>

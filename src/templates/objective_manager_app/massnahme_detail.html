@@ -4,45 +4,36 @@
 {% block content %}
 
     <div class="container">
-        <!-- Back Button -->
-        
-
         <h3>Massnahme: {{massnahme.titel}}</h3>
         <br/>
         <table class="table">
             <tr>
-                <th>Kürzel</th><td>{{massnahme.kuerzel}}</td>
+                <th>Nummer</th><td>{{massnahme.kuerzel}}</td>
             </tr>
             <tr>
                 <th>Titel</th><td>{{massnahme.titel}}</td>
             </tr>
             <tr>
-                <th>Pol. Vorstoss / Anmerkung </th><td>{{massnahme.anmerkung_initialisierung}}</td>
-            </tr>
-            <tr>
                 <th>Messbarkeit</th><td>{{massnahme.mess_groesse}}</td>
             </tr>
             <tr>
-                <th>Aufwand Personentage</th><td>{{massnahme.aufwand_personen_tage_plan}}</td>
+                <th>Termin</th><td>{{massnahme.jahr_ende}}</td>
             </tr>
+            {% if massnahme.beschreibung %}
             <tr>
-                <th>Kosten 1000 CHF</th><td>{{massnahme.aufwand_tsd_chf_plan}}</td>
+                <th>Beschreibung</th><td>{{massnahme.beschreibung}}</td>
             </tr>
-            <tr>
-                <th>Dauer</th><td>{{massnahme.jahr_start}} bis {{massnahme.jahr_ende}}</td>
-            </tr>
-            
+            {% endif %}
         </table>
-        {% if massnahme.beschreibung %}
-            <br>
-            <b>Beschreibung</b><br>{{massnahme.beschreibung}}
-            <br>
-        {% endif %}
-        <br>
-         <!-- Back Button -->
-        <button onclick="goBack()" class="btn btn-secondary mt-3">
-            <i class="fas fa-arrow-left"></i> Zurück
-        </button>
+
+         <div class="d-flex align-items-start">
+            <button onclick="goBack()" class="btn btn-secondary mt-3">
+                <i class="fas fa-arrow-left"></i> Zurück
+            </button>
+            <a href="{% url 'massnahme_edit' massnahme.pk %}" class="btn btn-primary ms-3 mt-3">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+        </div>
         <br>
         <hr>
         <h3>Verantwortliche Stellen/Personen</h3>
@@ -52,8 +43,9 @@
                     <th>Departement</th>
                     <th>Organisation</th>
                     <th>Person</th>
+                    <th>Rolle</th>
                     {% if request.user|is_in_group:"admins" %}
-                        <th>Edit</th>
+                        <th></th>
                     {% endif %}
                 </tr>
             </thead>
@@ -63,10 +55,16 @@
                     <td>{{ mo.organisation.departement_kuerzel }}</td>
                     <td>{{ mo.organisation.bereich }}</td>
                     <td>{{ mo.person }}</td>
+                    <td>{{ mo.rolle }}</td>
+                   
                     {% if request.user|is_in_group:"admins" %}
                         <td>
-                            <a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a><br>
-                            <a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-trash"></i></a>
+                            <a href="{% url 'massnahme_org_edit' mo.pk %}" class="btn btn-link">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="button" class="btn btn-link text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ handlungsfeld.pk }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </td>
                     {% endif %}
                 </tr>

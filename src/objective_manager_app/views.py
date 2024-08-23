@@ -1,12 +1,12 @@
 from enum import Enum
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy   
-from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation, Strategie, MassnahmeOrganisation
-from .forms import PlanRecordForm, PersonForm, OrganisationForm,ZielForm,HandlungsfeldForm, MassnahmeForm, MassnahmeOrganisationForm
+from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation, MassnahmeOrganisation
+from .forms import PlanRecordMVForm, PlanRecordSPForm, PlanRecordFGSForm, PersonForm, OrganisationForm,ZielForm,HandlungsfeldForm, MassnahmeForm, MassnahmeOrganisationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 import plotly.graph_objs as go
 from .templatetags.custom_filters import is_in_group
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import CreateView, UpdateView
 from django.contrib import messages
@@ -23,15 +23,11 @@ class ObjectType(Enum):
 def is_in_group_decorator(group_name):
     return user_passes_test(lambda u: is_in_group(u, group_name))
 
-def get_strategie(request):
-    strategie_auswahl_id = request.session.get('strategie_id', None)
-    return Strategie.objects.get(id=strategie_auswahl_id) if strategie_auswahl_id else None
 
 def handlungsfelder_list(request):
-    handlungsfelder = Handlungsfeld.objects.filter(strategie_id=request.session['strategie_id'])
+    handlungsfelder = Handlungsfeld.objects.all()
     context = {
         'handlungsfelder': handlungsfelder,
-        'strategie': get_strategie(request),
     }
     return render(
         request,
@@ -41,22 +37,15 @@ def handlungsfelder_list(request):
 
 
 def ziele_list(request):
-    ziele = Ziel.objects.filter(strategie_id=request.session['strategie_id'])
+    ziele = Ziel.objects.all()
     context = {
         'ziele': ziele,
-        'strategie': get_strategie(request)
     }
     return render(request, "objective_manager_app/ziele_list.html", context)
 
 
 def massnahmen_list(request):
-    # Retrieve the strategy ID from the session
-    strategie_auswahl_id = request.session.get('strategie_id', None)
-    strategie_auswahl = Strategie.objects.get(id=strategie_auswahl_id) if strategie_auswahl_id else None
-    
-    # Base queryset filtered by strategie_id
-    massnahmen = Massnahme.objects.filter(strategie_id=strategie_auswahl_id)
-
+    massnahmen = Massnahme.objects.all()
     # Get filter values from the request
     filter_ziel = request.GET.get('filterZiel', '')
     filter_kuerzel = request.GET.get('filterKuerzel', '')
@@ -79,7 +68,6 @@ def massnahmen_list(request):
     # Prepare the context with the filtered queryset
     context = {
         'massnahmen': massnahmen,
-        'strategie': strategie_auswahl,
         'filterZiel': filter_ziel,
         'filterKuerzel': filter_kuerzel,
         'filterTitel': filter_titel,
@@ -94,11 +82,9 @@ def massnahmen_list(request):
 
 def personen_list(request):
     personen = Person.objects.all()
-    strategie_auswahl_id = request.session.get('strategie_id', None)
-    strategie_auswahl = Strategie.objects.get(id=strategie_auswahl_id) if strategie_auswahl_id else None
+    
     context = {
         'personen': personen,
-        'strategie': strategie_auswahl,
     }
     return render(request, "objective_manager_app/personen_list.html", context)
 
@@ -106,24 +92,22 @@ def personen_list(request):
 def organisationen_list(request):
     organisationen = Organisation.objects.all()
     strategie_auswahl_id = request.session.get('strategie_id', None)
-    strategie_auswahl = Strategie.objects.get(id=strategie_auswahl_id) if strategie_auswahl_id else None
     context = {
         'organisationen': organisationen,
-        'strategie': strategie_auswahl,
     }
     return render(request, "objective_manager_app/organisationen_list.html", context)
 
 
 def plan_records_list(request):
     plan_records = PlanRecord.objects.all()
+    departement_choices = Organisation.objects.values_list('departement_kuerzel', flat=True).distinct().order_by('departement_kuerzel').order_by('departement_kuerzel')
 
     if request.method == "POST":
-        strategie = Strategie.objects.get(id=request.session['strategie_id'])
-        planung = Planung(strategie, request.user)
-        if planung.run():
-            messages.success(request, "Die Planung wurde erfolgreich erstellt.")
-        else:   
-            messages.warning(request, "Bei der Erstellung der Planung ist ein Fehler aufgetreten.")
+        pass
+        # if planung.run():
+        #     messages.success(request, "Die Planung wurde erfolgreich erstellt.")
+        # else:   
+        #    messages.warning(request, "Bei der Erstellung der Planung ist ein Fehler aufgetreten.")
     else:
         # Filter basierend auf GET-Parameter
         jahr = request.GET.get('jahr')
@@ -132,37 +116,23 @@ def plan_records_list(request):
         
         organisation = request.GET.get('organisation')
         if organisation:
-            plan_records = plan_records.filter(organisation__kuerzel__icontains=organisation)
+            plan_records = plan_records.filter(bereich__icontains=organisation)
+        
+        departement = request.GET.get('departement')
+        if departement:
+            plan_records = plan_records.filter(departement__kuerzel__icontains=departement)
         
         massnahme = request.GET.get('massnahme')
         if massnahme:
-            plan_records = plan_records.filter(objekt__titel__icontains=massnahme)
+            plan_records = plan_records.filter(massnahme__titel__icontains=massnahme)
         
-        erfuellung_soll = request.GET.get('erfuellung_soll')
-        if erfuellung_soll:
-            plan_records = plan_records.filter(soll_wert_erreicht_pzt__icontains=erfuellung_soll)
-        
-        erfuellung_ist = request.GET.get('erfuellung_ist')
-        if erfuellung_ist:
-            plan_records = plan_records.filter(ist_wert_erreicht_pzt__icontains=erfuellung_ist)
-        
-        aufwand_soll = request.GET.get('aufwand_soll')
-        if aufwand_soll:
-            plan_records = plan_records.filter(soll_wert_erreicht_pzt__icontains=aufwand_soll)
-        
-        aufwand_ist = request.GET.get('aufwand_ist')
-        if aufwand_ist:
-            plan_records = plan_records.filter(ist_wert_erreicht_pzt__icontains=aufwand_ist)
-
-    strategie_auswahl_id = request.session.get('strategie_id', None)
-    strategie_auswahl = Strategie.objects.get(id=strategie_auswahl_id) if strategie_auswahl_id else None
     context = {
         'plan_records': plan_records,
-        'strategie': strategie_auswahl,
+        'departement_choices': departement_choices,
     }  
     return render(
         request,
-        "objective_manager_app/plan_records_list.html",
+        "objective_manager_app/home.html",
         context,
     )
 
@@ -178,7 +148,6 @@ def handlungsfeld_detail(request, pk):
         'handlungsfeld': handlungsfeld,
         'ziele': ziele,
         'massnahmen': massnahmen,
-        'strategie': handlungsfeld.strategie
     }
     return render(request, 'objective_manager_app/handlungsfeld_detail.html', context)
 
@@ -189,7 +158,6 @@ def ziel_detail(request, pk):
     context = {
         'ziel': ziel,
         'massnahmen': massnahmen,
-        'strategie': ziel.strategie
     }
 
     return render(request, 'objective_manager_app/ziel_detail.html', context)
@@ -201,7 +169,6 @@ def massnahme_detail(request, pk):
     context = {
         'massnahme': massnahme,
         'massnahme_orgs': massnahme_orgs,
-        'strategie': massnahme.strategie
     }
     return render(
         request,
@@ -212,7 +179,7 @@ def massnahme_detail(request, pk):
 
 def plan_record_detail(request, pk):
     plan_record = get_object_or_404(PlanRecord, pk=pk)
-    plan_records = PlanRecord.objects.filter(objekt=plan_record.objekt)
+    plan_records = PlanRecord.objects.filter(objekt=plan_record)
     massnahme = Massnahme.objects.get(pk=plan_record.objekt.pk)
     # Prepare data for the plot
     years = [pr.jahr for pr in plan_records]
@@ -237,10 +204,8 @@ def plan_record_detail(request, pk):
 
     plot_div = fig.to_html(full_html=False)
 
-    
     context = {
         'plan_records': plan_records,
-        'strategie': Strategie.objects.get(request.session['strategie_id'])
     }
     return render(request, 'dein_template_name.html', context)
 
@@ -254,33 +219,25 @@ def plan_record_detail(request, pk):
 def home(request, pk):
     if request.method == "POST":
         request.session['strategie_id'] = request.POST.get('strategie_auswahl')
-        strategie_auswahl = Strategie.objects.get(id=request.session['strategie_id'])
     else:
         request.session['strategie_id'] = pk
-    
-    strategie = get_object_or_404(Strategie, pk=pk)
     
     return render(
         request,
         "objective_manager_app/home.html",
-        {"strategie": strategie},
     )
 
 
 def home_detail(request):
     if request.method == "POST":
         request.session['strategie_id'] = request.POST.get('strategie_auswahl')
-        strategie_auswahl = Strategie.objects.get(id=request.session['strategie_id'])
     else:
         if not 'strategie_id' in request.session:
             request.session['strategie_id'] = 2
-        strategie_auswahl = Strategie.objects.get(id=request.session['strategie_id'])
     
-    strategieen = Strategie.objects.all()
     return render(
         request,
         "objective_manager_app/home.html",
-        {"strategie_auswahl": strategie_auswahl, 'strategieen': strategieen},
     )
 
 
@@ -318,7 +275,6 @@ class HandlungsfeldEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['ziel'] = self.object.vorgaenger 
-        context['strategie'] = self.object.strategie  
         return context
 
 
@@ -342,7 +298,6 @@ class ZielEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['handlungsfeld'] = self.object.vorgaenger  # Add the vorgaenger (handlungsfeld) to the context
-        context['strategie'] = self.object.strategie
         return context
 
 
@@ -366,29 +321,34 @@ class MassnahmeEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['ziel'] = self.object.vorgaenger  
-        context['strategie'] = self.object.strategie
         return context
 
 
-@is_in_group_decorator('operators')
-def plan_record_edit(request, pk):
-    plan_record = get_object_or_404(PlanRecord, pk=pk)
-    if request.method == "POST":
-        form = PlanRecordForm(request.POST, instance=plan_record)
-        if form.is_valid():
-            obj = form.save(commit=False)
-            obj.erstellt_von = request.user
-            obj.save()
-            return redirect("plan_record_detail", pk=plan_record.pk)
-    else:
-        form = PlanRecordForm(instance=plan_record)
-    
-    context = {
-        "form": form,
-        "plan_record": plan_record,
-        "strategie": get_strategie(request)
-    }
-    return render(request, "objective_manager_app/plan_record_edit.html", context)
+class PlanRecordUpdateView(LoginRequiredMixin, UpdateView):
+    model = PlanRecord
+    template_name = "objective_manager_app/plan_record_edit.html"
+    context_object_name = 'plan_record'
+    success_url = reverse_lazy('home')  # Adjust this as needed
+
+    def get_form_class(self):
+        # Check user's group and return the corresponding form class
+        user = self.request.user
+        if user.groups.filter(name='mv').exists():
+            return PlanRecordMVForm
+        elif user.groups.filter(name='sp').exists():
+            return PlanRecordSPForm
+        elif user.groups.filter(name='fgs').exists():
+            return PlanRecordFGSForm
+        else:
+            pass # raise PermissionDenied("You are not authorized to edit this record.")  # Handle unauthorized access
+
+    def form_valid(self, form):
+        plan_record = form.save(commit=False)
+        plan_record.erstellt_von = self.request.user
+        plan_record.save()
+        return redirect('home')
+
+
 
 @is_in_group_decorator('admins')
 def person_edit(request, pk):
@@ -402,7 +362,6 @@ def person_edit(request, pk):
         form = PersonForm(instance=person)
     context = {
         "form": form,
-        "strategie": get_strategie(request)
     }
     return render(request, "objective_manager_app/person_edit.html", context)
 
@@ -419,7 +378,6 @@ def organisation_edit(request, pk):
         form = OrganisationForm(instance=organisation)
     context = {
         "form": form,
-        "strategie": get_strategie(request)
     }
     return render(request, "objective_manager_app/organisation_edit.html", context)
 
@@ -460,28 +418,29 @@ class MassnahmeCreateView(CreateView):
     form_class = MassnahmeForm
     template_name = 'objective_manager_app/massnahme_edit.html'
 
-    def get_initial(self):
-        initial = super().get_initial()
-        # Pre-fill form fields with initial values, if needed
-        initial['strategie'] = self.request.session.get('strategie_id')
-        return initial
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ziel = Ziel.objects.get(pk=self.kwargs['ziel_id'])
+        return context
+    
     def form_valid(self, form):
         # Assign additional fields before saving the object
         obj = form.save(commit=False)
         obj.erstellt_von = self.request.user
-        obj.strategie_id = self.request.session.get('strategie_id')
         obj.typ_id = ObjectType.MASSNAHME.value  
+
+        # Get the ziel_id from the URL kwargs and set it as the vorgaenger
         ziel_id = self.kwargs['ziel_id']
         obj.vorgaenger = get_object_or_404(BusinessObject, pk=ziel_id)
+
         messages.success(self.request, "Die Massnahme wurde erfolgreich in der Datenbank gespeichert.")
         obj.save()
         return super().form_valid(form)
-    
-    def get_success_url(self):
-        # Reverse the URL to the edit page for the newly created Ziel
-        return reverse('massnahme_edit', kwargs={'pk': self.object.pk})
 
+    def get_success_url(self):
+        # Redirect to the edit page for the newly created Massnahme
+        return reverse('massnahme_edit', kwargs={'pk': self.object.pk})
+    
 class MassnahmeOrgCreateView(CreateView):
     model = MassnahmeOrganisation
     form_class = MassnahmeOrganisationForm
@@ -489,24 +448,43 @@ class MassnahmeOrgCreateView(CreateView):
 
     def get_initial(self):
         initial = super().get_initial()
-        # Pre-fill form fields with initial values, if needed
-        initial['strategie'] = self.request.session.get('strategie_id')
+        # Pre-fill form fields with initial values
+        massnahme_id = self.kwargs.get('massnahme_id')
+        initial['massnahme'] = massnahme_id  # Assuming 'massnahme' is the field name in the form
         return initial
 
     def form_valid(self, form):
         # Assign additional fields before saving the object
         obj = form.save(commit=False)
         obj.erstellt_von = self.request.user
-        obj.strategie_id = self.request.session.get('strategie_id')
-        ziel_id = self.kwargs['massnahme_id']
-        obj.vorgaenger = get_object_or_404(BusinessObject, pk=ziel_id)
+        massnahme_id = self.kwargs.get('massnahme_id')
+        obj.massnahme_id = massnahme_id  # Set massnahme_id if the field is in the model
         messages.success(self.request, "Die Zuweisung wurde erfolgreich in der Datenbank gespeichert.")
         obj.save()
         return super().form_valid(form)
-    
+
+    def get_strategie(self, massnahme_id):
+        # Fetch the related strategie object
+        massnahme = get_object_or_404(Massnahme, pk=massnahme_id)
+        return massnahme.strategie
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        massnahme = Massnahme.objects.get(pk=self.kwargs['massnahme_id'])
+        return context
+
     def get_success_url(self):
-        # Reverse the URL to the edit page for the newly created Ziel
-        return reverse('massnahme_organisation_edit', kwargs={'pk': self.object.pk})
+        # Reverse the URL to the edit page for the newly created MassnahmeOrganisation
+        return reverse('massnahme_detail', kwargs={'pk': self.object.massnahme.pk})
+
+
+class MassnahmeOrganisationUpdateView(UpdateView):
+    model = MassnahmeOrganisation
+    fields = ['massnahme', 'organisation', 'person', 'bemerkungen', 'rolle']
+    template_name = 'objective_manager_app/massnahme_organisation_edit.html'
+    context_object_name = 'massnahmeorganisation'
+    success_url = reverse_lazy('massnahmeorganisation_list')  # Replace with your success URL, like the list or detail view
+    
 
 class ZielCreateView(CreateView):
     model = BusinessObject
@@ -515,15 +493,17 @@ class ZielCreateView(CreateView):
 
     def get_initial(self):
         initial = super().get_initial()
-        # Pre-fill form fields with initial values, if needed
-        initial['strategie'] = self.request.session.get('strategie_id')
         return initial
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        handlungsfeld = Handlungsfeld.objects.get(pk=self.kwargs['handlungsfeld_id'])
+        return context
+    
     def form_valid(self, form):
         # Assign additional fields before saving the object
         obj = form.save(commit=False)
         obj.erstellt_von = self.request.user
-        obj.strategie_id = self.request.session.get('strategie_id')
         obj.typ_id = ObjectType.ZIEL.value  
         handlungsfeld_id = self.kwargs['handlungsfeld_id']
         obj.vorgaenger = get_object_or_404(BusinessObject, pk=handlungsfeld_id)
@@ -544,15 +524,12 @@ class HandlungsfeldCreateView(LoginRequiredMixin, CreateView):
 
     def get_initial(self):
         initial = super().get_initial()
-        # Pre-fill form fields with initial values, if needed
-        initial['strategie'] = self.request.session.get('strategie_id')
         return initial
 
     def form_valid(self, form):
         # Assign additional fields before saving the object
         obj = form.save(commit=False)
         obj.erstellt_von = self.request.user
-        obj.strategie_id = self.request.session.get('strategie_id')
         obj.typ_id = ObjectType.HANDLUNGSFELD.value  
         obj.save()
         return super().form_valid(form)
@@ -560,7 +537,6 @@ class HandlungsfeldCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         # Add additional context data if necessary
         context = super().get_context_data(**kwargs)
-        context['strategie'] = get_strategie(self.request)
         return context
 
 class PersonCreateView(CreateView):
@@ -571,11 +547,7 @@ class PersonCreateView(CreateView):
 
 class PlanRecordCreateView(CreateView):
     model = PlanRecord
-    form_class = PlanRecordForm
+    form_class = PlanRecordMVForm
     template_name = 'objective_manager_app/plan_record_edit.html'
-    success_url = reverse_lazy('plan_records_list') 
-
-# -----------------------------------
-# other views
-#------------------------------------
+    success_url = reverse_lazy('home') 
 

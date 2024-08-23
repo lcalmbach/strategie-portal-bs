@@ -60,7 +60,7 @@
         {% endif %}
         {% if request.user|is_in_group:"operators" %}
         <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'plan_records_list' %}active{% endif %}" href="{% url 'plan_records_list' %}">Planung</a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'plan_records_list' %}active{% endif %}" href="{% url 'plan_records_list' %}">Rückmeldungen</a>
         </li>
         {% endif %}
         {% if request.user|is_in_group:"admins" %}

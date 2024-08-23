@@ -1,11 +1,17 @@
 {% extends "base.html" %} 
 {% load crispy_forms_tags %}  <!-- Load Crispy Forms tags -->
-{% block title %}Planung{% endblock title %} 
+{% block title %}Rückmeldung{% endblock title %} 
 {% block content %}
 
 <div class="container">
-    <h1>Planung {{ plan_record.jahr }}</h1>
-    <b>Massnahme:</b> {{ plan_record.verantwortlich.massnahme }}<br>
+    <h1>Rückmeldung {{ plan_record.jahr }}</h1>
+    <br>
+    <H3>Massnahme: {{ plan_record.verantwortlich.massnahme }}</H3>
+    <br>
+    HF: {{ plan_record.verantwortlich.massnahme.vorgaenger.vorgaenger }}<br>
+    Ziel: {{ plan_record.verantwortlich.massnahme.vorgaenger }}<br>
+    Messbarkeit: {{ plan_record.verantwortlich.massnahme.messbarkeit }}<br>
+    <br>
     <form method="post">
         {% csrf_token %}
         {{ form|crispy }}

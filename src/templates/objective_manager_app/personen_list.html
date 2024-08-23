@@ -8,6 +8,7 @@
                 <tr>
                     <th>Nachname</th>
                     <th>Vorname</th>
+                    <th>Username</th>
                     <th>Departement</th>
                     <th>Organisation</th>
                     <th></th>
@@ -18,6 +19,7 @@
                 <tr>
                     <td>{{ person.nachname }}</td>
                     <td>{{ person.vorname }}</td>
+                    <td>{{ person.user.username }}</td>
                     <td>{{ person.organisation.departement_kuerzel }}</td>
                     <td>{{ person.organisation }}</td>
                     <td><a href="{% url 'person_edit' person.pk %}"><i class="fas fa-edit"></i></a></td>

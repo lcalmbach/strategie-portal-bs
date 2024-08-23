@@ -4,47 +4,23 @@
 {% block content %}
 
     <div class="container">
-        <h3>Ziel: {{ziel.titel}}</h3>
-        <br/>
-        <table class="table">
-            <tr>
-                <th>Kürzel</th><td>{{ziel.kuerzel}}</td>
-            </tr>
-            <tr>
-                <th>Titel</th><td>{{ziel.titel}}</td>
-            </tr>
-            
-            <tr>
-                <th>Aufwand Personentage Soll</th><td>{{ziel.aufwand_personen_tage_soll}}</td>
-            </tr>
-            <tr>
-                <th>Finanzieller Aufwand tsd CHF</th><td>{{ziel.aufwand_tsd_chf_soll}}</td>
-            </tr>
-        </table>
-
-        <br>
-        <b>Beschreibung:</b>
+        <h3>Ziel: {{ ziel.kuerzel }} {{ziel.titel}}</h3>
         <br>{{ziel.beschreibung}}
-        <br>
+        
         
         <br><br>
         <h4>Massnahmen</h4>
         <table class="table">
             <thead>
                 <tr>
-                    <th>Kürzel</th>
-                    <th>Titel</th>
-                    <th>Beschreibung</th>
-                    {% if request.user|is_in_group:"admins" %}
-                        <th>Edit</th>
-                    {% endif %}
+                    <th>Nummer</th>
+                    <th>Massnahme</th>
                 </tr>
             </thead>
             
             {% for massnahme in massnahmen %}
                 <tr>
                     <td><a href="{% url 'massnahme_detail' massnahme.pk %}">{{ massnahme.kuerzel }}</a></td>
-                    <td>{{ massnahme.titel }}</td>
                     <td>{{ massnahme.beschreibung }}</td>
                     {% if request.user|is_in_group:"admins" %}
                         <td><a href="{% url 'massnahme_edit' massnahme.pk %}"><i class="fas fa-edit"></i></a></td>
@@ -55,19 +31,13 @@
         <br>
         <div class="container mt-4">
             <div class="d-flex justify-content-start align-items-center">
-                <button type="button" class="btn btn-success mr-3" onclick="window.location.href='{% url 'massnahme_create' ziel.pk %}'">
-                    Neue Massnahme
-                </button>&nbsp;
                 <button onclick="goBack()" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Zurück
+                </button>&nbsp;
+                <button type="button" class="btn btn-success mr-3" onclick="window.location.href='{% url 'massnahme_create' ziel.pk %}'">
+                    Neue Massnahme
                 </button>
             </div>
         </div>
     </div>
-
-    <script>
-        function goBack() {
-            window.history.back();
-        }
-    </script>
 {% endblock %}

@@ -28,11 +28,22 @@ class MassnahmeOrganisationForm(forms.ModelForm):
         exclude = ['massnahme']
 
 
-class PlanRecordForm(forms.ModelForm):
+
+class PlanRecordFGSForm(forms.ModelForm):
     class Meta:
         model = PlanRecord
-        exclude = [ 'strategie', 'verantwortlich', 'erstellt_von', 'jahr', 'monat']
+        fields = '__all__'
 
+class PlanRecordSPForm(forms.ModelForm):
+    class Meta:
+        model = PlanRecord
+        fields = '__all__'
+
+class PlanRecordMVForm(forms.ModelForm):
+    class Meta:
+        model = PlanRecord
+        fields = ['bemerkungen_code_mv', 'rueckmeldung_mv', 'einhaltung_termin', 'umsetzung_mv', 'fortschritt', 'zufriedenheit', 'schwierigkeiten']
+        
 
 class PersonForm(forms.ModelForm):
     class Meta:
