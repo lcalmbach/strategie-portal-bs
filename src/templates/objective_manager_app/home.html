@@ -3,58 +3,125 @@
 {% block content %}
     <div class="container">
         <h1>Monitoring der Massnahmen zum Gleichstellungsplan({{ plan_records|length}})</h1>
-        {% if request.user.is_authenticated %}
-        <form method="get">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Jahr</th>
-                        <th>Departement</th>
-                        <th>Organisation</th>
-                        <th>Massnahme</th>
-                        <th>Verantwortlich</th>
-                        <th>Edit</th>
-                    </tr>
-                    <tr>
-                        <th><input type="text" name="jahr" class="form-control" placeholder="Filter Jahr" value="{{ request.GET.jahr }}"></th>
-                        <th>
-                            <select name="departement" class="form-control">
-                                <option value="">-- Filter Departement --</option>
-                                {% for departement in departement_choices %}
-                                    <option value="{{ departement }}" {% if request.GET.departement == departement %}selected{% endif %}>
-                                        {{ departement }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </th>
-                        <th><input type="text" name="organisation" class="form-control" placeholder="Filter Organisation" value="{{ request.GET.organisation }}"></th>
-                        <th><input type="text" name="massnahme" class="form-control" placeholder="Filter Massnahme" value="{{ request.GET.massnahme }}"></th>
-                        <th><input type="text" name="verantwortlich" class="form-control" placeholder="Filter Verantwortlich" value="{{ request.GET.aufwand_ist }}"></th>
-                        <th><button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i></button></th>
-                    </tr>
-                </thead>
-        </form>
-            <tbody>
-                {% for pr in plan_records %}
-                <tr>
-                    <td>{{pr.jahr}}</td>
-                    <td>{{ pr.verantwortlich.organisation.departement_kuerzel }}</td>
-                    <td>{{ pr.verantwortlich.organisation.dienststelle }}</td>
-                    <td>{{ pr.verantwortlich.massnahme.kuerzel }}</td>
-                    <td>{{ pr.verantwortlich.person }}</td>
-                    <td><a href="{% url 'plan_record_edit' pr.pk %}"><i class="fas fa-edit"></i></a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
         <br>
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" action="initialize" class="btn btn-primary"><i class="fa fa-plus"></i>Planung initialisieren</button>
-        </form>
+        {% if request.user.is_authenticated %}
+            <form method="get">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Jahr</th>
+                            <th>Departement</th>
+                            <th>Organisation</th>
+                            <th>Massnahme</th>
+                            <th>Verantwortlich</th>
+                            <th>Status</th>
+                            <th>Fortschritt</th>
+                            <th>Zufriedenheit</th>
+                            <th>Schwierigkeiten</th>
+                            <th>Edit</th>
+                        </tr>
+                        <tr>
+                            <th><input type="text" name="jahr" class="form-control" placeholder="Filter Jahr" value="{{ request.GET.jahr }}"></th>
+                            <th>
+                                <select name="departement" class="form-control">
+                                    <option value="">-- Filter Departement --</option>
+                                    {% for departement in departement_choices %}
+                                        <option value="{{ departement }}" {% if request.GET.departement == departement %}selected{% endif %}>
+                                            {{ departement }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </th>
+                            <th><input type="text" name="organisation" class="form-control" placeholder="Filter Organisation" value="{{ request.GET.organisation }}"></th>
+                            <th><input type="text" name="massnahme" class="form-control" placeholder="Filter Massnahme" value="{{ request.GET.massnahme }}"></th>
+                            <th><input type="text" name="verantwortlich" class="form-control" placeholder="Filter Verantwortlich" value="{{ request.GET.aufwand_ist }}"></th>
+                            <th><input type="text" name="status" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="status" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="status" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="status" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
+
+                            <th><button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i></button></th>
+                        </tr>
+                    </thead>
+            </form>
+                <tbody>
+                    {% for pr in plan_records %}
+                    <tr>
+                        <td>{{pr.jahr}}</td>
+                        <td>{{ pr.verantwortlich.organisation.departement_kuerzel }}</td>
+                        <td>{{ pr.verantwortlich.organisation.dienststelle }}</td>
+                        <td>{{ pr.verantwortlich.massnahme.kuerzel }}</td>
+                        <td>{{ pr.verantwortlich.person }}</td>
+                        <td>{{ pr.status }}</td>
+                        <td>
+                            {% if pr.fortschritt.id == 14 %}
+                                <span class="dot green-dot"></span>
+                            {% elif pr.fortschritt.id == 15 %}
+                                <span class="dot orange-dot"></span>
+                            {% elif pr.fortschritt.id == 16 %}
+                                <span class="dot red-dot"></span>
+                            {% else %}
+                                <span class="dot grey-dot"></span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pr.zufriedenheit.id == 14 %}
+                                <span class="dot green-dot"></span>
+                            {% elif pr.zufriedenheit.id == 15 %}
+                                <span class="dot orange-dot"></span>
+                            {% elif pr.zufriedenheit.id == 16 %}
+                                <span class="dot red-dot"></span>
+                            {% else %}
+                                <span class="dot grey-dot"></span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pr.schwierigkeiten.id == 14 %}
+                                <span class="dot green-dot"></span>
+                            {% elif pr.schwierigkeiten.id == 15 %}
+                                <span class="dot orange-dot"></span>
+                            {% elif pr.schwierigkeiten.id == 16 %}
+                                <span class="dot red-dot"></span>
+                            {% else %}
+                                <span class="dot grey-dot"></span>
+                            {% endif %}
+                        </td>
+                        <td><a href="{% url 'plan_record_edit' pr.pk %}"><i class="fas fa-edit"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
+            {% if is_fgs_member %}
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" action="initialize" class="btn btn-primary"><i class="fa fa-plus"></i>Planung initialisieren</button>
+                </form>
+            {% endif %}
         {% else %}
             Bitte <a href="{% url 'login_account:login' %}">einloggen</a>
         {% endif %}
 
     </div>
-{% endblock %}
+    <style>
+        .dot {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .green-dot {
+            background-color: green;
+        }
+        .orange-dot {
+            background-color: orange;
+        }
+        .red-dot {
+            background-color: red;
+        }
+        .grey-dot {
+            background-color: grey;
+        }
+    </style>
+    {% endblock %}
+

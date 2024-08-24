@@ -58,18 +58,26 @@ class NeuBestehendManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(kategorie_id=2)
 
+
 class RueckmeldungMVManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(kategorie_id=4)
+
 
 class RolleManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(kategorie_id=3)
     
+
 class WertungManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(kategorie_id=5)
-    
+
+
+class StatusMassnahmeManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(kategorie_id=6)
+
 class Code(models.Model):
     kategorie = models.ForeignKey(CodeKategorie, on_delete=models.CASCADE)
     kuerzel = models.CharField(max_length=10)
@@ -122,6 +130,19 @@ class BusinessObject(models.Model):
     
     
 class MassnahmeOrganisation(models.Model):
+    """
+    Eine Klasse, die die Beziehung zwischen einer Massnahme, einer Organisation und einer Person repräsentiert.
+
+    Attribute:
+        massnahme (ForeignKey): Eine Fremdschlüsselbeziehung zu einem BusinessObject-Objekt.
+        organisation (ForeignKey): Eine Fremdschlüsselbeziehung zu einem Organisation-Objekt.
+        person (ForeignKey): Eine Fremdschlüsselbeziehung zu einem Person-Objekt.
+        bemerkungen (TextField): Ein optionales Textfeld für Bemerkungen.
+        rolle (ForeignKey): Eine Fremdschlüsselbeziehung zu einem Rolle-Objekt.
+
+    Methoden:
+        __str__(): Gibt den Titel der Massnahme zurück.
+    """
     massnahme = models.ForeignKey(BusinessObject, on_delete=models.CASCADE)
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
     person = models.ForeignKey(Person, on_delete=models.CASCADE, default=1)
@@ -141,6 +162,13 @@ class Rolle(Code):
 
 class Wertung(Code):
     objects = WertungManager()
+
+    class Meta:
+        proxy = True
+
+
+class StatusMassnahme(Code):
+    objects = StatusMassnahmeManager()
 
     class Meta:
         proxy = True
@@ -195,18 +223,17 @@ class PlanRecord(models.Model):
     
     bemerkungen_code_mv = models.ForeignKey(RueckmeldungMV, on_delete=models.CASCADE, verbose_name="Bemerkungen MV (codiert)", null=True, blank=True, related_name='planrecord_bemerkungen_code_mv')
     
-    rueckmeldung_mv = models.TextField(verbose_name="Bemerkungen MV", null=True, blank=True)
+    rueckmeldung_mv = models.TextField(verbose_name="Bemerkungen MV zu Fortschritt, Zufriedenheit und Schwierigkeiten", null=True, blank=True)
     einhaltung_termin = models.BooleanField(verbose_name="Termin wird eingehalten", null=True, default=False)
     umsetzung_mv = models.TextField(verbose_name="Was wurde im Berichtsjahr umgesetzt?", null=True, blank=True)
     
     fortschritt = models.ForeignKey(Wertung, verbose_name="Zielerreichungsgrad", blank=True, null=True, on_delete=models.CASCADE, related_name='planrecord_fortschritt')
-    
     zufriedenheit = models.ForeignKey(Wertung, verbose_name="Wie zufrieden sind die MV mit der Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_zufriedenheit')
-    
     schwierigkeiten = models.ForeignKey(Wertung, verbose_name="Schwierigkeiten", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_schwierigkeiten')
     
     bemerkungen_fgs = models.TextField(verbose_name="Bemerkungen FGS", null=True, blank=True)
     bemerkungen_sp = models.TextField(verbose_name="Bemerkungen SP", null=True, blank=True)
+    status = models.ForeignKey(StatusMassnahme,verbose_name="Status", null=True, default=17, on_delete=models.CASCADE)
     
     faellig_am = models.DateField(verbose_name="Fällig am", blank=True, null=True)
     

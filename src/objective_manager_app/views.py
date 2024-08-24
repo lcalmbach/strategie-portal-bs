@@ -1,4 +1,6 @@
 from enum import Enum
+from django.http import HttpRequest
+from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy   
 from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation, MassnahmeOrganisation
@@ -18,10 +20,11 @@ class ObjectType(Enum):
     HANDLUNGSFELD = 2
     ZIEL = 3
     MASSNAHME = 4
-    PLAN_RECORD = 5
+
 
 def is_in_group_decorator(group_name):
     return user_passes_test(lambda u: is_in_group(u, group_name))
+
 
 
 def handlungsfelder_list(request):
@@ -99,17 +102,21 @@ def organisationen_list(request):
 
 
 def plan_records_list(request):
+    user = request.user
     plan_records = PlanRecord.objects.all()
-    departement_choices = Organisation.objects.values_list('departement_kuerzel', flat=True).distinct().order_by('departement_kuerzel').order_by('departement_kuerzel')
+    departement_choices = Organisation.objects.values_list('departement_kuerzel', flat=True).distinct().order_by('departement_kuerzel')
 
+    # Filter based on user group
+    if user.groups.filter(name='mv').exists():
+        plan_records = plan_records.filter(verantwortlich__person__user=user)
+    elif user.groups.filter(name='sp').exists():
+        person = Person.objects.get(user=user)
+        plan_records = plan_records.filter(verantwortlich__organisation__departement_kuerzel=person.organisation.departement_kuerzel)
+    
     if request.method == "POST":
         pass
-        # if planung.run():
-        #     messages.success(request, "Die Planung wurde erfolgreich erstellt.")
-        # else:   
-        #    messages.warning(request, "Bei der Erstellung der Planung ist ein Fehler aufgetreten.")
     else:
-        # Filter basierend auf GET-Parameter
+        # Filter based on GET parameters
         jahr = request.GET.get('jahr')
         if jahr:
             plan_records = plan_records.filter(jahr__icontains=jahr)
@@ -129,12 +136,16 @@ def plan_records_list(request):
     context = {
         'plan_records': plan_records,
         'departement_choices': departement_choices,
+        'is_fgs_member': user.groups.filter(name='fgs').exists(),
+        'is_sp_member': user.groups.filter(name='sp').exists(),
+        'is_mv_member': user.groups.filter(name='mv').exists(),
     }  
     return render(
         request,
         "objective_manager_app/home.html",
         context,
     )
+
 
 
 # Detail Views
@@ -214,32 +225,6 @@ def plan_record_detail(request, pk):
         "objective_manager_app/plan_record_detail.html",
         {"plan_records": plan_records, "plot_div": plot_div, 'massnahme': massnahme},
     )
-
-
-def home(request, pk):
-    if request.method == "POST":
-        request.session['strategie_id'] = request.POST.get('strategie_auswahl')
-    else:
-        request.session['strategie_id'] = pk
-    
-    return render(
-        request,
-        "objective_manager_app/home.html",
-    )
-
-
-def home_detail(request):
-    if request.method == "POST":
-        request.session['strategie_id'] = request.POST.get('strategie_auswahl')
-    else:
-        if not 'strategie_id' in request.session:
-            request.session['strategie_id'] = 2
-    
-    return render(
-        request,
-        "objective_manager_app/home.html",
-    )
-
 
 def admin_detail(request):
     themes = BusinessObject.themen.all()
@@ -330,6 +315,7 @@ class PlanRecordUpdateView(LoginRequiredMixin, UpdateView):
     context_object_name = 'plan_record'
     success_url = reverse_lazy('home')  # Adjust this as needed
 
+
     def get_form_class(self):
         # Check user's group and return the corresponding form class
         user = self.request.user
@@ -348,6 +334,17 @@ class PlanRecordUpdateView(LoginRequiredMixin, UpdateView):
         plan_record.save()
         return redirect('home')
 
+    def get_context_data(self, **kwargs):
+        # First, get the existing context from the superclass
+        context = super().get_context_data(**kwargs)
+        
+        # Add your custom context variables
+        user = self.request.user
+        context['is_fgs_member'] = user.groups.filter(name='fgs').exists()
+        context['is_sp_member'] = user.groups.filter(name='sp').exists()
+        context['is_mv_member'] = user.groups.filter(name='mv').exists()
+        return context
+    
 
 
 @is_in_group_decorator('admins')

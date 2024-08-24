@@ -119,3 +119,19 @@ td.button-cell {
     max-width: 100%;
     height: auto;
 }
+
+.dot {
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.green-dot {
+    background-color: green;
+}
+.orange-dot {
+    background-color: orange;
+}
+.red-dot {
+    background-color: red;
+}

@@ -6,11 +6,93 @@
 <div class="container">
     <h1>Rückmeldung {{ plan_record.jahr }}</h1>
     <br>
-    <H3>Massnahme: {{ plan_record.verantwortlich.massnahme }}</H3>
+    <H3>Massnahme: {{ plan_record.massnahme }}</H3>
     <br>
-    HF: {{ plan_record.verantwortlich.massnahme.vorgaenger.vorgaenger }}<br>
-    Ziel: {{ plan_record.verantwortlich.massnahme.vorgaenger }}<br>
-    Messbarkeit: {{ plan_record.verantwortlich.massnahme.messbarkeit }}<br>
+    <b>Info zur Massnahme</b>
+    <table class="table">
+        <tr>
+            <th>Handlungsfeld</th>
+            <td>{{ plan_record.verantwortlich.massnahme.vorgaenger.vorgaenger  }}</td>
+        </tr>
+        <tr>
+            <th>Ziel</th>
+            <td>{{ plan_record.verantwortlich.massnahme.vorgaenger  }}</td>
+        </tr>
+        <tr>
+            <th>Messbarkeit</th>
+            <td>{{ plan_record.verantwortlich.massnahme.messbarkeit }}</td>
+        </tr>
+        <tr>
+            <th>Fällig am</th>
+            <td>{{ plan_record.faellig_am }}</td>
+        </tr>
+    </table>
+    <hr>
+
+    {%if is_fgs_member %}
+        <b>Rückmeldung MV</b>
+        <table class="table">
+            <tr>
+                <td>Bemerkungen MV</th>
+                <td>{{ plan_record.rueckmeldung_mv }}</td>
+            </tr>
+            <tr>
+                <td>Bemerkungen Schlüsselperson</th>
+                <td>{{ plan_record.bemerkungen_sp }}</td>
+            </tr>
+            <tr>
+                <td>Einhaltung Termin</th>
+                <td>{{ plan_record.einhaltung_termin }}</td>
+            </tr>
+            <tr>
+                <td>Einschätzung Fortschritt</th>
+                <td>{{ plan_record.fortschritt }}</td>
+            </tr>
+            <tr>
+                <td>Einschätzung Zufriedenheit</th>
+                <td>{{ plan_record.zufriedenheit }}</td>
+            </tr>
+            <tr>
+                <td>Einschätzung Schwierigkeiten</th>
+                <td>{{ plan_record.schwierigkeiten }}</td>
+            </tr>
+            <tr>
+                <td>Status</th>
+                <td>{{ plan_record.status }}</td>
+            </tr>
+        </table>
+    {% endif %}
+
+    {%if is_sp_member %}
+        <b>Rückmeldung MV und FGS</b>
+        <table class="table">
+            <tr>
+                <td>Bemerkungen MV</th>
+                <td>{{ plan_record.rueckmeldung_mv }}</td>
+            </tr>
+            <tr>
+                <td>Einhaltung Termin</th>
+                <td>{{ plan_record.einhaltung_termin }}</td>
+            </tr>
+            <tr>
+                <td>Einschätzung Fortschritt</th>
+                <td>{{ plan_record.fortschritt }}</td>
+            </tr>
+            <tr>
+                <td>Einschätzung Zufriedenheit</th>
+                <td>{{ plan_record.zufriedenheit }}</td>
+            </tr>
+            <tr>
+                <td>Einschätzung Schwierigkeiten</th>
+                <td>{{ plan_record.schwierigkeiten }}</td>
+            </tr>
+        </table>
+        <br>
+        <b>Rückmeldung Schlüsselperson</b>
+        <br>
+    {% endif %}
+
+
     <br>
     <form method="post">
         {% csrf_token %}
@@ -19,3 +101,26 @@
     </form>
 </div>
 {% endblock %}
+
+massnahme = models.ForeignKey(Massnahme, on_delete=models.CASCADE)
+    verantwortlich = models.ForeignKey(MassnahmeOrganisation, on_delete=models.CASCADE, verbose_name="Massnahme")
+    jahr = models.IntegerField(verbose_name="Jahr", default=datetime.now().year)
+    
+    bemerkungen_code_mv = models.ForeignKey(RueckmeldungMV, on_delete=models.CASCADE, verbose_name="Bemerkungen MV (codiert)", null=True, blank=True, related_name='planrecord_bemerkungen_code_mv')
+    
+    rueckmeldung_mv = models.TextField(verbose_name="Bemerkungen MV zu Fortschritt, Zufriedenheit und Schwierigkeiten", null=True, blank=True)
+    einhaltung_termin = models.BooleanField(verbose_name="Termin wird eingehalten", null=True, default=False)
+    umsetzung_mv = models.TextField(verbose_name="Was wurde im Berichtsjahr umgesetzt?", null=True, blank=True)
+    
+    fortschritt = models.ForeignKey(Wertung, verbose_name="Zielerreichungsgrad", blank=True, null=True, on_delete=models.CASCADE, related_name='planrecord_fortschritt')
+    zufriedenheit = models.ForeignKey(Wertung, verbose_name="Wie zufrieden sind die MV mit der Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_zufriedenheit')
+    schwierigkeiten = models.ForeignKey(Wertung, verbose_name="Schwierigkeiten", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_schwierigkeiten')
+    
+    bemerkungen_fgs = models.TextField(verbose_name="Bemerkungen FGS", null=True, blank=True)
+    bemerkungen_sp = models.TextField(verbose_name="Bemerkungen SP", null=True, blank=True)
+    status = models.ForeignKey(StatusMassnahme,verbose_name="Status", null=True, default=17, on_delete=models.CASCADE)
+    
+    faellig_am = models.DateField(verbose_name="Fällig am", blank=True, null=True)
+    
+    erstellt_am = models.DateTimeField(auto_now_add=True, verbose_name='Erstellt am')
+    erstellt_von = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Erstellt von')
