@@ -18,7 +18,7 @@ class BusinessObjectAdmin(admin.ModelAdmin):
     
 
 @admin.register(Organisation)
-class Strategie(admin.ModelAdmin):
+class OrganisationAdmin(admin.ModelAdmin):
     list_display = (
         'departement',
         'dienststelle',
@@ -27,12 +27,18 @@ class Strategie(admin.ModelAdmin):
     search_fields = ('departement','dienststelle','bereich')
 
 @admin.register(Person)
-class Strategie(admin.ModelAdmin):
-    list_display = (
-        'vorname',
-        'nachname',
-        'organisation',
-    )
+class PersonAdmin(admin.ModelAdmin):
+    list_display = ('vorname', 'nachname', 'username', 'user_id')  # Fields to display in the list view
+
+    def username(self, obj):
+        return obj.user.username  # Access the related User model's username field
+
+    def user_id(self, obj):
+        return obj.user.pk  # Access the related User model's username field
+    
+    username.admin_order_field = 'user__username'  # Allows sorting by username
+    username.short_description = 'Username'  # Column name in the admin list view
+
     search_fields = ('vorname','nachname')
 
 

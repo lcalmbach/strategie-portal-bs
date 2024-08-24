@@ -28,20 +28,28 @@ class MassnahmeOrganisationForm(forms.ModelForm):
         exclude = ['massnahme']
 
 
+class PlanRecordAdminForm(forms.ModelForm):
+    class Meta:
+        model = PlanRecord
+        fields = '__all__'
+        widgets = {
+            'faellig_am': forms.DateInput(attrs={'type': 'date'}),  # HTML5 date input
+        }
+
 class PlanRecordFGSForm(forms.ModelForm):
     class Meta:
         model = PlanRecord
-        fields = ['bemerkungen_fgs']
+        fields = ['rueckmeldung_fgs']
 
 class PlanRecordSPForm(forms.ModelForm):
     class Meta:
         model = PlanRecord
-        fields = ['status', 'bemerkungen_sp']
+        fields = ['status', 'rueckmeldung_sp']
 
 class PlanRecordMVForm(forms.ModelForm):
     class Meta:
         model = PlanRecord
-        fields = ['status', 'bemerkungen_code_mv', 'rueckmeldung_mv', 'einhaltung_termin', 'umsetzung_mv', 'fortschritt', 'zufriedenheit', 'schwierigkeiten']
+        fields = ['status', 'rueckmeldung_code_mv', 'rueckmeldung_mv', 'einhaltung_termin', 'umsetzung_mv', 'fortschritt', 'zufriedenheit', 'schwierigkeiten']
         
 
 class PersonForm(forms.ModelForm):

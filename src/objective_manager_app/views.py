@@ -4,7 +4,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy   
 from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation, MassnahmeOrganisation
-from .forms import PlanRecordMVForm, PlanRecordSPForm, PlanRecordFGSForm, PersonForm, OrganisationForm,ZielForm,HandlungsfeldForm, MassnahmeForm, MassnahmeOrganisationForm
+from .forms import PlanRecordMVForm, PlanRecordSPForm, PlanRecordFGSForm, PlanRecordAdminForm, PersonForm, OrganisationForm,ZielForm,HandlungsfeldForm, MassnahmeForm, MassnahmeOrganisationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 import plotly.graph_objs as go
 from .templatetags.custom_filters import is_in_group
@@ -108,10 +108,10 @@ def plan_records_list(request):
 
     # Filter based on user group
     if user.groups.filter(name='mv').exists():
-        plan_records = plan_records.filter(verantwortlich__person__user=user)
+        plan_records = plan_records.filter(verantwortlich__user=user)
     elif user.groups.filter(name='sp').exists():
         person = Person.objects.get(user=user)
-        plan_records = plan_records.filter(verantwortlich__organisation__departement_kuerzel=person.organisation.departement_kuerzel)
+        plan_records = plan_records.filter(organisation__departement_kuerzel=person.organisation.departement_kuerzel)
     
     if request.method == "POST":
         pass
@@ -139,6 +139,7 @@ def plan_records_list(request):
         'is_fgs_member': user.groups.filter(name='fgs').exists(),
         'is_sp_member': user.groups.filter(name='sp').exists(),
         'is_mv_member': user.groups.filter(name='mv').exists(),
+        'is_admin_member': user.groups.filter(name='admin').exists(),
     }  
     return render(
         request,
@@ -319,12 +320,15 @@ class PlanRecordUpdateView(LoginRequiredMixin, UpdateView):
     def get_form_class(self):
         # Check user's group and return the corresponding form class
         user = self.request.user
-        if user.groups.filter(name='mv').exists():
+        if user.groups.filter(name='admin').exists():
+            return PlanRecordAdminForm
+        elif user.groups.filter(name='mv').exists():
             return PlanRecordMVForm
         elif user.groups.filter(name='sp').exists():
             return PlanRecordSPForm
         elif user.groups.filter(name='fgs').exists():
             return PlanRecordFGSForm
+        
         else:
             pass # raise PermissionDenied("You are not authorized to edit this record.")  # Handle unauthorized access
 

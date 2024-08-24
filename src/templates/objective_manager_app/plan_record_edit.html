@@ -6,21 +6,21 @@
 <div class="container">
     <h1>Rückmeldung {{ plan_record.jahr }}</h1>
     <br>
-    <H3>Massnahme: {{ plan_record.massnahme }}</H3>
+    <H3>Massnahme: {{ plan_record.massnahme.kuerzel }} {{ plan_record.massnahme }}</H3>
     <br>
     <b>Info zur Massnahme</b>
     <table class="table">
         <tr>
             <th>Handlungsfeld</th>
-            <td>{{ plan_record.verantwortlich.massnahme.vorgaenger.vorgaenger  }}</td>
+            <td>{{ plan_record.massnahme.vorgaenger.vorgaenger  }}</td>
         </tr>
         <tr>
             <th>Ziel</th>
-            <td>{{ plan_record.verantwortlich.massnahme.vorgaenger  }}</td>
+            <td>{{ plan_record.massnahme.vorgaenger  }}</td>
         </tr>
         <tr>
             <th>Messbarkeit</th>
-            <td>{{ plan_record.verantwortlich.massnahme.messbarkeit }}</td>
+            <td>{{ plan_record.massnahme.mess_groesse }}</td>
         </tr>
         <tr>
             <th>Fällig am</th>

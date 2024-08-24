@@ -218,10 +218,12 @@ class Massnahme(BusinessObject):
 
 class PlanRecord(models.Model):
     massnahme = models.ForeignKey(Massnahme, on_delete=models.CASCADE)
-    verantwortlich = models.ForeignKey(MassnahmeOrganisation, on_delete=models.CASCADE, verbose_name="Massnahme")
     jahr = models.IntegerField(verbose_name="Jahr", default=datetime.now().year)
-    
-    bemerkungen_code_mv = models.ForeignKey(RueckmeldungMV, on_delete=models.CASCADE, verbose_name="Bemerkungen MV (codiert)", null=True, blank=True, related_name='planrecord_bemerkungen_code_mv')
+    faellig_am = models.DateField(verbose_name="Fällig am", blank=True, null=True)
+    verantwortlich = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name="Massnahmenverantwortliche Person", null=True, blank=True, related_name='planrecord_person')
+    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, verbose_name="Federführende Organisation", null=True, blank=True, related_name='planrecord_organisation')
+
+    rueckmeldung_code_mv = models.ForeignKey(RueckmeldungMV, on_delete=models.CASCADE, verbose_name="Bemerkungen MV (codiert)", null=True, blank=True, related_name='planrecord_bemerkungen_code_mv')
     
     rueckmeldung_mv = models.TextField(verbose_name="Bemerkungen MV zu Fortschritt, Zufriedenheit und Schwierigkeiten", null=True, blank=True)
     einhaltung_termin = models.BooleanField(verbose_name="Termin wird eingehalten", null=True, default=False)
@@ -231,11 +233,9 @@ class PlanRecord(models.Model):
     zufriedenheit = models.ForeignKey(Wertung, verbose_name="Wie zufrieden sind die MV mit der Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_zufriedenheit')
     schwierigkeiten = models.ForeignKey(Wertung, verbose_name="Schwierigkeiten", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_schwierigkeiten')
     
-    bemerkungen_fgs = models.TextField(verbose_name="Bemerkungen FGS", null=True, blank=True)
-    bemerkungen_sp = models.TextField(verbose_name="Bemerkungen SP", null=True, blank=True)
+    rueckmeldung_fgs = models.TextField(verbose_name="Bemerkungen FGS", null=True, blank=True)
+    rueckmeldung_sp = models.TextField(verbose_name="Bemerkungen SP", null=True, blank=True)
     status = models.ForeignKey(StatusMassnahme,verbose_name="Status", null=True, default=17, on_delete=models.CASCADE)
-    
-    faellig_am = models.DateField(verbose_name="Fällig am", blank=True, null=True)
     
     erstellt_am = models.DateTimeField(auto_now_add=True, verbose_name='Erstellt am')
     erstellt_von = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Erstellt von')

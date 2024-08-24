@@ -48,10 +48,10 @@
                     {% for pr in plan_records %}
                     <tr>
                         <td>{{pr.jahr}}</td>
-                        <td>{{ pr.verantwortlich.organisation.departement_kuerzel }}</td>
-                        <td>{{ pr.verantwortlich.organisation.dienststelle }}</td>
-                        <td>{{ pr.verantwortlich.massnahme.kuerzel }}</td>
-                        <td>{{ pr.verantwortlich.person }}</td>
+                        <td>{{ pr.organisation.departement_kuerzel }}</td>
+                        <td>{{ pr.organisation.dienststelle }}</td>
+                        <td>{{ pr.massnahme.kuerzel }}</td>
+                        <td>{{ pr.verantwortlich }}</td>
                         <td>{{ pr.status }}</td>
                         <td>
                             {% if pr.fortschritt.id == 14 %}
