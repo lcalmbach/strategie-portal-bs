@@ -13,12 +13,12 @@ class CodeKategorie(models.Model):
 
 
 class Organisation(models.Model):
-    departement = models.CharField(max_length=200)
-    dienststelle = models.CharField(max_length=200)
-    bereich = models.CharField(max_length=200)
-    departement_kuerzel = models.CharField(max_length=200)
-    dienststelle_kuerzel = models.CharField(max_length=200)
-    bereich_kuerzel = models.CharField(max_length=200)
+    departement = models.CharField(max_length=200, verbose_name='Departement')
+    dienststelle = models.CharField(max_length=200, verbose_name='Dienststelle')
+    bereich = models.CharField(max_length=200, verbose_name='Bereich')
+    departement_kuerzel = models.CharField(max_length=200, verbose_name='Departement Kürzel')
+    dienststelle_kuerzel = models.CharField(max_length=200, verbose_name='Dienststelle Kürzel')
+    bereich_kuerzel = models.CharField(max_length=200, verbose_name='Bereich Kürzel')
     
     def __str__(self):
         return self.bereich if self.bereich else self.dienststelle
@@ -33,7 +33,7 @@ class Person(models.Model):
     nachname = models.CharField(verbose_name= 'Nachname', max_length=200)
     email = models.EmailField(verbose_name= 'Email', max_length=200, null=True, blank=True)
     telefon = models.CharField(verbose_name= 'Telefon', max_length=200, null=True, blank=True)
-    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
+    organisation = models.ForeignKey(Organisation, verbose_name='Organisation', on_delete=models.CASCADE)
     erstellt_am = models.DateTimeField(auto_now_add=True)
 
     class Meta:

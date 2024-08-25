@@ -241,7 +241,7 @@ def admin_detail(request):
         {"themes": themes, "selected_theme": selected_theme},
     )
 
-@method_decorator(is_in_group_decorator('admins'), name='dispatch')
+@method_decorator(is_in_group_decorator('admin'), name='dispatch')
 class HandlungsfeldEditView(UpdateView):
     model = Handlungsfeld
     form_class = HandlungsfeldForm
@@ -264,7 +264,7 @@ class HandlungsfeldEditView(UpdateView):
         return context
 
 
-@method_decorator(is_in_group_decorator('admins'), name='dispatch')
+@method_decorator(is_in_group_decorator('admin'), name='dispatch')
 class ZielEditView(UpdateView):
     model = Ziel
     form_class = ZielForm
@@ -287,7 +287,7 @@ class ZielEditView(UpdateView):
         return context
 
 
-@method_decorator(is_in_group_decorator('admins'), name='dispatch')
+@method_decorator(is_in_group_decorator('admin'), name='dispatch')
 class MassnahmeEditView(UpdateView):
     model = Massnahme
     form_class = MassnahmeForm
@@ -350,24 +350,15 @@ class PlanRecordUpdateView(LoginRequiredMixin, UpdateView):
         return context
     
 
-
-@is_in_group_decorator('admins')
-def person_edit(request, pk):
-    person = get_object_or_404(Person, pk=pk)
-    if request.method == "POST":
-        form = PersonForm(request.POST, instance=person)
-        if form.is_valid():
-            form.save()
-            return redirect("personen_list")
-    else:
-        form = PersonForm(instance=person)
-    context = {
-        "form": form,
-    }
-    return render(request, "objective_manager_app/person_edit.html", context)
+class PersonUpdateView(UpdateView):
+    model = Person
+    fields = '__all__'
+    template_name = 'objective_manager_app/person_edit.html'
+    context_object_name = 'person'
+    success_url = reverse_lazy('person_list')  
 
 
-@is_in_group_decorator('admins')
+@is_in_group_decorator('admin')
 def organisation_edit(request, pk):
     organisation = get_object_or_404(Organisation, pk=pk)
     if request.method == "POST":

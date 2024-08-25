@@ -10,12 +10,13 @@
         {% csrf_token %}
         {{ form|crispy }}
         
-        <button type="submit" class="btn btn-primary">Speichern</button>
         <button type="button" class="btn btn-secondary" onclick="window.history.back()">Zurück</button>
+        <button type="submit" class="btn btn-primary">Speichern</button>
+        <button type="button" class="btn btn-success" onclick="window.location.href='{% url "organisation_create" %}'">Neue Organisation</button>
         {% if form.instance.pk %}
             <button type="button" class="btn btn-danger" onclick="confirmDelete({{ form.instance.id }})">Löschen</button>
         {% endif %}
-        <button type="button" class="btn btn-success" onclick="window.location.href='{% url "organisation_create" %}'">Neue Organisation</button>
+        
         
     </form>
 </div>

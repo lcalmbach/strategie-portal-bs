@@ -28,7 +28,7 @@ urlpatterns = [
     path("plan_record/<int:pk>/edit/", views.PlanRecordUpdateView.as_view(), name="plan_record_edit"),
 
 
-    path("person/<int:pk>/edit/", views.person_edit, name="person_edit"),
+    path("person/<int:pk>/edit/", views.PersonUpdateView.as_view(), name="person_edit"),
     path("organisation/<int:pk>/edit/", views.organisation_edit, name="organisation_edit"),
     path('massnahme_org/edit/<int:pk>/', views.MassnahmeOrganisationUpdateView.as_view(), name='massnahme_org_edit'),
 
