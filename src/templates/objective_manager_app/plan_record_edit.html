@@ -6,29 +6,39 @@
 <div class="container">
     <h1>Rückmeldung {{ plan_record.jahr }}</h1>
     <br>
-    <H3>Massnahme: {{ plan_record.massnahme.kuerzel }} {{ plan_record.massnahme }}</H3>
+    <H3>Massnahme:<br>{{ plan_record.massnahme.kuerzel }} {{ plan_record.massnahme }}</H3>
     <br>
     <b>Info zur Massnahme</b>
     <table class="table">
         <tr>
             <th>Handlungsfeld</th>
-            <td>{{ plan_record.massnahme.vorgaenger.vorgaenger  }}</td>
+            <td>{{ plan_record.massnahme.vorgaenger.vorgaenger  }}
+                <a href="{% url 'handlungsfeld_detail' plan_record.massnahme.vorgaenger.vorgaenger.pk %}">
+                    <i class="fas fa-link"></i>
+                </a>
+            </td>
         </tr>
         <tr>
             <th>Ziel</th>
-            <td>{{ plan_record.massnahme.vorgaenger  }}</td>
+            <td>{{ plan_record.massnahme.vorgaenger  }}
+                <a href="{% url 'ziel_detail' plan_record.massnahme.vorgaenger.pk %}">
+                    <i class="fas fa-link"></i>
+                </a>
+            </td>
         </tr>
         <tr>
-            <th>Messbarkeit</th>
-            <td>{{ plan_record.massnahme.mess_groesse }}</td>
+            <th>Ziel Beschreibung</th>
+            <td>{{ plan_record.massnahme.vorgaenger.beschreibung  }}</td>
         </tr>
-        <tr>
-            <th>Fällig am</th>
-            <td>{{ plan_record.faellig_am }}</td>
-        </tr>
-    </table>
+    </table>    
+        
+    <b>Indikator Messbarkeit</b>
+    <p>Messbarkeit der Umsetzung der Massnahme: {{ plan_record.massnahme.mess_groesse }}</p>
+    <b>Indikator Termin:</b>
+    <p>Termin für die Umsetzung der Massnahme der Umsetzung: {{ plan_record.faellig_am }}</p>
+    <br>
     <hr>
-
+    <br>
     {%if is_fgs_member %}
         <b>Rückmeldung MV</b>
         <table class="table">

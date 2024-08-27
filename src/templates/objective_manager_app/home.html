@@ -9,19 +9,21 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Jahr</th>
-                            <th>Departement</th>
-                            <th>Organisation</th>
                             <th>Massnahme</th>
                             <th>Verantwortlich</th>
+                            <th>Organisation</th>
+                            <th>Departement</th>
+                            <th>Jahr<br>Berichterstattung</th>
+                            <th>Termin Umsetzung</th>
                             <th>Status</th>
-                            <th>Fortschritt</th>
-                            <th>Zufriedenheit</th>
-                            <th>Schwierigkeiten</th>
-                            <th>Edit</th>
+                            <th>Termin eingehalten</th>
+                            <th>Fortschritt Umsetzung</th>
+                            <th>Zufriedenheit MV</th>
                         </tr>
                         <tr>
-                            <th><input type="text" name="jahr" class="form-control" placeholder="Filter Jahr" value="{{ request.GET.jahr }}"></th>
+                            <th><input type="text" name="massnahme" class="form-control" placeholder="Filter Massnahme" value="{{ request.GET.massnahme }}"></th>
+                            <th><input type="text" name="verantwortlich" class="form-control" placeholder="Filter Verantwortlich" value="{{ request.GET.verantwortlich }}"></th>
+                            <th><input type="text" name="organisation" class="form-control" placeholder="Filter Organisation" value="{{ request.GET.organisation }}"></th>
                             <th>
                                 <select name="departement" class="form-control">
                                     <option value="">-- Filter Departement --</option>
@@ -32,14 +34,14 @@
                                     {% endfor %}
                                 </select>
                             </th>
-                            <th><input type="text" name="organisation" class="form-control" placeholder="Filter Organisation" value="{{ request.GET.organisation }}"></th>
-                            <th><input type="text" name="massnahme" class="form-control" placeholder="Filter Massnahme" value="{{ request.GET.massnahme }}"></th>
-                            <th><input type="text" name="verantwortlich" class="form-control" placeholder="Filter Verantwortlich" value="{{ request.GET.aufwand_ist }}"></th>
-                            <th><input type="text" name="status" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
-                            <th><input type="text" name="status" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
-                            <th><input type="text" name="status" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
-                            <th><input type="text" name="status" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
-
+                            <th><input type="text" name="jahr" class="form-control" placeholder="Filter Jahr" value="{{ request.GET.jahr }}"></th>
+                            <th><input type="text" name="termin" class="form-control" placeholder="Filter Jahr" value="{{ request.GET.jahr }}"></th>
+                    
+                            <th><input type="text" name="status" class="form-control" placeholder="Filter Verantwortlich" value="{{ request.GET.aufwand_ist }}"></th>
+                            <th><input type="text" name="termin_eingehalten" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="fortschritt" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="zufriedenheit" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
+                            
                             <th><button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i></button></th>
                         </tr>
                     </thead>
@@ -47,12 +49,14 @@
                 <tbody>
                     {% for pr in plan_records %}
                     <tr>
-                        <td>{{pr.jahr}}</td>
-                        <td>{{ pr.organisation.departement_kuerzel }}</td>
-                        <td>{{ pr.organisation.dienststelle }}</td>
                         <td>{{ pr.massnahme.kuerzel }}</td>
                         <td>{{ pr.verantwortlich }}</td>
+                        <td>{{ pr.organisation.dienststelle_kuerzel }}</td>
+                        <td>{{ pr.organisation.departement_kuerzel }}</td>
+                        <td>{{pr.jahr}}</td>
+                        <td>{{pr.massnahme.faellig_am}}</td>
                         <td>{{ pr.status }}</td>
+                        <td>{{ pr.termin_eingehalten }}</td>
                         <td>
                             {% if pr.fortschritt.id == 14 %}
                                 <span class="dot green-dot"></span>
@@ -75,29 +79,13 @@
                                 <span class="dot grey-dot"></span>
                             {% endif %}
                         </td>
-                        <td>
-                            {% if pr.schwierigkeiten.id == 14 %}
-                                <span class="dot green-dot"></span>
-                            {% elif pr.schwierigkeiten.id == 15 %}
-                                <span class="dot orange-dot"></span>
-                            {% elif pr.schwierigkeiten.id == 16 %}
-                                <span class="dot red-dot"></span>
-                            {% else %}
-                                <span class="dot grey-dot"></span>
-                            {% endif %}
-                        </td>
+                        
                         <td><a href="{% url 'plan_record_edit' pr.pk %}"><i class="fas fa-edit"></i></a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
             <br>
-            {% if is_fgs_member %}
-                <form method="post">
-                    {% csrf_token %}
-                    <button type="submit" action="initialize" class="btn btn-primary"><i class="fa fa-plus"></i>Planung initialisieren</button>
-                </form>
-            {% endif %}
         {% else %}
             Bitte <a href="{% url 'login_account:login' %}">einloggen</a>
         {% endif %}

@@ -83,6 +83,7 @@ class Code(models.Model):
     kuerzel = models.CharField(max_length=10)
     titel = models.CharField(max_length=10)
     beschreibung = models.CharField(max_length=200)
+    color = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return self.titel
@@ -223,14 +224,18 @@ class PlanRecord(models.Model):
     verantwortlich = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name="Massnahmenverantwortliche Person", null=True, blank=True, related_name='planrecord_person')
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, verbose_name="Federführende Organisation", null=True, blank=True, related_name='planrecord_organisation')
 
-    rueckmeldung_code_mv = models.ForeignKey(RueckmeldungMV, on_delete=models.CASCADE, verbose_name="Bemerkungen MV (codiert)", null=True, blank=True, related_name='planrecord_bemerkungen_code_mv')
-    
-    rueckmeldung_mv = models.TextField(verbose_name="Bemerkungen MV zu Fortschritt, Zufriedenheit und Schwierigkeiten", null=True, blank=True)
+    rueckmeldung_austausch = models.BooleanField(verbose_name="Austausch oder Beratung ist erwünscht", null=True, default=False)
+    rueckmeldung_schwierigkeiten = models.BooleanField(verbose_name="Umsetzung der Massnahme bereitet Schwierigkeiten", null=True, default=False)
+    rueckmeldung_neupriorisierung = models.BooleanField(verbose_name="Neupriorisierung von departemententalen Zielen", null=True, default=False)
+    rueckmeldung_pol_vorstoss = models.BooleanField(verbose_name="Politischer Vorstoss hat Auswirkungen auf die Massnahme", null=True, default=False)
+    rueckmeldung_anderes = models.BooleanField(verbose_name="Anderes", null=True, default=False)
+    rueckmeldung_anderes_text = models.TextField(verbose_name="Anderes", max_length=500, null=True, blank=True)
+
+    rueckmeldung_mv = models.TextField(verbose_name="Allgmeine Bemerkungen", null=True, blank=True)
     einhaltung_termin = models.BooleanField(verbose_name="Termin wird eingehalten", null=True, default=False)
-    umsetzung_mv = models.TextField(verbose_name="Was wurde im Berichtsjahr umgesetzt?", null=True, blank=True)
+    umsetzung_mv = models.TextField(verbose_name="Welche Schritte, Teilprojekte oder Meilensteine wurden im Berichtsjahr umgesetzt?", null=True, blank=True)
     
-    fortschritt = models.ForeignKey(Wertung, verbose_name="Zielerreichungsgrad", blank=True, null=True, on_delete=models.CASCADE, related_name='planrecord_fortschritt')
-    zufriedenheit = models.ForeignKey(Wertung, verbose_name="Wie zufrieden sind die MV mit der Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_zufriedenheit')
+    zufriedenheit = models.ForeignKey(Wertung, verbose_name="Wie zufrieden sind Sie mit der Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_zufriedenheit')
     schwierigkeiten = models.ForeignKey(Wertung, verbose_name="Schwierigkeiten", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_schwierigkeiten')
     
     rueckmeldung_fgs = models.TextField(verbose_name="Bemerkungen FGS", null=True, blank=True)

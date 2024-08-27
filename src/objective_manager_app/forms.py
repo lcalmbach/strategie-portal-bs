@@ -49,7 +49,27 @@ class PlanRecordSPForm(forms.ModelForm):
 class PlanRecordMVForm(forms.ModelForm):
     class Meta:
         model = PlanRecord
-        fields = ['status', 'rueckmeldung_code_mv', 'rueckmeldung_mv', 'einhaltung_termin', 'umsetzung_mv', 'fortschritt', 'zufriedenheit', 'schwierigkeiten']
+        fields = ['status',
+                  'rueckmeldung_austausch', 
+                  'rueckmeldung_schwierigkeiten', 
+                  'rueckmeldung_neupriorisierung',
+                  'rueckmeldung_pol_vorstoss',
+                  'rueckmeldung_anderes',
+                  'rueckmeldung_anderes_text',   
+                  'rueckmeldung_mv', 
+                  'einhaltung_termin', 
+                  'umsetzung_mv', 
+                  'zufriedenheit', 
+                  'schwierigkeiten'
+            ]
+        widgets = {
+            'einhaltung_termin': forms.CheckboxInput(),
+            'rueckmeldung_austausch': forms.CheckboxInput(),
+            'rueckmeldung_schwierigkeiten': forms.CheckboxInput(),
+            'rueckmeldung_neupriorisierung': forms.CheckboxInput(),
+            'rueckmeldung_pol_vorstoss': forms.CheckboxInput(),
+            'rueckmeldung_anderes': forms.CheckboxInput()
+        }
         
 
 class PersonForm(forms.ModelForm):
