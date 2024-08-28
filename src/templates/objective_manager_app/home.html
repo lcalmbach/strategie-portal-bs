@@ -14,11 +14,17 @@
                             <th>Organisation</th>
                             <th>Departement</th>
                             <th>Jahr<br>Berichterstattung</th>
-                            <th>Termin Umsetzung</th>
+                            <th>Termin Um
+                                setzung</th>
                             <th>Status</th>
                             <th>Termin eingehalten</th>
                             <th>Fortschritt Umsetzung</th>
                             <th>Zufriedenheit MV</th>
+                            <th>Austausch erwünscht</th>
+                            <th>Schwierigkeiten</th>
+                            <th>Neuprio</th>
+                            <th>Pol. Vorstoss</th>
+                            <th>Anderes</th>
                         </tr>
                         <tr>
                             <th><input type="text" name="massnahme" class="form-control" placeholder="Filter Massnahme" value="{{ request.GET.massnahme }}"></th>
@@ -38,9 +44,14 @@
                             <th><input type="text" name="termin" class="form-control" placeholder="Filter Jahr" value="{{ request.GET.jahr }}"></th>
                     
                             <th><input type="text" name="status" class="form-control" placeholder="Filter Verantwortlich" value="{{ request.GET.aufwand_ist }}"></th>
-                            <th><input type="text" name="termin_eingehalten" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
-                            <th><input type="text" name="fortschritt" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
-                            <th><input type="text" name="zufriedenheit" class="form-control" placeholder="Filter Status" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="termin_eingehalten" class="form-control" placeholder="Filter Termin" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="fortschritt" class="form-control" placeholder="Filter Fortschritt" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="zufriedenheit" class="form-control" placeholder="Filter Zufriedenheit" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="austausch" class="form-control" placeholder="Filter Austausch" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="schwierigkeiten" class="form-control" placeholder="Filter Schwierigkeiten" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="neupriorisierung" class="form-control" placeholder="Filter Neuprio" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="pol_vorstoss" class="form-control" placeholder="Filter pol. Vorstoss" value="{{ request.GET.status }}"></th>
+                            <th><input type="text" name="anderes" class="form-control" placeholder="Filter Anderes" value="{{ request.GET.status }}"></th>
                             
                             <th><button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i></button></th>
                         </tr>
@@ -53,10 +64,18 @@
                         <td>{{ pr.verantwortlich }}</td>
                         <td>{{ pr.organisation.dienststelle_kuerzel }}</td>
                         <td>{{ pr.organisation.departement_kuerzel }}</td>
-                        <td>{{pr.jahr}}</td>
-                        <td>{{pr.massnahme.faellig_am}}</td>
+                        <td>{{ pr.jahr}}</td>
+                        <td>{{ pr.massnahme.jahr_ende }}</td>
                         <td>{{ pr.status }}</td>
-                        <td>{{ pr.termin_eingehalten }}</td>
+                        <td>
+                            {% if pr.einhaltung_termin.id == 25 %}
+                                <span class="dot red-dot"></span>
+                            {% elif pr.einhaltung_termin.id == 24 %}
+                                <span class="dot green-dot"></span>
+                            {% else %}
+                                <span class="dot grey-dot"></span>
+                            {% endif %}
+                        </td>
                         <td>
                             {% if pr.fortschritt.id == 14 %}
                                 <span class="dot green-dot"></span>
@@ -79,7 +98,41 @@
                                 <span class="dot grey-dot"></span>
                             {% endif %}
                         </td>
-                        
+                        <td>
+                            {% if pr.rueckmeldung_austausch %}
+                                <i class="fas fa-check-square"></i> <!-- Checked icon -->
+                            {% else %}
+                                <i class="fas fa-square"></i> <!-- Unchecked icon -->
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pr.rueckmeldung_schwierigkeiten %}
+                                <i class="fas fa-check-square"></i> <!-- Checked icon -->
+                            {% else %}
+                                <i class="fas fa-square"></i> <!-- Unchecked icon -->
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pr.rueckmeldung_neupriorisierung %}
+                                <i class="fas fa-check-square"></i> <!-- Checked icon -->
+                            {% else %}
+                                <i class="fas fa-square"></i> <!-- Unchecked icon -->
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pr.rueckmeldung_pol_vorstoss %}
+                                <i class="fas fa-check-square"></i> <!-- Checked icon -->
+                            {% else %}
+                                <i class="fas fa-square"></i> <!-- Unchecked icon -->
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if pr.rueckmeldung_anderes %}
+                                <i class="fas fa-check-square"></i> <!-- Checked icon -->
+                            {% else %}
+                                <i class="fas fa-square"></i> <!-- Unchecked icon -->
+                            {% endif %}
+                        </td>
                         <td><a href="{% url 'plan_record_edit' pr.pk %}"><i class="fas fa-edit"></i></a></td>
                     </tr>
                     {% endfor %}
@@ -110,6 +163,12 @@
         .grey-dot {
             background-color: grey;
         }
+
+            .fas {
+                font-size: 1.5em; /* Adjust the size */
+                color: grey;
+            }
+
     </style>
     {% endblock %}
 

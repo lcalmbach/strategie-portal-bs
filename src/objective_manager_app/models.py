@@ -54,6 +54,26 @@ class BusinessObjectTypManager(models.Manager):
         return super().get_queryset().filter(kategorie_id=1)
 
 
+class HandlungsfeldManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(typ_id=2)
+
+
+class ZielManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(typ_id=3)
+    
+
+class MassnahmeManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(typ_id=4)
+    
+
+class BusinessObjectTypManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(kategorie_id=1)
+
+
 class NeuBestehendManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(kategorie_id=2)
@@ -68,7 +88,7 @@ class RolleManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(kategorie_id=3)
     
-
+        
 class WertungManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(kategorie_id=5)
@@ -78,6 +98,16 @@ class StatusMassnahmeManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(kategorie_id=6)
 
+class ZufriedenheitManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(kategorie_id=7)
+    
+class JaNeinManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(kategorie_id=8)
+
+
+    
 class Code(models.Model):
     kategorie = models.ForeignKey(CodeKategorie, on_delete=models.CASCADE)
     kuerzel = models.CharField(max_length=10)
@@ -89,21 +119,6 @@ class Code(models.Model):
         return self.titel
 
 
-class HandlungsfeldManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(typ_id=2)
-
-
-class ZielManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(typ_id=3)
-
-
-class MassnahmeManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(typ_id=4)
-
-
 class BusinessObject(models.Model):
     typ = models.ForeignKey("BusinessObjectTyp", on_delete=models.CASCADE, related_name="typ")
     vorgaenger = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True)
@@ -112,10 +127,8 @@ class BusinessObject(models.Model):
     beschreibung = models.TextField(verbose_name="Beschreibung")
     erstellt_am = models.DateTimeField(auto_now_add=True, verbose_name="Erstellt am")
     erstellt_von = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Erstellt von", blank=True)
-    aufwand_personen_tage_plan = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Aufwand Personentage", default=0)
-    aufwand_tsd_chf_plan = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Aufwand tsd CHF", default=0)
-    jahr_start = models.IntegerField(verbose_name="Jahr Start", default=datetime.now().year)
-    jahr_ende = models.IntegerField(verbose_name="Jahr Ende", default=datetime.now().year)
+    
+    jahr_ende = models.IntegerField(verbose_name="Termin", default=datetime.now().year)
     anmerkung_initialisierung = models.TextField(verbose_name="Pol. Vorstoss", null=True, blank=True)
     mess_groesse = models.CharField(max_length=200, verbose_name="Messbarkeit", blank=True, null=True)
     # messbarkeit = models.CharField(max_length=200, verbose_name="Messbarkeit")  
@@ -196,6 +209,22 @@ class NeuBestehend(Code):
         proxy = True
 
 
+
+class JaNein(Code):
+    objects = JaNeinManager()
+
+    class Meta:
+        proxy = True
+
+
+
+class Zufriedenheit(Code):
+    objects = ZufriedenheitManager()
+
+    class Meta:
+        proxy = True
+
+
 class Handlungsfeld(BusinessObject):
     objects = HandlungsfeldManager()
 
@@ -220,7 +249,6 @@ class Massnahme(BusinessObject):
 class PlanRecord(models.Model):
     massnahme = models.ForeignKey(Massnahme, on_delete=models.CASCADE)
     jahr = models.IntegerField(verbose_name="Jahr", default=datetime.now().year)
-    faellig_am = models.DateField(verbose_name="Fällig am", blank=True, null=True)
     verantwortlich = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name="Massnahmenverantwortliche Person", null=True, blank=True, related_name='planrecord_person')
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, verbose_name="Federführende Organisation", null=True, blank=True, related_name='planrecord_organisation')
 
@@ -232,10 +260,12 @@ class PlanRecord(models.Model):
     rueckmeldung_anderes_text = models.TextField(verbose_name="Anderes", max_length=500, null=True, blank=True)
 
     rueckmeldung_mv = models.TextField(verbose_name="Allgmeine Bemerkungen", null=True, blank=True)
-    einhaltung_termin = models.BooleanField(verbose_name="Termin wird eingehalten", null=True, default=False)
+    
+    einhaltung_termin = models.ForeignKey(JaNein, verbose_name="Termin wird eingehalten", on_delete=models.CASCADE, null=True, blank=True, related_name='planrecord_einhaltung_termin')
+    einhaltung_termin_text = models.TextField(verbose_name="Begründung der Abweichung", max_length=500, null=True, blank=True)
     umsetzung_mv = models.TextField(verbose_name="Welche Schritte, Teilprojekte oder Meilensteine wurden im Berichtsjahr umgesetzt?", null=True, blank=True)
     
-    zufriedenheit = models.ForeignKey(Wertung, verbose_name="Wie zufrieden sind Sie mit der Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_zufriedenheit')
+    zufriedenheit = models.ForeignKey(Zufriedenheit, verbose_name="Wie zufrieden sind Sie mit der Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_zufriedenheit')
     schwierigkeiten = models.ForeignKey(Wertung, verbose_name="Schwierigkeiten", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_schwierigkeiten')
     
     rueckmeldung_fgs = models.TextField(verbose_name="Bemerkungen FGS", null=True, blank=True)

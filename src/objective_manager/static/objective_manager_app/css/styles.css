@@ -46,3 +46,8 @@
 .top-aligned {
     align-items: flex-start;
   }
+
+.fas {
+    font-size: 1.5em; /* Adjust the size */
+    color: white; /* Adjust the color */
+}

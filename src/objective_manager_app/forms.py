@@ -33,7 +33,11 @@ class PlanRecordAdminForm(forms.ModelForm):
         model = PlanRecord
         fields = '__all__'
         widgets = {
-            'faellig_am': forms.DateInput(attrs={'type': 'date'}),  # HTML5 date input
+             'rueckmeldung_austausch': forms.CheckboxInput(),
+            'rueckmeldung_schwierigkeiten': forms.CheckboxInput(),
+            'rueckmeldung_neupriorisierung': forms.CheckboxInput(),
+            'rueckmeldung_pol_vorstoss': forms.CheckboxInput(),
+            'rueckmeldung_anderes': forms.CheckboxInput()
         }
 
 class PlanRecordFGSForm(forms.ModelForm):
@@ -58,12 +62,12 @@ class PlanRecordMVForm(forms.ModelForm):
                   'rueckmeldung_anderes_text',   
                   'rueckmeldung_mv', 
                   'einhaltung_termin', 
+                  'einhaltung_termin_text',
                   'umsetzung_mv', 
                   'zufriedenheit', 
                   'schwierigkeiten'
             ]
         widgets = {
-            'einhaltung_termin': forms.CheckboxInput(),
             'rueckmeldung_austausch': forms.CheckboxInput(),
             'rueckmeldung_schwierigkeiten': forms.CheckboxInput(),
             'rueckmeldung_neupriorisierung': forms.CheckboxInput(),

@@ -6,7 +6,8 @@
 <div class="container">
     <h1>Rückmeldung {{ plan_record.jahr }}</h1>
     <br>
-    <H3>Massnahme:<br>{{ plan_record.massnahme.kuerzel }} {{ plan_record.massnahme }}</H3>
+    <h3>Massnahme:</h3><b>{{ plan_record.massnahme.kuerzel }} {{ plan_record.massnahme }}</b>
+    <br>
     <br>
     <b>Info zur Massnahme</b>
     <table class="table">
@@ -18,26 +19,12 @@
                 </a>
             </td>
         </tr>
+        
         <tr>
             <th>Ziel</th>
-            <td>{{ plan_record.massnahme.vorgaenger  }}
-                <a href="{% url 'ziel_detail' plan_record.massnahme.vorgaenger.pk %}">
-                    <i class="fas fa-link"></i>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <th>Ziel Beschreibung</th>
             <td>{{ plan_record.massnahme.vorgaenger.beschreibung  }}</td>
         </tr>
     </table>    
-        
-    <b>Indikator Messbarkeit</b>
-    <p>Messbarkeit der Umsetzung der Massnahme: {{ plan_record.massnahme.mess_groesse }}</p>
-    <b>Indikator Termin:</b>
-    <p>Termin für die Umsetzung der Massnahme der Umsetzung: {{ plan_record.faellig_am }}</p>
-    <br>
-    <hr>
     <br>
     {%if is_fgs_member %}
         <b>Rückmeldung MV</b>
@@ -52,7 +39,7 @@
             </tr>
             <tr>
                 <td>Einhaltung Termin</th>
-                <td>{{ plan_record.einhaltung_termin }}</td>
+                <td>{{ plan_record.einhaltung_term }}</td>
             </tr>
             <tr>
                 <td>Einschätzung Fortschritt</th>
@@ -82,7 +69,7 @@
             </tr>
             <tr>
                 <td>Einhaltung Termin</th>
-                <td>{{ plan_record.einhaltung_termin }}</td>
+                <td>{{ plan_record.einhaltung_term }}</td>
             </tr>
             <tr>
                 <td>Einschätzung Fortschritt</th>
@@ -101,36 +88,78 @@
         <b>Rückmeldung Schlüsselperson</b>
         <br>
     {% endif %}
-
-
-    <br>
     <form method="post">
         {% csrf_token %}
-        {{ form|crispy }}
+    
+        <!-- Block 1: Title and Fields -->
+        <div class="form-block">
+            <h3>Indikator Messbarkeit</h3>
+            <p>Messbarkeit der Umsetzung der Massnahme: {{ plan_record.massnahme.mess_groesse }}</p>
+            <div class="form-group">
+                {{ form.rueckmeldung_austausch }}
+                {{ form.rueckmeldung_austausch.label_tag }}
+            </div>
+            <div class="form-group">
+                {{ form.rueckmeldung_schwierigkeiten }}
+                {{ form.rueckmeldung_schwierigkeiten.label_tag }}
+                
+            </div>
+            <div class="form-group">
+                {{ form.rueckmeldung_neupriorisierung }}
+                {{ form.rueckmeldung_neupriorisierung.label_tag }}
+                
+            </div>
+            <div class="form-group">
+                {{ form.rueckmeldung_pol_vorstoss }}
+                {{ form.rueckmeldung_pol_vorstoss.label_tag }}
+            </div>
+            <div class="form-group">
+                {{ form.rueckmeldung_anderes }}
+                {{ form.rueckmeldung_anderes.label_tag }}
+            </div>
+            <div class="form-group" id="rueckmeldung_anderes_text_block" style="display: none;">
+                <label for="{{ form.rueckmeldung_anderes_text.id_for_label }}" class="form-label">
+                    {{ form.rueckmeldung_anderes_text.label }}
+                </label>
+                {{ form.rueckmeldung_anderes_text }}
+            </div>
+        </div>
+        <br>
+        <!-- Block 2: Title and Conditional Fields -->
+        <div class="form-block">
+            <h3>Indikator Termin</h3>
+            
+        </div>
+    
         <button type="submit" class="btn btn-primary">Speichern</button>
     </form>
-</div>
-{% endblock %}
 
-massnahme = models.ForeignKey(Massnahme, on_delete=models.CASCADE)
-    verantwortlich = models.ForeignKey(MassnahmeOrganisation, on_delete=models.CASCADE, verbose_name="Massnahme")
-    jahr = models.IntegerField(verbose_name="Jahr", default=datetime.now().year)
-    
-    bemerkungen_code_mv = models.ForeignKey(RueckmeldungMV, on_delete=models.CASCADE, verbose_name="Bemerkungen MV (codiert)", null=True, blank=True, related_name='planrecord_bemerkungen_code_mv')
-    
-    rueckmeldung_mv = models.TextField(verbose_name="Bemerkungen MV zu Fortschritt, Zufriedenheit und Schwierigkeiten", null=True, blank=True)
-    einhaltung_termin = models.BooleanField(verbose_name="Termin wird eingehalten", null=True, default=False)
-    umsetzung_mv = models.TextField(verbose_name="Was wurde im Berichtsjahr umgesetzt?", null=True, blank=True)
-    
-    fortschritt = models.ForeignKey(Wertung, verbose_name="Zielerreichungsgrad", blank=True, null=True, on_delete=models.CASCADE, related_name='planrecord_fortschritt')
-    zufriedenheit = models.ForeignKey(Wertung, verbose_name="Wie zufrieden sind die MV mit der Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_zufriedenheit')
-    schwierigkeiten = models.ForeignKey(Wertung, verbose_name="Schwierigkeiten", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_schwierigkeiten')
-    
-    bemerkungen_fgs = models.TextField(verbose_name="Bemerkungen FGS", null=True, blank=True)
-    bemerkungen_sp = models.TextField(verbose_name="Bemerkungen SP", null=True, blank=True)
-    status = models.ForeignKey(StatusMassnahme,verbose_name="Status", null=True, default=17, on_delete=models.CASCADE)
-    
-    faellig_am = models.DateField(verbose_name="Fällig am", blank=True, null=True)
-    
-    erstellt_am = models.DateTimeField(auto_now_add=True, verbose_name='Erstellt am')
-    erstellt_von = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Erstellt von')
+    <b>Indikator Termin:</b>
+    <p>Termin für die Umsetzung der Massnahme: {{ plan_record.massnahme.jahr_ende }}</p>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var checkbox = document.getElementById('id_rueckmeldung_anderes');
+        var textFieldBlock = document.getElementById('rueckmeldung_anderes_text_block');
+
+        function toggleTextField() {
+            console.log("Checkbox checked state: ", checkbox.checked);
+
+            if (checkbox.checked) {
+                textFieldBlock.style.display = 'block';
+            } else {
+                textFieldBlock.style.display = 'none';
+            }
+        }
+
+        toggleTextField();
+
+        checkbox.addEventListener('change', function() {
+            console.log("Checkbox state changed.");
+            toggleTextField();
+        });
+    });
+</script>
+
+{% endblock %}
