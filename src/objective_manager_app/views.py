@@ -107,8 +107,8 @@ def plan_records_list(request):
     plan_records = PlanRecord.objects.all()
     departement_choices = Organisation.objects.values_list('departement_kuerzel', flat=True).distinct().order_by('departement_kuerzel')
     status_choices = StatusMassnahme.objects.all()
-    zufriedenheit_choices = Wertung.objects.all()
-    print(status_choices)
+    stand_choices = Wertung.objects.all()
+
     # Filter based on user group
     if user.groups.filter(name='mv').exists():
         plan_records = plan_records.filter(verantwortlich__user=user)
@@ -126,7 +126,6 @@ def plan_records_list(request):
         
         organisation = request.GET.get('organisation')
         if organisation:
-            print(organisation)
             plan_records = plan_records.filter(organisation__bereich_kuerzel__icontains=organisation)
         
         departement = request.GET.get('departement')
@@ -159,6 +158,7 @@ def plan_records_list(request):
         'plan_records': plan_records,
         'departement_choices': departement_choices,
         'status_choices': status_choices,
+        'stand_choices': stand_choices, 
         'is_fgs_member': user.groups.filter(name='fgs').exists(),
         'is_sp_member': user.groups.filter(name='sp').exists(),
         'is_mv_member': user.groups.filter(name='mv').exists(),

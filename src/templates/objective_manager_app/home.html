@@ -76,10 +76,10 @@
                             </th>
                             <th>
                                 <select name="stand" class="form-control">
-                                    <option value="">-- Filter Status --</option>
-                                    {% for status in status_choices %}
-                                        <option value="{{ status }}" {% if request.GET.status == status %}selected{% endif %}>
-                                            {{ status }}
+                                    <option value="">-- Filter Stand --</option>
+                                    {% for stand in stand_choices %}
+                                        <option value="{{ stand }}" {% if request.GET.stand == stand %}selected{% endif %} class="{{stand.color}}-dot">
+                                            {{ stand }}
                                         </option>
                                     {% endfor %}
                                 </select>
@@ -128,12 +128,10 @@
                         <td>{{ pr.massnahme.jahr_ende }}</td>
                         <td>{{ pr.status }}</td>
                         <td>
-                            {% if pr.einhaltung_termin.id == 25 %}
-                                <span class="dot red-dot"></span>
-                            {% elif pr.einhaltung_termin.id == 24 %}
-                                <span class="dot green-dot"></span>
+                            {% if pr.einhaltung_termin %}
+                                <i class="fas fa-check-square"></i> <!-- Checked icon -->
                             {% else %}
-                                <span class="dot grey-dot"></span>
+                                <i class="fas fa-square"></i> <!-- Unchecked icon -->
                             {% endif %}
                         </td>
                         <td>
