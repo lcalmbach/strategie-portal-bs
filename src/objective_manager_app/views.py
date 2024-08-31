@@ -1,9 +1,10 @@
 from enum import Enum
 from django.http import HttpRequest
+from django.db.models import Q
 from django.http.response import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy   
-from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation, MassnahmeOrganisation
+from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation, MassnahmeOrganisation, StatusMassnahme, Wertung
 from .forms import PlanRecordMVForm, PlanRecordSPForm, PlanRecordFGSForm, PlanRecordAdminForm, PersonForm, OrganisationForm,ZielForm,HandlungsfeldForm, MassnahmeForm, MassnahmeOrganisationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 import plotly.graph_objs as go
@@ -105,7 +106,9 @@ def plan_records_list(request):
     user = request.user
     plan_records = PlanRecord.objects.all()
     departement_choices = Organisation.objects.values_list('departement_kuerzel', flat=True).distinct().order_by('departement_kuerzel')
-
+    status_choices = StatusMassnahme.objects.all()
+    zufriedenheit_choices = Wertung.objects.all()
+    print(status_choices)
     # Filter based on user group
     if user.groups.filter(name='mv').exists():
         plan_records = plan_records.filter(verantwortlich__user=user)
@@ -123,19 +126,39 @@ def plan_records_list(request):
         
         organisation = request.GET.get('organisation')
         if organisation:
-            plan_records = plan_records.filter(bereich__icontains=organisation)
+            print(organisation)
+            plan_records = plan_records.filter(organisation__bereich_kuerzel__icontains=organisation)
         
         departement = request.GET.get('departement')
         if departement:
-            plan_records = plan_records.filter(departement__kuerzel__icontains=departement)
+            plan_records = plan_records.filter(organisation__departement_kuerzel__icontains=departement)
         
         massnahme = request.GET.get('massnahme')
         if massnahme:
-            plan_records = plan_records.filter(massnahme__titel__icontains=massnahme)
+            plan_records = plan_records.filter(massnahme__kuerzel__icontains=massnahme)
         
+        verantwortlich = request.GET.get('verantwortlich')
+        if verantwortlich:
+            plan_records = plan_records.filter(
+            Q(verantwortlich__nachname__icontains=verantwortlich) |
+            Q(verantwortlich__vorname__icontains=verantwortlich)
+        )
+        
+        status = request.GET.get('status')
+        if status:
+            pass
+            # plan_records = plan_records.filter(status_name__icontains=status)
+
+        einhaltung_termin = request.GET.get('termin_eingehalten') == 'on'
+        if einhaltung_termin:
+            plan_records = plan_records.filter(einhaltung_termin=True)
+
+
+
     context = {
         'plan_records': plan_records,
         'departement_choices': departement_choices,
+        'status_choices': status_choices,
         'is_fgs_member': user.groups.filter(name='fgs').exists(),
         'is_sp_member': user.groups.filter(name='sp').exists(),
         'is_mv_member': user.groups.filter(name='mv').exists(),
@@ -146,7 +169,6 @@ def plan_records_list(request):
         "objective_manager_app/home.html",
         context,
     )
-
 
 
 # Detail Views
@@ -316,7 +338,6 @@ class PlanRecordUpdateView(LoginRequiredMixin, UpdateView):
     context_object_name = 'plan_record'
     success_url = reverse_lazy('home')  # Adjust this as needed
 
-
     def get_form_class(self):
         # Check user's group and return the corresponding form class
         user = self.request.user
@@ -337,6 +358,10 @@ class PlanRecordUpdateView(LoginRequiredMixin, UpdateView):
         plan_record.erstellt_von = self.request.user
         plan_record.save()
         return redirect('home')
+
+    def form_invalid(self, form):
+        print("Form is invalid. Errors:", form.errors)
+        return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, **kwargs):
         # First, get the existing context from the superclass

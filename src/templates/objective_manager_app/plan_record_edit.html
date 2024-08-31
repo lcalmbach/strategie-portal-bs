@@ -88,78 +88,138 @@
         <b>Rückmeldung Schlüsselperson</b>
         <br>
     {% endif %}
-    <form method="post">
+    <form method="post" action="{% url 'plan_record_edit' plan_record.id %}">
         {% csrf_token %}
     
         <!-- Block 1: Title and Fields -->
         <div class="form-block">
-            <h3>Indikator Messbarkeit</h3>
-            <p>Messbarkeit der Umsetzung der Massnahme: {{ plan_record.massnahme.mess_groesse }}</p>
             <div class="form-group">
+                {{ form.status.label_tag }}
+                {{ form.status }}
+            </div>
+            </br>
+            <b>Indikator Messbarkeit</b>
+            <p>Messbarkeit der Umsetzung der Massnahme: {{ plan_record.massnahme.mess_groesse }}</p>
+            <div class="form-group-inline">
                 {{ form.rueckmeldung_austausch }}
                 {{ form.rueckmeldung_austausch.label_tag }}
             </div>
-            <div class="form-group">
+            <div class="form-group-inline">
                 {{ form.rueckmeldung_schwierigkeiten }}
                 {{ form.rueckmeldung_schwierigkeiten.label_tag }}
-                
             </div>
-            <div class="form-group">
+            <div class="form-group-inline">
                 {{ form.rueckmeldung_neupriorisierung }}
                 {{ form.rueckmeldung_neupriorisierung.label_tag }}
-                
             </div>
-            <div class="form-group">
+            <div class="form-group-inline">
                 {{ form.rueckmeldung_pol_vorstoss }}
                 {{ form.rueckmeldung_pol_vorstoss.label_tag }}
             </div>
-            <div class="form-group">
+            <div class="form-group-inline">
                 {{ form.rueckmeldung_anderes }}
                 {{ form.rueckmeldung_anderes.label_tag }}
             </div>
             <div class="form-group" id="rueckmeldung_anderes_text_block" style="display: none;">
-                <label for="{{ form.rueckmeldung_anderes_text.id_for_label }}" class="form-label">
-                    {{ form.rueckmeldung_anderes_text.label }}
-                </label>
                 {{ form.rueckmeldung_anderes_text }}
+            </div>
+            <div class="form-group">
+                {{ form.umsetzung_mv.label_tag }}
+                {{ form.umsetzung_mv }}
+            </div>
+            <div class="form-group">
+                {{ form.zufriedenheit.label_tag }}
+                {{ form.zufriedenheit }}
+            </div>
+            <div class="form-group">
+                {{ form.schwierigkeiten.label_tag }}
+                {{ form.schwierigkeiten }}
             </div>
         </div>
         <br>
         <!-- Block 2: Title and Conditional Fields -->
         <div class="form-block">
-            <h3>Indikator Termin</h3>
-            
+            <b>Indikator Termin:</b>
+            <p>Termin für die Umsetzung der Massnahme: {{ plan_record.massnahme.jahr_ende }}</p>
+            <div class="form-group-inline">
+                {{ form.einhaltung_termin }}
+                {{ form.einhaltung_termin.label_tag }}
+            </div>
+            <div class="form-group" id="einhaltung_termin_text_block" style="display: none;">
+                {{ form.einhaltung_termin_text }}
+            </div>
         </div>
-    
-        <button type="submit" class="btn btn-primary">Speichern</button>
+        <br>
+        <div class="d-flex align-items-start">
+            <a href="{% url 'home' %}" class="btn btn-secondary mt-3">
+                <i class="fas fa-arrow-left"></i> Zurück
+            </a>
+            <button type="submit" class="btn btn-primary ms-3 mt-3">
+                <i class="fas fa-save"></i> Speichern
+            </button>
+        </div>
     </form>
-
-    <b>Indikator Termin:</b>
-    <p>Termin für die Umsetzung der Massnahme: {{ plan_record.massnahme.jahr_ende }}</p>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var checkbox = document.getElementById('id_rueckmeldung_anderes');
-        var textFieldBlock = document.getElementById('rueckmeldung_anderes_text_block');
-
-        function toggleTextField() {
-            console.log("Checkbox checked state: ", checkbox.checked);
-
-            if (checkbox.checked) {
-                textFieldBlock.style.display = 'block';
+        // Function to toggle text field based on checkbox state
+        function toggleTextField(checkboxId, textFieldBlockId, showOnChecked = true) {
+            var checkbox = document.getElementById(checkboxId);
+            var textFieldBlock = document.getElementById(textFieldBlockId);
+    
+            if (checkbox) {
+                function updateVisibility() {
+                    if (showOnChecked) {
+                        textFieldBlock.style.display = checkbox.checked ? 'block' : 'none';
+                    } else {
+                        textFieldBlock.style.display = checkbox.checked ? 'none' : 'block';
+                    }
+                }
+    
+                // Initial visibility update
+                updateVisibility();
+    
+                // Add event listener to handle changes
+                checkbox.addEventListener('change', function() {
+                    console.log("Checkbox state changed.");
+                    updateVisibility();
+                });
             } else {
-                textFieldBlock.style.display = 'none';
+                console.warn("Checkbox with ID '" + checkboxId + "' not found.");
             }
         }
-
-        toggleTextField();
-
-        checkbox.addEventListener('change', function() {
-            console.log("Checkbox state changed.");
-            toggleTextField();
-        });
+    
+        // Call the function for each checkbox and text field block pair
+        toggleTextField('id_rueckmeldung_anderes', 'rueckmeldung_anderes_text_block', true);
+        toggleTextField('id_einhaltung_termin', 'einhaltung_termin_text_block', false);
     });
 </script>
 
+<style>
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .form-group label {
+        margin-bottom: 5px; 
+    }
+
+    .form-group-inline {
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-group-inline label {
+        margin-right: 10px; 
+        margin-left: 10px; 
+    }
+
+    .textarea-wide {
+        width: 500px; /* Set the desired width */
+        max-width: 100%; /* Prevents the textarea from exceeding the container's width */
+    }
+</style>
 {% endblock %}

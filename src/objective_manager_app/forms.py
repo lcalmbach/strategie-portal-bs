@@ -72,7 +72,11 @@ class PlanRecordMVForm(forms.ModelForm):
             'rueckmeldung_schwierigkeiten': forms.CheckboxInput(),
             'rueckmeldung_neupriorisierung': forms.CheckboxInput(),
             'rueckmeldung_pol_vorstoss': forms.CheckboxInput(),
-            'rueckmeldung_anderes': forms.CheckboxInput()
+            'rueckmeldung_anderes': forms.CheckboxInput(),
+            'einhaltung_termin': forms.CheckboxInput(),
+            'rueckmeldung_anderes_text': forms.Textarea(attrs={'class': 'textarea-wide'}),
+            'umsetzung_mv': forms.Textarea(attrs={'class': 'textarea-wide'})
+            
         }
         
 

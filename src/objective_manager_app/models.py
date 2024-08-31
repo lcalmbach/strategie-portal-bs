@@ -261,12 +261,12 @@ class PlanRecord(models.Model):
 
     rueckmeldung_mv = models.TextField(verbose_name="Allgmeine Bemerkungen", null=True, blank=True)
     
-    einhaltung_termin = models.ForeignKey(JaNein, verbose_name="Termin wird eingehalten", on_delete=models.CASCADE, null=True, blank=True, related_name='planrecord_einhaltung_termin')
+    einhaltung_termin = models.BooleanField(verbose_name="Termin wird eingehalten", null=True, blank=True)
     einhaltung_termin_text = models.TextField(verbose_name="Begründung der Abweichung", max_length=500, null=True, blank=True)
     umsetzung_mv = models.TextField(verbose_name="Welche Schritte, Teilprojekte oder Meilensteine wurden im Berichtsjahr umgesetzt?", null=True, blank=True)
     
     zufriedenheit = models.ForeignKey(Zufriedenheit, verbose_name="Wie zufrieden sind Sie mit der Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_zufriedenheit')
-    schwierigkeiten = models.ForeignKey(Wertung, verbose_name="Schwierigkeiten", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_schwierigkeiten')
+    schwierigkeiten = models.ForeignKey(Wertung, verbose_name="Stand Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_schwierigkeiten')
     
     rueckmeldung_fgs = models.TextField(verbose_name="Bemerkungen FGS", null=True, blank=True)
     rueckmeldung_sp = models.TextField(verbose_name="Bemerkungen SP", null=True, blank=True)

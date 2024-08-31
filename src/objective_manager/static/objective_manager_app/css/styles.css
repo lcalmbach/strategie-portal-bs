@@ -1,4 +1,13 @@
 /* styles.css */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.form-group label {
+    margin-bottom: 5px; /* Adds some space between the label and the input */
+}
 
 .navbar-select {
     background-color: #28a745; /* Green background color */

@@ -14,14 +14,12 @@
                             <th>Organisation</th>
                             <th>Departement</th>
                             <th>Jahr<br>Berichterstattung</th>
-                            <th>Termin Um
-                                setzung</th>
+                            <th>Termin</th>
                             <th>Status</th>
-                            <th>Termin eingehalten</th>
-                            <th>Fortschritt Umsetzung</th>
+                            <th>Einhaltung<br>Termin</th>
                             <th>Zufriedenheit MV</th>
-                            <th>Austausch erwünscht</th>
-                            <th>Schwierigkeiten</th>
+                            <th>Stand<br>Umsetzung</th>
+                            <th>Austausch<br>erwünscht</th>
                             <th>Neuprio</th>
                             <th>Pol. Vorstoss</th>
                             <th>Anderes</th>
@@ -42,16 +40,78 @@
                             </th>
                             <th><input type="text" name="jahr" class="form-control" placeholder="Filter Jahr" value="{{ request.GET.jahr }}"></th>
                             <th><input type="text" name="termin" class="form-control" placeholder="Filter Jahr" value="{{ request.GET.jahr }}"></th>
-                    
-                            <th><input type="text" name="status" class="form-control" placeholder="Filter Verantwortlich" value="{{ request.GET.aufwand_ist }}"></th>
-                            <th><input type="text" name="termin_eingehalten" class="form-control" placeholder="Filter Termin" value="{{ request.GET.status }}"></th>
-                            <th><input type="text" name="fortschritt" class="form-control" placeholder="Filter Fortschritt" value="{{ request.GET.status }}"></th>
-                            <th><input type="text" name="zufriedenheit" class="form-control" placeholder="Filter Zufriedenheit" value="{{ request.GET.status }}"></th>
-                            <th><input type="text" name="austausch" class="form-control" placeholder="Filter Austausch" value="{{ request.GET.status }}"></th>
-                            <th><input type="text" name="schwierigkeiten" class="form-control" placeholder="Filter Schwierigkeiten" value="{{ request.GET.status }}"></th>
-                            <th><input type="text" name="neupriorisierung" class="form-control" placeholder="Filter Neuprio" value="{{ request.GET.status }}"></th>
-                            <th><input type="text" name="pol_vorstoss" class="form-control" placeholder="Filter pol. Vorstoss" value="{{ request.GET.status }}"></th>
-                            <th><input type="text" name="anderes" class="form-control" placeholder="Filter Anderes" value="{{ request.GET.status }}"></th>
+                            <th>
+                                <select name="status" class="form-control">
+                                    <option value="">-- Filter Status --</option>
+                                    {% for status in status_choices %}
+                                        <option value="{{ status }}" {% if request.GET.status == status %}selected{% endif %}>
+                                            {{ status }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </th>
+                            <th>
+                                <select name="einhaltung_termin" class="form-select">
+                                    <option value="" {% if request.GET.einhaltung_termin == "" %}selected{% endif %}>----</option>
+                                    <option value="true" {% if request.GET.einhaltung_termin == "true" %}selected{% endif %}>Ja</option>
+                                    <option value="false" {% if request.GET.einhaltung_termin == "false" %}selected{% endif %}>Nein</option>
+                                </select>
+                            </th>
+                            <th>
+                                <select name="zufriedenheit" class="form-control">
+                                    <option value="">-- Filter Zufriedenheit --</option>
+                                    <option value="20" {% if request.GET.zufriedenheit == "20" %}selected{% endif %} class="green-dot">
+                                        Sehr zufrieden
+                                    </option>
+                                    <option value="21" {% if request.GET.zufriedenheit == "21" %}selected{% endif %} class="orange-dot">
+                                        eher zufrieden
+                                    </option>
+                                    <option value="22" {% if request.GET.zufriedenheit == "22" %}selected{% endif %} class="orange-dot">
+                                        eher unzufrieden
+                                    </option>
+                                    <option value="23" {% if request.GET.zufriedenheit == "23" %}selected{% endif %} class="red-dot">
+                                        sehr unzufrieden
+                                    </option>
+                                </select>
+                            </th>
+                            <th>
+                                <select name="stand" class="form-control">
+                                    <option value="">-- Filter Status --</option>
+                                    {% for status in status_choices %}
+                                        <option value="{{ status }}" {% if request.GET.status == status %}selected{% endif %}>
+                                            {{ status }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </th>
+                            <th>
+                                <select name="austausch" class="form-select">
+                                    <option value="" {% if request.GET.austausch == "" %}selected{% endif %}>----</option>
+                                    <option value="true" {% if request.GET.austausch == "true" %}selected{% endif %}>Ja</option>
+                                    <option value="false" {% if request.GET.austausch == "false" %}selected{% endif %}>Nein</option>
+                                </select>
+                            </th>
+                            <th>
+                                <select name="neupriorisierung" class="form-select">
+                                    <option value="" {% if request.GET.neupriorisierung == "" %}selected{% endif %}>----</option>
+                                    <option value="true" {% if request.GET.neupriorisierung == "true" %}selected{% endif %}>Ja</option>
+                                    <option value="false" {% if request.GET.neupriorisierung == "false" %}selected{% endif %}>Nein</option>
+                                </select>
+                            </th>
+                            <th>
+                                <select name="pol_vorstoss" class="form-select">
+                                    <option value="" {% if request.GET.pol_vorstoss == "" %}selected{% endif %}>----</option>
+                                    <option value="true" {% if request.GET.pol_vorstoss == "true" %}selected{% endif %}>Ja</option>
+                                    <option value="false" {% if request.GET.pol_vorstoss == "false" %}selected{% endif %}>Nein</option>
+                                </select>
+                            </th>
+                            <th>
+                                <select name="anderes" class="form-select">
+                                    <option value="" {% if request.GET.anderes == "" %}selected{% endif %}>----</option>
+                                    <option value="true" {% if request.GET.anderes == "true" %}selected{% endif %}>Ja</option>
+                                    <option value="false" {% if request.GET.anderes == "false" %}selected{% endif %}>Nein</option>
+                                </select>
+                            </th>
                             
                             <th><button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i></button></th>
                         </tr>
@@ -62,7 +122,7 @@
                     <tr>
                         <td>{{ pr.massnahme.kuerzel }}</td>
                         <td>{{ pr.verantwortlich }}</td>
-                        <td>{{ pr.organisation.dienststelle_kuerzel }}</td>
+                        <td>{{ pr.organisation.bereich_kuerzel }}</td>
                         <td>{{ pr.organisation.departement_kuerzel }}</td>
                         <td>{{ pr.jahr}}</td>
                         <td>{{ pr.massnahme.jahr_ende }}</td>
@@ -72,17 +132,6 @@
                                 <span class="dot red-dot"></span>
                             {% elif pr.einhaltung_termin.id == 24 %}
                                 <span class="dot green-dot"></span>
-                            {% else %}
-                                <span class="dot grey-dot"></span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if pr.fortschritt.id == 14 %}
-                                <span class="dot green-dot"></span>
-                            {% elif pr.fortschritt.id == 15 %}
-                                <span class="dot orange-dot"></span>
-                            {% elif pr.fortschritt.id == 16 %}
-                                <span class="dot red-dot"></span>
                             {% else %}
                                 <span class="dot grey-dot"></span>
                             {% endif %}
@@ -99,19 +148,24 @@
                             {% endif %}
                         </td>
                         <td>
+                            {% if pr.schwierigkeiten.id == 14 %}
+                                <span class="dot green-dot"></span>
+                            {% elif pr.schwierigkeiten.id == 15 %}
+                                <span class="dot orange-dot"></span>
+                            {% elif pr.schwierigkeiten.id == 16 %}
+                                <span class="dot red-dot"></span>
+                            {% else %}
+                                <span class="dot grey-dot"></span>
+                            {% endif %}
+                        </td>
+                        <td>
                             {% if pr.rueckmeldung_austausch %}
                                 <i class="fas fa-check-square"></i> <!-- Checked icon -->
                             {% else %}
                                 <i class="fas fa-square"></i> <!-- Unchecked icon -->
                             {% endif %}
                         </td>
-                        <td>
-                            {% if pr.rueckmeldung_schwierigkeiten %}
-                                <i class="fas fa-check-square"></i> <!-- Checked icon -->
-                            {% else %}
-                                <i class="fas fa-square"></i> <!-- Unchecked icon -->
-                            {% endif %}
-                        </td>
+        
                         <td>
                             {% if pr.rueckmeldung_neupriorisierung %}
                                 <i class="fas fa-check-square"></i> <!-- Checked icon -->
@@ -164,11 +218,10 @@
             background-color: grey;
         }
 
-            .fas {
-                font-size: 1.5em; /* Adjust the size */
-                color: grey;
-            }
-
+        .fas {
+            font-size: 1.5em; /* Adjust the size */
+            color: grey;
+        }
     </style>
     {% endblock %}
 
