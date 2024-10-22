@@ -63,9 +63,9 @@ class PlanRecordMVForm(forms.ModelForm):
                   'rueckmeldung_mv', 
                   'einhaltung_termin', 
                   'einhaltung_termin_text',
-                  'umsetzung_mv', 
-                  'zufriedenheit', 
-                  'schwierigkeiten'
+                  'stand_umsetzung', 
+                  'zufriedenheit_umsetzung', 
+                  'stand_umsetzung'
             ]
         widgets = {
             'rueckmeldung_austausch': forms.CheckboxInput(),
@@ -75,8 +75,11 @@ class PlanRecordMVForm(forms.ModelForm):
             'rueckmeldung_anderes': forms.CheckboxInput(),
             'einhaltung_termin': forms.CheckboxInput(),
             'rueckmeldung_anderes_text': forms.Textarea(attrs={'class': 'textarea-wide'}),
-            'umsetzung_mv': forms.Textarea(attrs={'class': 'textarea-wide'})
-            
+            'umsetzung_mv': forms.Textarea(attrs={'class': 'textarea-wide'}),
+            'einhaltung_termin': forms.Select(),
+            'einhaltung_termin_text': forms.Textarea(attrs={'class': 'textarea-wide'}),
+            'rueckmeldung_mv': forms.Textarea(attrs={'class': 'textarea-wide'}),
+            'zufriedenheit_umsetzung': forms.Select(),
         }
         
 

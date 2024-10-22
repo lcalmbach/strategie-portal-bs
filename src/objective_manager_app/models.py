@@ -113,6 +113,7 @@ class Code(models.Model):
     kuerzel = models.CharField(max_length=10)
     titel = models.CharField(max_length=10)
     beschreibung = models.CharField(max_length=200)
+    reihenfolge = models.IntegerField()
     color = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
@@ -252,22 +253,22 @@ class PlanRecord(models.Model):
     verantwortlich = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name="Massnahmenverantwortliche Person", null=True, blank=True, related_name='planrecord_person')
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, verbose_name="Federführende Organisation", null=True, blank=True, related_name='planrecord_organisation')
 
+    einhaltung_termin = models.ForeignKey(JaNein, verbose_name="Termin wird eingehalten", null=True, blank=True, on_delete=models.CASCADE, related_name='einhaltung_termine_janein')
+    einhaltung_termin_text = models.TextField(verbose_name="Begründung der Abweichung", max_length=500, null=True, blank=True)
+    
+    messbarkeit_umsetzung = models.TextField(verbose_name="Messbarkeit der Umsetzung der Massnahme", null=True, blank=True)
+    stand_umsetzung = models.ForeignKey(Wertung, verbose_name="Stand Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_schwierigkeiten')
+    umsetzung_mv = models.TextField(verbose_name="Welche Schritte, Teilprojekte oder Meilensteine wurden im Berichtsjahr umgesetzt?", null=True, blank=True)
+    zufriedenheit_umsetzung = models.ForeignKey(Zufriedenheit, verbose_name="Wie zufrieden sind Sie mit der Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_zufriedenheit')
+
     rueckmeldung_austausch = models.BooleanField(verbose_name="Austausch oder Beratung ist erwünscht", null=True, default=False)
     rueckmeldung_schwierigkeiten = models.BooleanField(verbose_name="Umsetzung der Massnahme bereitet Schwierigkeiten", null=True, default=False)
     rueckmeldung_neupriorisierung = models.BooleanField(verbose_name="Neupriorisierung von departemententalen Zielen", null=True, default=False)
     rueckmeldung_pol_vorstoss = models.BooleanField(verbose_name="Politischer Vorstoss hat Auswirkungen auf die Massnahme", null=True, default=False)
     rueckmeldung_anderes = models.BooleanField(verbose_name="Anderes", null=True, default=False)
-    rueckmeldung_anderes_text = models.TextField(verbose_name="Anderes", max_length=500, null=True, blank=True)
+    rueckmeldung_anderes_text = models.TextField(verbose_name="Allgemeine Bemerkungen", max_length=500, null=True, blank=True)
 
     rueckmeldung_mv = models.TextField(verbose_name="Allgmeine Bemerkungen", null=True, blank=True)
-    
-    einhaltung_termin = models.BooleanField(verbose_name="Termin wird eingehalten", null=True, blank=True)
-    einhaltung_termin_text = models.TextField(verbose_name="Begründung der Abweichung", max_length=500, null=True, blank=True)
-    umsetzung_mv = models.TextField(verbose_name="Welche Schritte, Teilprojekte oder Meilensteine wurden im Berichtsjahr umgesetzt?", null=True, blank=True)
-    
-    zufriedenheit = models.ForeignKey(Zufriedenheit, verbose_name="Wie zufrieden sind Sie mit der Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_zufriedenheit')
-    schwierigkeiten = models.ForeignKey(Wertung, verbose_name="Stand Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_schwierigkeiten')
-    
     rueckmeldung_fgs = models.TextField(verbose_name="Bemerkungen FGS", null=True, blank=True)
     rueckmeldung_sp = models.TextField(verbose_name="Bemerkungen SP", null=True, blank=True)
     status = models.ForeignKey(StatusMassnahme,verbose_name="Status", null=True, default=17, on_delete=models.CASCADE)

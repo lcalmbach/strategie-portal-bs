@@ -4,161 +4,215 @@
 {% block content %}
 
 <div class="container">
-    <h1>Rückmeldung {{ plan_record.jahr }}</h1>
+    <h2>Rückmeldung {{ plan_record.jahr }}</h2>
     <br>
-    <h3>Massnahme:</h3><b>{{ plan_record.massnahme.kuerzel }} {{ plan_record.massnahme }}</b>
-    <br>
-    <br>
-    <b>Info zur Massnahme</b>
     <table class="table">
+        <tr> 
+            <th>Massnahme:</th>
+            <td>{{ plan_record.massnahme.kuerzel }}</td>
+        </tr>
+        <tr> 
+            <th></th><td>{{ plan_record.massnahme }}</td>
+        </tr>
         <tr>
-            <th>Handlungsfeld</th>
-            <td>{{ plan_record.massnahme.vorgaenger.vorgaenger  }}
+            <th>Messbarkeit der Umsetzung der Massnahme:</th>
+            <td>{{ plan_record.massnahme.mess_groesse }}</td>
+        <tr>
+        <tr>
+            <th>Handlungsfeld</th><td>{{plan_record.massnahme.vorgaenger.vorgaenger.kuerzel}} {{ plan_record.massnahme.vorgaenger.vorgaenger  }}
                 <a href="{% url 'handlungsfeld_detail' plan_record.massnahme.vorgaenger.vorgaenger.pk %}">
                     <i class="fas fa-link"></i>
                 </a>
             </td>
         </tr>
-        
+        <tr></tr>
         <tr>
-            <th>Ziel</th>
-            <td>{{ plan_record.massnahme.vorgaenger.beschreibung  }}</td>
+            <th style="vertical-align: top;">Ziel</th>
+            <td>
+                {{ plan_record.massnahme.vorgaenger.kuerzel  }} {{ plan_record.massnahme.vorgaenger.beschreibung  }}
+                </br></br>&nbsp;
+            </td>
         </tr>
-    </table>    
-    <br>
-    {%if is_fgs_member %}
-        <b>Rückmeldung MV</b>
-        <table class="table">
-            <tr>
-                <td>Bemerkungen MV</th>
-                <td>{{ plan_record.rueckmeldung_mv }}</td>
-            </tr>
-            <tr>
-                <td>Bemerkungen Schlüsselperson</th>
-                <td>{{ plan_record.bemerkungen_sp }}</td>
-            </tr>
-            <tr>
-                <td>Einhaltung Termin</th>
-                <td>{{ plan_record.einhaltung_term }}</td>
-            </tr>
-            <tr>
-                <td>Einschätzung Fortschritt</th>
-                <td>{{ plan_record.fortschritt }}</td>
-            </tr>
-            <tr>
-                <td>Einschätzung Zufriedenheit</th>
-                <td>{{ plan_record.zufriedenheit }}</td>
-            </tr>
-            <tr>
-                <td>Einschätzung Schwierigkeiten</th>
-                <td>{{ plan_record.schwierigkeiten }}</td>
-            </tr>
-            <tr>
-                <td>Status</th>
-                <td>{{ plan_record.status }}</td>
-            </tr>
-        </table>
-    {% endif %}
+    </table>
 
-    {%if is_sp_member %}
-        <b>Rückmeldung MV und FGS</b>
-        <table class="table">
-            <tr>
-                <td>Bemerkungen MV</th>
-                <td>{{ plan_record.rueckmeldung_mv }}</td>
-            </tr>
-            <tr>
-                <td>Einhaltung Termin</th>
-                <td>{{ plan_record.einhaltung_term }}</td>
-            </tr>
-            <tr>
-                <td>Einschätzung Fortschritt</th>
-                <td>{{ plan_record.fortschritt }}</td>
-            </tr>
-            <tr>
-                <td>Einschätzung Zufriedenheit</th>
-                <td>{{ plan_record.zufriedenheit }}</td>
-            </tr>
-            <tr>
-                <td>Einschätzung Schwierigkeiten</th>
-                <td>{{ plan_record.schwierigkeiten }}</td>
-            </tr>
-        </table>
-        <br>
-        <b>Rückmeldung Schlüsselperson</b>
-        <br>
-    {% endif %}
+{%if is_fgs_member %}
+    <table class="table">
+        <tr>
+            <th colspan="2"><h3>Indikator Termin</h3></th>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Termin für die Umsetzung der Massnahme:</td> 
+            <td style="vertical-align: top;">{{ plan_record.massnahme.jahr_ende }}</td>
+        </tr>
+        <tr>
+            <td>Termin wird eingehalten:</td> 
+            <td>
+                {% if plan_record.einhaltung_termin %}
+                    {{ plan_record.einhaltung_termin }}
+                {% else %}
+                    Leer
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Begründung zur Abweichung des Termins:</td> 
+            <td>{{ plan_record.einhaltung_termin_text }}</br></br>&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2"><h3>Indikator Messbarkeit</h3></th>
+        </tr>
+       
+        <tr>
+            <td style="vertical-align: top;">Stand der Umsetzung der Massnahme</th>
+            <td>
+                {% if plan_record.stand_umsetzung %}
+                    {{ plan_record.stand_umsetzung }}
+                {% else %}
+                    Leer
+                {% endif %}
+        </tr>          
+        <tr>
+            <td style="vertical-align: top;">Welche Schritte, Teilprojekte oder Meilensteine wurden im Berichtsjahr umgesetzt</td>
+            <td>{{ plan_record.rueckmeldung_mv }}
+        </tr>         
+        <tr>
+            <td style="vertical-align: top;">Wie zufrieden sind sie mit der Umsetzung der Massnahme</td>
+            <td>
+                {% if plan_record.zufriedenheit_umsetzung %}
+                    {{ plan_record.zufriedenheit_umsetzung }}
+                {% else %}
+                    Leer
+                {% endif %}
+                </br></br>&nbsp;
+            <td>
+        </tr>          
+        <tr>
+            <th colspan="2"><h3>Allgemeine Rückmeldungen</h3></th>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Probleme bei der Umsetzung der Massnahme</td>
+            <td>
+                {% if plan_record.rueckmeldung_austausch %}
+                    &#x2611; <!-- Checked checkbox symbol -->
+                {% else %}
+                    &#x2610; <!-- Unchecked checkbox symbol -->
+                {% endif %} {{ form.rueckmeldung_austausch.label }}<br>
+                {% if plan_record.rueckmeldung_neupriorisierung %}
+                    &#x2611; <!-- Checked checkbox symbol -->
+                {% else %}
+                    &#x2610; <!-- Unchecked checkbox symbol -->
+                {% endif %} {{ form.rueckmeldung_neupriorisierung.label }}<br>
+                {% if plan_record.rueckmeldung_schwierigkeiten %}
+                    &#x2611; <!-- Checked checkbox symbol -->
+                {% else %}
+                    &#x2610; <!-- Unchecked checkbox symbol -->
+                {% endif %} {{form.rueckmeldung_schwierigkeiten.label}} <br>
+                {% if plan_record.rueckmeldung_pol_vorstoss %}
+                        &#x2611; <!-- Checked checkbox symbol -->
+                    {% else %}
+                        &#x2610; <!-- Unchecked checkbox symbol -->
+                    {% endif %} {{ form.rueckmeldung_pol_vorstoss.label }}<br>
+                {% if plan_record.rueckmeldung_anderes %}
+                    &#x2611; <!-- Checked checkbox symbol -->
+                {% else %}
+                    &#x2610; <!-- Unchecked checkbox symbol -->
+                {% endif %} {{ form.rueckmeldung_anderes.label }}
+            </td>
+        </tr>  
+        <tr>
+            <td style="vertical-align: top;"> {{ form.rueckmeldung_anderes_text.label }}</td>
+            <td>
+                {{ plan_record.rueckmeldung_anderes_text }} 
+            </td>
+        </tr>  
+        <tr>
+            <td> {{ form.status.label }}</td>
+            <td>
+                {{ plan_record.status }} 
+            </td>
+        </tr>  
+    </table>
+    <br>
+{% endif %}
+
+{%if is_mv_member %}
     <form method="post" action="{% url 'plan_record_edit' plan_record.id %}">
-        {% csrf_token %}
+    {% csrf_token %}
+    <table class="table">
+        <tr>
+            <th colspan="2"><h3>Indikator Termin</h3></th>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Termin für die Umsetzung der Massnahme:</td> 
+            <td style="vertical-align: top;">{{ plan_record.massnahme.jahr_ende }}</td>
+        </tr>
+        <tr>
+            <td>{{ form.einhaltung_termin.label }}:</td> 
+            <td>{{ form.einhaltung_termin }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Begründung zur Abweichung des Termins:</td> 
+            <td>{{ form.einhaltung_termin_text }}</br></br>&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2"><h3>Indikator Messbarkeit</h3></th>
+        </tr>
+       
+        <tr>
+            <td style="vertical-align: top;">Stand der Umsetzung der Massnahme</th>
+            <td>{{ form.stand_umsetzung }}
+        </tr>          
+        <tr>
+            <td style="vertical-align: top;">Welche Schritte, Teilprojekte oder Meilensteine wurden im Berichtsjahr umgesetzt</td>
+            <td>{{ form.rueckmeldung_mv }}
+        </tr>         
+        <tr>
+            <td style="vertical-align: top;">Wie zufrieden sind sie mit der Umsetzung der Massnahme</td>
+            <td> {{ form.zufriedenheit_umsetzung }}</br></br>&nbsp;
+            <td>
+        </tr>          
+        <tr>
+            <th colspan="2"><h3>Allgemeine Rückmeldungen</h3></th>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Probleme bei der Umsetzung der Massnahme</td>
+            <td>
+                {{ form.rueckmeldung_austausch }} {{ form.rueckmeldung_austausch.label }}<br>
+                {{ form.rueckmeldung_neupriorisierung }} {{ form.rueckmeldung_neupriorisierung.label }}<br>
+                {{ form.rueckmeldung_schwierigkeiten }} {{form.rueckmeldung_schwierigkeiten.label}} <br>
+                {{ form.rueckmeldung_pol_vorstoss }} {{ form.rueckmeldung_pol_vorstoss.label }}<br>
+                {{ form.rueckmeldung_anderes }} {{ form.rueckmeldung_anderes.label }}
+            </td>
+        </tr>  
+        <tr>
+            <td style="vertical-align: top;"> {{ form.rueckmeldung_anderes_text.label }}</td>
+            <td>
+                {{ form.rueckmeldung_anderes_text }} 
+            </td>
+        </tr>  
+        <tr>
+            <td> {{ form.status.label }}</td>
+            <td>
+                {{ form.status }} 
+            </td>
+        </tr>  
+    </table>
     
-        <!-- Block 1: Title and Fields -->
-        <div class="form-block">
-            <div class="form-group">
-                {{ form.status.label_tag }}
-                {{ form.status }}
-            </div>
-            </br>
-            <b>Indikator Messbarkeit</b>
-            <p>Messbarkeit der Umsetzung der Massnahme: {{ plan_record.massnahme.mess_groesse }}</p>
-            <div class="form-group-inline">
-                {{ form.rueckmeldung_austausch }}
-                {{ form.rueckmeldung_austausch.label_tag }}
-            </div>
-            <div class="form-group-inline">
-                {{ form.rueckmeldung_schwierigkeiten }}
-                {{ form.rueckmeldung_schwierigkeiten.label_tag }}
-            </div>
-            <div class="form-group-inline">
-                {{ form.rueckmeldung_neupriorisierung }}
-                {{ form.rueckmeldung_neupriorisierung.label_tag }}
-            </div>
-            <div class="form-group-inline">
-                {{ form.rueckmeldung_pol_vorstoss }}
-                {{ form.rueckmeldung_pol_vorstoss.label_tag }}
-            </div>
-            <div class="form-group-inline">
-                {{ form.rueckmeldung_anderes }}
-                {{ form.rueckmeldung_anderes.label_tag }}
-            </div>
-            <div class="form-group" id="rueckmeldung_anderes_text_block" style="display: none;">
-                {{ form.rueckmeldung_anderes_text }}
-            </div>
-            <div class="form-group">
-                {{ form.umsetzung_mv.label_tag }}
-                {{ form.umsetzung_mv }}
-            </div>
-            <div class="form-group">
-                {{ form.zufriedenheit.label_tag }}
-                {{ form.zufriedenheit }}
-            </div>
-            <div class="form-group">
-                {{ form.schwierigkeiten.label_tag }}
-                {{ form.schwierigkeiten }}
-            </div>
-        </div>
-        <br>
-        <!-- Block 2: Title and Conditional Fields -->
-        <div class="form-block">
-            <b>Indikator Termin:</b>
-            <p>Termin für die Umsetzung der Massnahme: {{ plan_record.massnahme.jahr_ende }}</p>
-            <div class="form-group-inline">
-                {{ form.einhaltung_termin }}
-                {{ form.einhaltung_termin.label_tag }}
-            </div>
-            <div class="form-group" id="einhaltung_termin_text_block" style="display: none;">
-                {{ form.einhaltung_termin_text }}
-            </div>
-        </div>
-        <br>
-        <div class="d-flex align-items-start">
-            <a href="{% url 'home' %}" class="btn btn-secondary mt-3">
-                <i class="fas fa-arrow-left"></i> Zurück
-            </a>
-            <button type="submit" class="btn btn-primary ms-3 mt-3">
-                <i class="fas fa-save"></i> Speichern
-            </button>
-        </div>
+    <!-- Block 2: Title and Conditional Fields -->
+    
+    <br>
+    <div class="d-flex align-items-start">
+        <a href="{% url 'home' %}" class="btn btn-secondary mt-3">
+            <i class="fas fa-arrow-left"></i> Zurück
+        </a>
+        <button type="submit" class="btn btn-primary ms-3 mt-3">
+            <i class="fas fa-save"></i> Speichern
+        </button>
+    </div>
     </form>
+    {% endif %}
 </div>
 
 <script>
@@ -176,8 +230,6 @@
                         textFieldBlock.style.display = checkbox.checked ? 'none' : 'block';
                     }
                 }
-    
-                // Initial visibility update
                 updateVisibility();
     
                 // Add event listener to handle changes
@@ -220,6 +272,11 @@
     .textarea-wide {
         width: 500px; /* Set the desired width */
         max-width: 100%; /* Prevents the textarea from exceeding the container's width */
+    }
+
+    .blank_row{
+        height: 12px !important; /* overwrites any other rules */
+        background-color: #FFFFFF;
     }
 </style>
 {% endblock %}

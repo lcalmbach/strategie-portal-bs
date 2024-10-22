@@ -148,10 +148,9 @@ def plan_records_list(request):
             pass
             # plan_records = plan_records.filter(status_name__icontains=status)
 
-        einhaltung_termin = request.GET.get('termin_eingehalten') == 'on'
+        einhaltung_termin = request.GET.get('termin_eingehalten')
         if einhaltung_termin:
-            plan_records = plan_records.filter(einhaltung_termin=True)
-
+            plan_records = plan_records.filter(einhaltung_termin__kuerzel='J')
 
 
     context = {
