@@ -1,7 +1,8 @@
 from django import forms
 from .models import PlanRecord, Person, Organisation, Handlungsfeld, Ziel, Massnahme, MassnahmeOrganisation
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Layout, Fieldset, Field, Submit
+
 
 
 class HandlungsfeldForm(forms.ModelForm):
@@ -34,54 +35,77 @@ class PlanRecordAdminForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
              'rueckmeldung_austausch': forms.CheckboxInput(),
-            'rueckmeldung_schwierigkeiten': forms.CheckboxInput(),
-            'rueckmeldung_neupriorisierung': forms.CheckboxInput(),
-            'rueckmeldung_pol_vorstoss': forms.CheckboxInput(),
-            'rueckmeldung_anderes': forms.CheckboxInput()
         }
 
-class PlanRecordFGSForm(forms.ModelForm):
-    class Meta:
-        model = PlanRecord
-        fields = ['rueckmeldung_fgs']
 
-class PlanRecordSPForm(forms.ModelForm):
+class PlanRecordForm(forms.ModelForm):
     class Meta:
         model = PlanRecord
-        fields = ['status', 'rueckmeldung_sp']
-
-class PlanRecordMVForm(forms.ModelForm):
-    class Meta:
-        model = PlanRecord
-        fields = ['status',
-                  'rueckmeldung_austausch', 
-                  'rueckmeldung_schwierigkeiten', 
-                  'rueckmeldung_neupriorisierung',
-                  'rueckmeldung_pol_vorstoss',
-                  'rueckmeldung_anderes',
-                  'rueckmeldung_anderes_text',   
-                  'rueckmeldung_mv', 
-                  'einhaltung_termin', 
-                  'einhaltung_termin_text',
-                  'stand_umsetzung', 
-                  'zufriedenheit_umsetzung', 
-                  'stand_umsetzung'
-            ]
+        exclude = ['rueckmeldung_fgs','rueckmeldung_sp', 'erstellt_von', 'erstellt_am', 'massnahme', 'jahr', 'verantwortlich', 'organisation']
         widgets = {
             'rueckmeldung_austausch': forms.CheckboxInput(),
-            'rueckmeldung_schwierigkeiten': forms.CheckboxInput(),
-            'rueckmeldung_neupriorisierung': forms.CheckboxInput(),
-            'rueckmeldung_pol_vorstoss': forms.CheckboxInput(),
-            'rueckmeldung_anderes': forms.CheckboxInput(),
             'einhaltung_termin': forms.CheckboxInput(),
-            'rueckmeldung_anderes_text': forms.Textarea(attrs={'class': 'textarea-wide'}),
             'umsetzung_mv': forms.Textarea(attrs={'class': 'textarea-wide'}),
             'einhaltung_termin': forms.Select(),
             'einhaltung_termin_text': forms.Textarea(attrs={'class': 'textarea-wide'}),
             'rueckmeldung_mv': forms.Textarea(attrs={'class': 'textarea-wide'}),
             'zufriedenheit_umsetzung': forms.Select(),
         }
+
+    def __init__(self, group_name=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.read_only = False
+        # Massnahmenverantwortliche, Status-MV gesetzt
+        if group_name == 'mv' and getattr(self.instance, 'status_id', 'unbekannt') >= 18:
+            disabled_fields = self.fields
+            self.read_only = True
+        elif group_name == 'sp':
+            disabled_fields = [field_name for field_name in self.fields if field_name not in ['status', 'rueckmeldung_sp']]
+        elif group_name == 'sp' and getattr(self.instance, 'status_id', 'unbekannt') == 19:
+            disabled_fields = self.fields
+            self.read_only = True
+        elif group_name == 'fgs':
+            disabled_fields = [field_name for field_name in self.fields if field_name != 'rueckmeldung_fgs']
+        else:
+            disabled_fields = []
         
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-sm-2'
+        self.helper.field_class = 'col-sm-8'  
+        self.helper.form_tag = True
+
+        jahr = getattr(self.instance.massnahme, 'termin', 'unbekannt') 
+        messbarkeit = getattr(self.instance.massnahme, 'mess_groesse', 'unbekannt') 
+        self.helper.layout = Layout(
+            Fieldset(
+                f'Termin für die Umsetzung der Massnahme: {jahr}',
+                'einhaltung_termin', 
+                Field('einhaltung_termin_text', css_class='textarea-wide'),
+
+            ),
+             Fieldset(
+                f'Messbarkeit der Massnahme: {messbarkeit}',
+                'stand_umsetzung', 
+                Field('umsetzung_mv', css_class='textarea-wide'), 
+                'zufriedenheit_umsetzung',
+            ),
+            Fieldset(
+                'Allgemeine Rückmeldungen',
+                'rueckmeldung_austausch', 
+                Field('rueckmeldung_mv', css_class='textarea-wide'), 
+                'status',
+            ),
+        )
+
+        # Conditionally add the submit button if the form is not read-only
+        if not self.read_only:
+            self.helper.add_input(Submit('submit', 'Speichern', css_class='btn btn-primary'))
+
+        for field in disabled_fields:
+            self.fields[field].disabled = True
+
+
 
 class PersonForm(forms.ModelForm):
     class Meta:

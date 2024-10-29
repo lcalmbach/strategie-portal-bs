@@ -1,11 +1,10 @@
 from enum import Enum
-from django.http import HttpRequest
 from django.db.models import Q
-from django.http.response import HttpResponse
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy   
 from .models import BusinessObject, PlanRecord, Massnahme, Ziel, Handlungsfeld, Person, Organisation, MassnahmeOrganisation, StatusMassnahme, Wertung
-from .forms import PlanRecordMVForm, PlanRecordSPForm, PlanRecordFGSForm, PlanRecordAdminForm, PersonForm, OrganisationForm,ZielForm,HandlungsfeldForm, MassnahmeForm, MassnahmeOrganisationForm
+from .forms import PlanRecordForm, PersonForm, OrganisationForm, ZielForm, HandlungsfeldForm, MassnahmeForm, MassnahmeOrganisationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 import plotly.graph_objs as go
 from .templatetags.custom_filters import is_in_group
@@ -145,12 +144,19 @@ def plan_records_list(request):
         
         status = request.GET.get('status')
         if status:
-            pass
-            # plan_records = plan_records.filter(status_name__icontains=status)
+            plan_records = plan_records.filter(status__titel__icontains=status) 
 
-        einhaltung_termin = request.GET.get('termin_eingehalten')
+        einhaltung_termin = request.GET.get('einhaltung_termin')
         if einhaltung_termin:
             plan_records = plan_records.filter(einhaltung_termin__kuerzel='J')
+        
+        rueckmeldung_austausch = request.GET.get('rueckmeldung_austausch')
+        print(rueckmeldung_austausch)
+        if rueckmeldung_austausch == 'true':
+            plan_records = plan_records.filter(rueckmeldung_austausch=True)
+        elif rueckmeldung_austausch == 'false':
+            print(123)
+            plan_records = plan_records.filter(rueckmeldung_austausch=False)
 
 
     context = {
@@ -176,7 +182,7 @@ def handlungsfeld_detail(request, pk):
     
     ziele = BusinessObject.objects.filter(typ_id=3, vorgaenger=handlungsfeld)
     massnahmen = BusinessObject.objects.filter(typ_id=4, vorgaenger__in=ziele)
-    # print(massnahmen)
+
     context = {
         'handlungsfeld': handlungsfeld,
         'ziele': ziele,
@@ -333,33 +339,60 @@ class MassnahmeEditView(UpdateView):
 
 class PlanRecordUpdateView(LoginRequiredMixin, UpdateView):
     model = PlanRecord
-    template_name = "objective_manager_app/plan_record_edit.html"
     context_object_name = 'plan_record'
     success_url = reverse_lazy('home')  # Adjust this as needed
+    template_name = "objective_manager_app/plan_record_edit.html"
 
-    def get_form_class(self):
-        # Check user's group and return the corresponding form class
+    def get_form(self, form_class=None):
+        # Check the user group and determine the form class
         user = self.request.user
-        if user.groups.filter(name='admin').exists():
-            return PlanRecordAdminForm
-        elif user.groups.filter(name='mv').exists():
-            return PlanRecordMVForm
+        group_name = None
+
+        if user.groups.filter(name='mv').exists():
+            group_name = 'mv'
         elif user.groups.filter(name='sp').exists():
-            return PlanRecordSPForm
+            group_name = 'sp'
         elif user.groups.filter(name='fgs').exists():
-            return PlanRecordFGSForm
-        
+            group_name = 'fgs'
         else:
-            pass # raise PermissionDenied("You are not authorized to edit this record.")  # Handle unauthorized access
+            # Handle unauthorized access or raise an error if needed
+            raise PermissionDenied("You are not authorized to edit this record.")
+
+        # Get the instance of PlanRecord
+        instance = self.get_object()
+
+        # Pass both group_name and instance to the form
+        return PlanRecordForm(group_name=group_name, instance=instance, data=self.request.POST or None)
 
     def form_valid(self, form):
         plan_record = form.save(commit=False)
         plan_record.erstellt_von = self.request.user
+
+        if self.request.user.groups.filter(name='mv').exists():
+           pass
+        elif self.request.user.groups.filter(name='fgs').exists():
+            plan_record.rueckmeldung_fgs = form.cleaned_data['rueckmeldung_fgs']
+        elif self.request.user.groups.filter(name='sp').exists():
+            plan_record.status = form.cleaned_data['status']
+        else:
+            plan_record.save()
+
         plan_record.save()
         return redirect('home')
 
+    def clean(self):
+        cleaned_data = super().clean()
+         # Reinstate original values from instance if they exist
+        if self.instance.pk:
+            cleaned_data['jahr'] = self.instance.jahr
+            cleaned_data['massnahme'] = self.instance.massnahme
+            cleaned_data['rueckmeldung_fgs'] = self.instance.rueckmeldung_fgs
+        return cleaned_data
+
     def form_invalid(self, form):
         print("Form is invalid. Errors:", form.errors)
+        print("Data submitted:", form.clean)
+        print("All data:", form.data)  # To see the raw data coming into the form
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, **kwargs):
@@ -371,9 +404,14 @@ class PlanRecordUpdateView(LoginRequiredMixin, UpdateView):
         context['is_fgs_member'] = user.groups.filter(name='fgs').exists()
         context['is_sp_member'] = user.groups.filter(name='sp').exists()
         context['is_mv_member'] = user.groups.filter(name='mv').exists()
-        return context
-    
 
+        plan_record = self.get_object()  # or however you retrieve it
+        context['status_label'] = plan_record._meta.get_field('status').verbose_name
+        context['rueckmeldung_fgs_label'] = plan_record._meta.get_field('rueckmeldung_fgs').verbose_name
+        
+        return context
+
+    
 class PersonUpdateView(UpdateView):
     model = Person
     fields = '__all__'
@@ -561,9 +599,9 @@ class PersonCreateView(CreateView):
     template_name = 'objective_manager_app/person_edit.html'
     success_url = reverse_lazy('personen_list') 
 
-class PlanRecordCreateView(CreateView):
-    model = PlanRecord
-    form_class = PlanRecordMVForm
-    template_name = 'objective_manager_app/plan_record_edit.html'
-    success_url = reverse_lazy('home') 
+# class PlanRecordCreateView(CreateView):
+#     model = PlanRecord
+#     form_class = PlanRecordForm('mv')
+#     template_name = 'objective_manager_app/plan_record_edit.html'
+#     success_url = reverse_lazy('home') 
 

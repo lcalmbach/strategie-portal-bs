@@ -17,11 +17,8 @@
                             <th>Status</th>
                             <th>Einhaltung<br>Termin</th>
                             <th>Zufriedenheit MV</th>
-                            <th>Stand<br>Umsetzung</th>
+                            <th>Ziel<br>erreichungsgrad</th>
                             <th>Austausch<br>erwünscht</th>
-                            <th>Neuprio</th>
-                            <th>Pol. Vorstoss</th>
-                            <th>Anderes</th>
                         </tr>
                         <tr>
                             <th><input type="text" name="massnahme" class="form-control" placeholder="Filter Massnahme" value="{{ request.GET.massnahme }}"></th>
@@ -73,44 +70,22 @@
                                 </select>
                             </th>
                             <th>
-                                <select name="stand" class="form-control">
+                                <select name="stand_umsetzung" class="form-control">
                                     <option value="">-- Filter Stand --</option>
                                     {% for stand in stand_choices %}
                                         <option value="{{ stand }}" {% if request.GET.stand == stand %}selected{% endif %} class="{{stand.color}}-dot">
-                                            {{ stand }}
+                                            {{ stand_umsetzung }}
                                         </option>
                                     {% endfor %}
                                 </select>
                             </th>
                             <th>
-                                <select name="austausch" class="form-select">
-                                    <option value="" {% if request.GET.austausch == "" %}selected{% endif %}>----</option>
-                                    <option value="true" {% if request.GET.austausch == "true" %}selected{% endif %}>Ja</option>
-                                    <option value="false" {% if request.GET.austausch == "false" %}selected{% endif %}>Nein</option>
+                                <select name="rueckmeldung_austausch" class="form-select">
+                                    <option value="" {% if request.GET.rueckmeldung_austausch == "" %}selected{% endif %}>----</option>
+                                    <option value="true" {% if request.GET.rueckmeldung_austausch == "true" %}selected{% endif %}>Ja</option>
+                                    <option value="false" {% if request.GET.rueckmeldung_austausch == "false" %}selected{% endif %}>Nein</option>
                                 </select>
                             </th>
-                            <th>
-                                <select name="neupriorisierung" class="form-select">
-                                    <option value="" {% if request.GET.neupriorisierung == "" %}selected{% endif %}>----</option>
-                                    <option value="true" {% if request.GET.neupriorisierung == "true" %}selected{% endif %}>Ja</option>
-                                    <option value="false" {% if request.GET.neupriorisierung == "false" %}selected{% endif %}>Nein</option>
-                                </select>
-                            </th>
-                            <th>
-                                <select name="pol_vorstoss" class="form-select">
-                                    <option value="" {% if request.GET.pol_vorstoss == "" %}selected{% endif %}>----</option>
-                                    <option value="true" {% if request.GET.pol_vorstoss == "true" %}selected{% endif %}>Ja</option>
-                                    <option value="false" {% if request.GET.pol_vorstoss == "false" %}selected{% endif %}>Nein</option>
-                                </select>
-                            </th>
-                            <th>
-                                <select name="anderes" class="form-select">
-                                    <option value="" {% if request.GET.anderes == "" %}selected{% endif %}>----</option>
-                                    <option value="true" {% if request.GET.anderes == "true" %}selected{% endif %}>Ja</option>
-                                    <option value="false" {% if request.GET.anderes == "false" %}selected{% endif %}>Nein</option>
-                                </select>
-                            </th>
-                            
                             <th><button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i></button></th>
                         </tr>
                     </thead>
@@ -132,22 +107,22 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if pr.zufriedenheit.id == 14 %}
+                            {% if pr.zufriedenheit_umsetzung.id == 20 %}
                                 <span class="dot green-dot"></span>
-                            {% elif pr.zufriedenheit.id == 15 %}
+                            {% elif pr.zufriedenheit_umsetzung.id == 21 or pr.zufriedenheit.id == 22 %}
                                 <span class="dot orange-dot"></span>
-                            {% elif pr.zufriedenheit.id == 16 %}
+                            {% elif pr.zufriedenheit_umsetzung.id == 23 %}
                                 <span class="dot red-dot"></span>
                             {% else %}
                                 <span class="dot grey-dot"></span>
                             {% endif %}
                         </td>
                         <td>
-                            {% if pr.schwierigkeiten.id == 14 %}
+                            {% if pr.stand_umsetzung.id == 14 %}
                                 <span class="dot green-dot"></span>
-                            {% elif pr.schwierigkeiten.id == 15 %}
+                            {% elif pr.stand_umsetzung.id == 15 %}
                                 <span class="dot orange-dot"></span>
-                            {% elif pr.schwierigkeiten.id == 16 %}
+                            {% elif pr.stand_umsetzung.id == 16 %}
                                 <span class="dot red-dot"></span>
                             {% else %}
                                 <span class="dot grey-dot"></span>
@@ -155,28 +130,6 @@
                         </td>
                         <td>
                             {% if pr.rueckmeldung_austausch %}
-                                <i class="fas fa-check-square"></i> <!-- Checked icon -->
-                            {% else %}
-                                <i class="fas fa-square"></i> <!-- Unchecked icon -->
-                            {% endif %}
-                        </td>
-        
-                        <td>
-                            {% if pr.rueckmeldung_neupriorisierung %}
-                                <i class="fas fa-check-square"></i> <!-- Checked icon -->
-                            {% else %}
-                                <i class="fas fa-square"></i> <!-- Unchecked icon -->
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if pr.rueckmeldung_pol_vorstoss %}
-                                <i class="fas fa-check-square"></i> <!-- Checked icon -->
-                            {% else %}
-                                <i class="fas fa-square"></i> <!-- Unchecked icon -->
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if pr.rueckmeldung_anderes %}
                                 <i class="fas fa-check-square"></i> <!-- Checked icon -->
                             {% else %}
                                 <i class="fas fa-square"></i> <!-- Unchecked icon -->

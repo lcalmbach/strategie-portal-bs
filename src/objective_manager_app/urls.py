@@ -45,5 +45,5 @@ urlpatterns = [
     path('handlungsfeld/create/', views.HandlungsfeldCreateView.as_view(), name='handlungsfeld_create'),
     path('ziel/create/<int:handlungsfeld_id>/', views.ZielCreateView.as_view(), name='ziel_create'),
     path('person/create/', views.PersonCreateView.as_view(), name='person_create'),
-    path('plan_record/create/', views.PlanRecordCreateView.as_view(), name='planrecord_create'),
+    # path('plan_record/create/', views.PlanRecordCreateView.as_view(), name='planrecord_create'),
 ]

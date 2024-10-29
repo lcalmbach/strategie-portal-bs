@@ -1,0 +1,284 @@
+{% extends "base.html" %} 
+{% load crispy_forms_tags %}  <!-- Load Crispy Forms tags -->
+{% block title %}Rückmeldung{% endblock title %} 
+{% block content %}
+
+<div class="container">
+    <h2>Rückmeldung {{ plan_record.jahr }}</h2>
+    <br>
+    <table class="table">
+        <tr> 
+            <th>Massnahme:</th>
+            <td>{{ plan_record.massnahme.kuerzel }}</td>
+        </tr>
+        <tr> 
+            <th></th><td>{{ plan_record.massnahme }}</td>
+        </tr>
+        <tr>
+            <th>Messbarkeit der Umsetzung der Massnahme:</th>
+            <td>{{ plan_record.massnahme.mess_groesse }}</td>
+        <tr>
+        <tr>
+            <th>Handlungsfeld</th><td>{{plan_record.massnahme.vorgaenger.vorgaenger.kuerzel}} {{ plan_record.massnahme.vorgaenger.vorgaenger  }}
+                <a href="{% url 'handlungsfeld_detail' plan_record.massnahme.vorgaenger.vorgaenger.pk %}">
+                    <i class="fas fa-link"></i>
+                </a>
+            </td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <th style="vertical-align: top;">Ziel</th>
+            <td>
+                {{ plan_record.massnahme.vorgaenger.kuerzel  }} {{ plan_record.massnahme.vorgaenger.beschreibung  }}
+                </br></br>&nbsp;
+            </td>
+        </tr>
+    </table>
+<form method="post" action="{% url 'plan_record_edit' plan_record.id %}">
+{% csrf_token %}
+    <table class="table">
+        <tr>
+            <th colspan="2"><h3>Indikator Termin</h3></th>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Termin für die Umsetzung der Massnahme:</td> 
+            <td style="vertical-align: top;">{{ plan_record.massnahme.jahr_ende }}</td>
+        </tr>
+        <tr>
+            <td>Termin wird eingehalten:</td> 
+            <td>
+                {% if plan_record.einhaltung_termin %}
+                    {{ plan_record.einhaltung_termin }}
+                {% else %}
+                    Leer
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Begründung zur Abweichung des Termins:</td> 
+            <td>{{ plan_record.einhaltung_termin_text }}</br></br>&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2"><h3>Indikator Messbarkeit</h3></th>
+        </tr>
+       
+        <tr>
+            <td style="vertical-align: top;">Stand der Umsetzung der Massnahme</th>
+            <td>
+                {% if plan_record.stand_umsetzung %}
+                    {{ plan_record.stand_umsetzung }}
+                {% else %}
+                    Leer
+                {% endif %}
+        </tr>          
+        <tr>
+            <td style="vertical-align: top;">Welche Schritte, Teilprojekte oder Meilensteine wurden im Berichtsjahr umgesetzt</td>
+            <td>{{ plan_record.rueckmeldung_mv }}
+        </tr>         
+        <tr>
+            <td style="vertical-align: top;">Wie zufrieden sind sie mit der Umsetzung der Massnahme</td>
+            <td>
+                {% if plan_record.zufriedenheit_umsetzung %}
+                    {{ plan_record.zufriedenheit_umsetzung }}
+                {% else %}
+                    Leer
+                {% endif %}
+                </br></br>&nbsp;
+            <td>
+        </tr>          
+        <tr>
+            <th colspan="2"><h3>Allgemeine Rückmeldungen</h3></th>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Probleme bei der Umsetzung der Massnahme</td>
+            <td>
+                {% if plan_record.rueckmeldung_austausch %}
+                    &#x2611; <!-- Checked checkbox symbol -->
+                {% else %}
+                    &#x2610; <!-- Unchecked checkbox symbol -->
+                {% endif %} {{ form.rueckmeldung_austausch.label }}<br>
+                {% if plan_record.rueckmeldung_neupriorisierung %}
+                    &#x2611; <!-- Checked checkbox symbol -->
+                {% else %}
+                    &#x2610; <!-- Unchecked checkbox symbol -->
+                {% endif %} {{ form.rueckmeldung_neupriorisierung.label }}<br>
+                {% if plan_record.rueckmeldung_schwierigkeiten %}
+                    &#x2611; <!-- Checked checkbox symbol -->
+                {% else %}
+                    &#x2610; <!-- Unchecked checkbox symbol -->
+                {% endif %} {{form.rueckmeldung_schwierigkeiten.label}} <br>
+                {% if plan_record.rueckmeldung_pol_vorstoss %}
+                        &#x2611; <!-- Checked checkbox symbol -->
+                    {% else %}
+                        &#x2610; <!-- Unchecked checkbox symbol -->
+                    {% endif %} {{ form.rueckmeldung_pol_vorstoss.label }}<br>
+                {% if plan_record.rueckmeldung_anderes %}
+                    &#x2611; <!-- Checked checkbox symbol -->
+                {% else %}
+                    &#x2610; <!-- Unchecked checkbox symbol -->
+                {% endif %} {{ form.rueckmeldung_anderes.label }}
+            </td>
+        </tr>  
+        <tr>
+            <td style="vertical-align: top;"> {{ plan_record.rueckmeldung_anderes_text_label }}</td>
+            <td>
+                {{ plan_record.rueckmeldung_anderes_text }} 
+            </td>
+        </tr>  
+        <tr>
+            <td> {{ form.status.label }}</td>
+            <td>
+                {{ plan_record.status }} 
+            </td>
+        </tr>  
+    
+    
+        <tr>
+            <td style="vertical-align: top;">{{ form.rueckmeldung_fgs.label }}</td> 
+            <td>{{ form.rueckmeldung_fgs }}</br></br>&nbsp;
+            </td>
+        </tr>
+    </table>
+    <br>
+    <table class="table">
+        <tr>
+            <th colspan="2"><h3>Indikator Termin</h3></th>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Termin für die Umsetzung der Massnahme:</td> 
+            <td style="vertical-align: top;">{{ plan_record.massnahme.jahr_ende }}</td>
+        </tr>
+        <tr>
+            <td>{{ form.einhaltung_termin.label }}:</td> 
+            <td>{{ form.einhaltung_termin }}</td>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Begründung zur Abweichung des Termins:</td> 
+            <td>{{ form.einhaltung_termin_text }}</br></br>&nbsp;
+            </td>
+        </tr>
+        <tr>
+            <th colspan="2"><h3>Indikator Messbarkeit</h3></th>
+        </tr>
+       
+        <tr>
+            <td style="vertical-align: top;">Stand der Umsetzung der Massnahme</th>
+            <td>{{ form.stand_umsetzung }}
+        </tr>          
+        <tr>
+            <td style="vertical-align: top;">Welche Schritte, Teilprojekte oder Meilensteine wurden im Berichtsjahr umgesetzt</td>
+            <td>{{ form.rueckmeldung_mv }}
+        </tr>         
+        <tr>
+            <td style="vertical-align: top;">Wie zufrieden sind sie mit der Umsetzung der Massnahme</td>
+            <td> {{ form.zufriedenheit_umsetzung }}</br></br>&nbsp;
+            <td>
+        </tr>          
+        <tr>
+            <th colspan="2"><h3>Allgemeine Rückmeldungen</h3></th>
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">Probleme bei der Umsetzung der Massnahme</td>
+            <td>
+                {{ plan_record.rueckmeldung_austausch }} {{ form.rueckmeldung_austausch.label }}<br>
+                {{ form.rueckmeldung_neupriorisierung }} {{ form.rueckmeldung_neupriorisierung.label }}<br>
+                {{ form.rueckmeldung_schwierigkeiten }} {{form.rueckmeldung_schwierigkeiten.label}} <br>
+                {{ form.rueckmeldung_pol_vorstoss }} {{ form.rueckmeldung_pol_vorstoss.label }}<br>
+                {{ form.rueckmeldung_anderes }} {{ form.rueckmeldung_anderes.label }}
+            </td>
+        </tr>  
+        <tr>
+            <td style="vertical-align: top;"> {{ form.rueckmeldung_anderes_text.label }}</td>
+            <td>
+                {{ form.rueckmeldung_anderes_text }} 
+            </td>
+        </tr>  
+        <tr>
+            <td> {{ form.status.label }}</td>
+            <td>
+                {{ form.status }} 
+            </td>
+        </tr>  
+    </table>
+
+    <!-- Block 2: Title and Conditional Fields -->
+    
+    <br>
+    <div class="d-flex align-items-start">
+        <a href="{% url 'home' %}" class="btn btn-secondary mt-3">
+            <i class="fas fa-arrow-left"></i> Zurück
+        </a>
+        <button type="submit" class="btn btn-primary ms-3 mt-3">
+            <i class="fas fa-save"></i> Speichern
+        </button>
+    </div>
+    </form>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to toggle text field based on checkbox state
+        function toggleTextField(checkboxId, textFieldBlockId, showOnChecked = true) {
+            var checkbox = document.getElementById(checkboxId);
+            var textFieldBlock = document.getElementById(textFieldBlockId);
+    
+            if (checkbox) {
+                function updateVisibility() {
+                    if (showOnChecked) {
+                        textFieldBlock.style.display = checkbox.checked ? 'block' : 'none';
+                    } else {
+                        textFieldBlock.style.display = checkbox.checked ? 'none' : 'block';
+                    }
+                }
+                updateVisibility();
+    
+                // Add event listener to handle changes
+                checkbox.addEventListener('change', function() {
+                    console.log("Checkbox state changed.");
+                    updateVisibility();
+                });
+            } else {
+                console.warn("Checkbox with ID '" + checkboxId + "' not found.");
+            }
+        }
+    
+        // Call the function for each checkbox and text field block pair
+        toggleTextField('id_rueckmeldung_anderes', 'rueckmeldung_anderes_text_block', true);
+        toggleTextField('id_einhaltung_termin', 'einhaltung_termin_text_block', false);
+    });
+</script>
+
+<style>
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .form-group label {
+        margin-bottom: 5px; 
+    }
+
+    .form-group-inline {
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-group-inline label {
+        margin-right: 10px; 
+        margin-left: 10px; 
+    }
+
+    .textarea-wide {
+        width: 500px; /* Set the desired width */
+        max-width: 100%; /* Prevents the textarea from exceeding the container's width */
+    }
+
+    .blank_row{
+        height: 12px !important; /* overwrites any other rules */
+        background-color: #FFFFFF;
+    }
+</style>
+{% endblock %}

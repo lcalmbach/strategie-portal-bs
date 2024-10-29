@@ -107,7 +107,6 @@ class JaNeinManager(models.Manager):
         return super().get_queryset().filter(kategorie_id=8)
 
 
-    
 class Code(models.Model):
     kategorie = models.ForeignKey(CodeKategorie, on_delete=models.CASCADE)
     kuerzel = models.CharField(max_length=10)
@@ -129,7 +128,7 @@ class BusinessObject(models.Model):
     erstellt_am = models.DateTimeField(auto_now_add=True, verbose_name="Erstellt am")
     erstellt_von = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Erstellt von", blank=True)
     
-    jahr_ende = models.IntegerField(verbose_name="Termin", default=datetime.now().year)
+    termin = models.IntegerField(verbose_name="Termin", default=datetime.now().year)
     anmerkung_initialisierung = models.TextField(verbose_name="Pol. Vorstoss", null=True, blank=True)
     mess_groesse = models.CharField(max_length=200, verbose_name="Messbarkeit", blank=True, null=True)
     # messbarkeit = models.CharField(max_length=200, verbose_name="Messbarkeit")  
@@ -248,7 +247,7 @@ class Massnahme(BusinessObject):
 
 
 class PlanRecord(models.Model):
-    massnahme = models.ForeignKey(Massnahme, on_delete=models.CASCADE)
+    massnahme = models.ForeignKey(Massnahme, on_delete=models.CASCADE, related_name='planrecords')
     jahr = models.IntegerField(verbose_name="Jahr", default=datetime.now().year)
     verantwortlich = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name="Massnahmenverantwortliche Person", null=True, blank=True, related_name='planrecord_person')
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, verbose_name="Federführende Organisation", null=True, blank=True, related_name='planrecord_organisation')
@@ -256,25 +255,19 @@ class PlanRecord(models.Model):
     einhaltung_termin = models.ForeignKey(JaNein, verbose_name="Termin wird eingehalten", null=True, blank=True, on_delete=models.CASCADE, related_name='einhaltung_termine_janein')
     einhaltung_termin_text = models.TextField(verbose_name="Begründung der Abweichung", max_length=500, null=True, blank=True)
     
-    messbarkeit_umsetzung = models.TextField(verbose_name="Messbarkeit der Umsetzung der Massnahme", null=True, blank=True)
-    stand_umsetzung = models.ForeignKey(Wertung, verbose_name="Stand Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_schwierigkeiten')
-    umsetzung_mv = models.TextField(verbose_name="Welche Schritte, Teilprojekte oder Meilensteine wurden im Berichtsjahr umgesetzt?", null=True, blank=True)
+    stand_umsetzung = models.ForeignKey(Wertung, verbose_name="Zielerreichungsgrad", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_schwierigkeiten')
+    umsetzung_mv = models.TextField(verbose_name="Kommentar zur Zielerreichung", null=True, blank=True)
     zufriedenheit_umsetzung = models.ForeignKey(Zufriedenheit, verbose_name="Wie zufrieden sind Sie mit der Umsetzung der Massnahme", null=True, blank=True, on_delete=models.CASCADE, related_name='planrecord_zufriedenheit')
 
     rueckmeldung_austausch = models.BooleanField(verbose_name="Austausch oder Beratung ist erwünscht", null=True, default=False)
-    rueckmeldung_schwierigkeiten = models.BooleanField(verbose_name="Umsetzung der Massnahme bereitet Schwierigkeiten", null=True, default=False)
-    rueckmeldung_neupriorisierung = models.BooleanField(verbose_name="Neupriorisierung von departemententalen Zielen", null=True, default=False)
-    rueckmeldung_pol_vorstoss = models.BooleanField(verbose_name="Politischer Vorstoss hat Auswirkungen auf die Massnahme", null=True, default=False)
-    rueckmeldung_anderes = models.BooleanField(verbose_name="Anderes", null=True, default=False)
-    rueckmeldung_anderes_text = models.TextField(verbose_name="Allgemeine Bemerkungen", max_length=500, null=True, blank=True)
 
     rueckmeldung_mv = models.TextField(verbose_name="Allgmeine Bemerkungen", null=True, blank=True)
     rueckmeldung_fgs = models.TextField(verbose_name="Bemerkungen FGS", null=True, blank=True)
     rueckmeldung_sp = models.TextField(verbose_name="Bemerkungen SP", null=True, blank=True)
     status = models.ForeignKey(StatusMassnahme,verbose_name="Status", null=True, default=17, on_delete=models.CASCADE)
-    
+
     erstellt_am = models.DateTimeField(auto_now_add=True, verbose_name='Erstellt am')
     erstellt_von = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Erstellt von')
 
     def __str__(self):
-        return f"{self.verantwortlich.titel} {self.jahr}"
+        return f"{self.verantwortlich.vorname} {self.verantwortlich.nachname}{self.jahr}"
