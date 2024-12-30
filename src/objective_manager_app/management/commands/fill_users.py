@@ -60,13 +60,3 @@ class Command(BaseCommand):
             operators_group.user_set.add(user)    
 
             self.stdout.write(self.style.SUCCESS(f"Created user {username} for person {first_name} {last_name}"))
-        
-        persons = Person.objects.all()
-        for person in persons:
-            user = person.user
-            user.first_name = person.vorname
-            user.last_name = person.nachname
-            user.set_password('password')
-            user.save()
-            
-            self.stdout.write(self.style.SUCCESS(f"update user {user.username}"))

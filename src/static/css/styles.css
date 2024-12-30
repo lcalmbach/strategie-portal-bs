@@ -120,23 +120,9 @@ td.button-cell {
     height: auto;
 }
 
-.dot {
-    height: 15px;
-    width: 15px;
-    border-radius: 50%;
-    display: inline-block;
-}
-.green-dot {
-    background-color: green;
-}
-.orange-dot {
-    background-color: orange;
-}
-.red-dot {
-    background-color: red;
-}
-
-.blank_row{
-    height: 10px !important; /* overwrites any other rules */
-    background-color: #FFFFFF;
+.embed-container {
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
 }

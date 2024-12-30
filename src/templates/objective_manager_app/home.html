@@ -1,175 +1,75 @@
-{% extends "base.html" %} 
-{% block title %}Monitoring{% endblock title %} 
+{% extends "base.html" %}
+{% load static %}
+{% load strategie_filters %}
+
+{% block title %}{{ strategie.titel_kurz }}{% endblock %}
+
 {% block content %}
-    <div class="container">
-        <h1>Monitoring der Massnahmen zum Gleichstellungsplan({{ plan_records|length}})</h1>
-        <br>
-        {% if request.user.is_authenticated %}
-            <form method="get">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Massnahme</th>
-                            <th>Verantwortlich</th>
-                            <th>Organisation</th>
-                            <th>Departement</th>
-                            <th>Jahr<br>Berichterstattung</th>
-                            <th>Status</th>
-                            <th>Einhaltung<br>Termin</th>
-                            <th>Zufriedenheit MV</th>
-                            <th>Ziel<br>erreichungsgrad</th>
-                            <th>Austausch<br>erwünscht</th>
-                        </tr>
-                        <tr>
-                            <th><input type="text" name="massnahme" class="form-control" placeholder="Filter Massnahme" value="{{ request.GET.massnahme }}"></th>
-                            <th><input type="text" name="verantwortlich" class="form-control" placeholder="Filter Verantwortlich" value="{{ request.GET.verantwortlich }}"></th>
-                            <th><input type="text" name="organisation" class="form-control" placeholder="Filter Organisation" value="{{ request.GET.organisation }}"></th>
-                            <th>
-                                <select name="departement" class="form-control">
-                                    <option value="">-- Filter Departement --</option>
-                                    {% for departement in departement_choices %}
-                                        <option value="{{ departement }}" {% if request.GET.departement == departement %}selected{% endif %}>
-                                            {{ departement }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </th>
-                            <th><input type="text" name="jahr" class="form-control" placeholder="Filter Jahr" value="{{ request.GET.jahr }}"></th>
-                            <th>
-                                <select name="status" class="form-control">
-                                    <option value="">-- Filter Status --</option>
-                                    {% for status in status_choices %}
-                                        <option value="{{ status }}" {% if request.GET.status == status %}selected{% endif %}>
-                                            {{ status }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </th>
-                            <th>
-                                <select name="einhaltung_termin" class="form-select">
-                                    <option value="" {% if request.GET.einhaltung_termin == "" %}selected{% endif %}>----</option>
-                                    <option value="true" {% if request.GET.einhaltung_termin == "true" %}selected{% endif %}>Ja</option>
-                                    <option value="false" {% if request.GET.einhaltung_termin == "false" %}selected{% endif %}>Nein</option>
-                                </select>
-                            </th>
-                            <th>
-                                <select name="zufriedenheit" class="form-control">
-                                    <option value="">-- Filter Zufriedenheit --</option>
-                                    <option value="20" {% if request.GET.zufriedenheit == "20" %}selected{% endif %} class="green-dot">
-                                        Sehr zufrieden
-                                    </option>
-                                    <option value="21" {% if request.GET.zufriedenheit == "21" %}selected{% endif %} class="orange-dot">
-                                        eher zufrieden
-                                    </option>
-                                    <option value="22" {% if request.GET.zufriedenheit == "22" %}selected{% endif %} class="orange-dot">
-                                        eher unzufrieden
-                                    </option>
-                                    <option value="23" {% if request.GET.zufriedenheit == "23" %}selected{% endif %} class="red-dot">
-                                        sehr unzufrieden
-                                    </option>
-                                </select>
-                            </th>
-                            <th>
-                                <select name="stand_umsetzung" class="form-control">
-                                    <option value="">-- Filter Stand --</option>
-                                    {% for stand in stand_choices %}
-                                        <option value="{{ stand }}" {% if request.GET.stand == stand %}selected{% endif %} class="{{stand.color}}-dot">
-                                            {{ stand_umsetzung }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </th>
-                            <th>
-                                <select name="rueckmeldung_austausch" class="form-select">
-                                    <option value="" {% if request.GET.rueckmeldung_austausch == "" %}selected{% endif %}>----</option>
-                                    <option value="true" {% if request.GET.rueckmeldung_austausch == "true" %}selected{% endif %}>Ja</option>
-                                    <option value="false" {% if request.GET.rueckmeldung_austausch == "false" %}selected{% endif %}>Nein</option>
-                                </select>
-                            </th>
-                            <th><button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i></button></th>
-                        </tr>
-                    </thead>
-            </form>
-                <tbody>
-                    {% for pr in plan_records %}
-                    <tr>
-                        <td>{{ pr.massnahme.kuerzel }}</td>
-                        <td>{{ pr.verantwortlich }}</td>
-                        <td>{{ pr.organisation.bereich_kuerzel }}</td>
-                        <td>{{ pr.organisation.departement_kuerzel }}</td>
-                        <td>{{ pr.jahr}}</td>
-                        <td>{{ pr.status }}</td>
-                        <td>
-                            {% if pr.einhaltung_termin %}
-                                <i class="fas fa-check-square"></i> <!-- Checked icon -->
-                            {% else %}
-                                <i class="fas fa-square"></i> <!-- Unchecked icon -->
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if pr.zufriedenheit_umsetzung.id == 20 %}
-                                <span class="dot green-dot"></span>
-                            {% elif pr.zufriedenheit_umsetzung.id == 21 or pr.zufriedenheit.id == 22 %}
-                                <span class="dot orange-dot"></span>
-                            {% elif pr.zufriedenheit_umsetzung.id == 23 %}
-                                <span class="dot red-dot"></span>
-                            {% else %}
-                                <span class="dot grey-dot"></span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if pr.stand_umsetzung.id == 14 %}
-                                <span class="dot green-dot"></span>
-                            {% elif pr.stand_umsetzung.id == 15 %}
-                                <span class="dot orange-dot"></span>
-                            {% elif pr.stand_umsetzung.id == 16 %}
-                                <span class="dot red-dot"></span>
-                            {% else %}
-                                <span class="dot grey-dot"></span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if pr.rueckmeldung_austausch %}
-                                <i class="fas fa-check-square"></i> <!-- Checked icon -->
-                            {% else %}
-                                <i class="fas fa-square"></i> <!-- Unchecked icon -->
-                            {% endif %}
-                        </td>
-                        <td><a href="{% url 'plan_record_edit' pr.pk %}"><i class="fas fa-edit"></i></a></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <br>
-        {% else %}
-            Bitte <a href="{% url 'login_account:login' %}">einloggen</a>
-        {% endif %}
-
+<div class="container">
+    <h1>{{strategie.titel}}</h1>
+    <div class="image-container">
+        <img src="{% static 'images/' %}{{ strategie.home_image }}" alt="Strategie Image" class="centered-image">
     </div>
-    <style>
-        .dot {
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        .green-dot {
-            background-color: green;
-        }
-        .orange-dot {
-            background-color: orange;
-        }
-        .red-dot {
-            background-color: red;
-        }
-        .grey-dot {
-            background-color: grey;
-        }
+    <br>
+    <p>{{strategie.beschreibung_extern}}</p>
+    <br>
+    <table class="table">
+        <tr>
+            <th>Verantwortliche Stelle</th>
+            <td>{{strategie.organisation}}</td>
+        </tr>
+        <tr>
+            <th>Von</th>
+            <td>{{strategie.gueltigkeit_jahr_start}}</td>
+        </tr>
+        <tr>
+            <th>Bis</th>
+            <td>{{strategie.gueltigkeit_jahr_ende}}</td>
+        </tr>
+        <tr>
+            <th>Anzahl Handlungsfelder</th>
+            <td>{{ strategie|handlungsfelder|length }}</td>
+        </tr>
+        <tr>
+            <th>Anzahl Ziele</th>
+            <td>{{ strategie | ziele | length }}</td>
+        </tr>
+        <tr>
+            <th>Anzahl Massnahmen</th>
+            <td>{{ strategie | massnahmen | length }}</td>
+        </tr>
+        <tr>
+            <th>Beteiligte Personen</th>
+            <td>{{ strategie | personen| length }}</td>
+        </tr>
+        <tr>
+            <th>Kontakt</th>
+            <td>{{ strategie.kontakt.vorname_nachname }}</td>
+        </tr>
+    </table>    
+    <br>
+    <b>Dokumente</b>
+    <ul>
+        {% for dokument in strategie.dokumente.all %}
+            <li><a href="{{ dokument.url_feld }}">{{ dokument.titel_dokument }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
 
-        .fas {
-            font-size: 1.5em; /* Adjust the size */
-            color: grey;
-        }
-    </style>
-    {% endblock %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        updateDescription();  // Ensure the description is set initially
+    });
 
+    function updateDescription() {
+        var select = document.getElementById('strategie');
+        if (select) {
+            var description = select.options[select.selectedIndex].getAttribute('data-description');
+            document.getElementById('theme-description').innerText = description;
+        }
+    }
+</script>
+
+
+
+{% endblock %}

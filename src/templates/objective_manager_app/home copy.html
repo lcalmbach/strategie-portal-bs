@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load strategie_filters %}
+
+{% block title %}Welcome to the Objective Manager{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>🚧Portal für Strategisches Controlling des Kantons Basel-Stadt🚧</h1>
+    <br>
+    <p>Diese App ermöglicht es, strategische Handlungsfelder, Ziele und Massnahmen zu verwalten sowie deren Zielerreichung und den geplanten Aufwand zu überwachen. Die App befindet sich derzeit in der Entwicklung. Handlungsfelder, Ziele und Maßnahmen entsprechen realen Vorhaben, während alle Planungsdaten erfunden sind. Nur das Thema Gleichstellung ist aktuell mit Daten hinterlegt.</p>
+    <br>
+    <hr>
+    <h2>{{ strategie_auswahl.titel }}</h2>
+    <p>{{ strategie_auswahl.beschreibung_extern }}</p>
+    <table class="table">
+        <tr>
+            <th>Verantwortliche Stelle</th>
+            <td>{{strategie_auswahl.organisation}}</td>
+        </tr>
+        <tr>
+            <th>Von</th>
+            <td>{{strategie_auswahl.gueltigkeit_jahr_start}}</td>
+        </tr>
+        <tr>
+            <th>Bis</th>
+            <td>{{strategie_auswahl.gueltigkeit_jahr_ende}}</td>
+        </tr>
+        <tr>
+            <th>Anzahl Handlungsfelder</th>
+            <td>{{ strategie_auswahl|handlungsfelder|length }}</td>
+        </tr>
+        <tr>
+            <th>Anzahl Ziele</th>
+            <td>{{ strategie_auswahl | ziele | length }}</td>
+        </tr>
+        <tr>
+            <th>Anzahl Massnahmen</th>
+            <td>{{ strategie_auswahl | massnahmen | length }}</td>
+        </tr>
+        <tr>
+            <th>Beteiligte Personen</th>
+            <td>{{ strategie_auswahl | personen| length }}</td>
+        </tr>
+        <tr>
+            <th>Kontakt</th>
+            <td>{{ strategie_auswahl.kontakt.vorname_nachname }}</td>
+        </tr>
+    </table>    
+    <br>
+    <b>Dokumente</b>
+    <ul>
+        {% for dokument in strategie_auswahl.dokumente.all %}
+            <li><a href="{{ dokument.url_feld }}">{{ dokument.titel_dokument }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        updateDescription();  // Ensure the description is set initially
+    });
+
+    function updateDescription() {
+        var select = document.getElementById('strategie_auswahl');
+        if (select) {
+            var description = select.options[select.selectedIndex].getAttribute('data-description');
+            document.getElementById('theme-description').innerText = description;
+        }
+    }
+</script>
+
+<style>
+    .form-group {
+        margin-bottom: 0;
+        flex-grow: 1;
+    }
+    .d-flex {
+        display: flex;
+        align-items: center;
+    }
+    .mr-2 {
+        margin-right: 0.5rem;
+    }
+    .ml-2 {
+        margin-left: 0.5rem;
+    }
+    .full-width-select {
+        width: 100%;
+    }
+</style>
+
+{% endblock %}

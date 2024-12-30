@@ -1,0 +1,177 @@
+{% extends "base.html" %} 
+{% load static %}
+{% load strategie_filters %}
+
+{% block title %}Strategie-Portal-BS{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <!-- Title Section -->
+  <h1 class="text-center mb-4">Strategie-Portal.bs</h1>
+
+  <!-- Top Image -->
+  <div class="text-center mb-4">
+    <img
+      src="{% static 'images/portal_top_image.jpg' %}"
+      alt="Portal Image"
+      class="img-fluid"
+      style="height: 350px; object-fit: cover;"
+    />
+  </div>
+  <br>
+  <!-- Radio Button Section -->
+  <form method="get" action="" class="text-center mb-4" id="sicht-form">
+    <div class="form-check form-check-inline">
+        <input
+            class="form-check-input"
+            type="radio"
+            name="sicht"
+            id="sicht_strategien"
+            value="strategien"
+            {% if sicht == "strategien" %}
+                checked
+            {% endif %}
+            onchange="document.getElementById('sicht-form').submit();"
+        />
+        <label class="form-check-label" for="sicht_strategien">Sicht Strategien</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input
+            class="form-check-input"
+            type="radio"
+            name="sicht"
+            id="sicht_themen"
+            value="themen"
+            {% if sicht == "themen" %}
+                checked
+            {% endif %}
+            onchange="document.getElementById('sicht-form').submit();"
+        />
+        <label class="form-check-label" for="sicht_themen">Sicht Themen</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input
+            class="form-check-input"
+            type="radio"
+            name="sicht"
+            id="sicht_kennzahlen"
+            value="kennzahlen"
+            {% if sicht == "kennzahlen" %}
+                checked
+            {% endif %}
+            onchange="document.getElementById('sicht-form').submit();"
+        />
+        <label class="form-check-label" for="sicht_kennzahlen">Sicht Kennzahlen</label>
+    </div>
+</form>
+  <br>
+
+  {% if sicht == "strategien" %}
+    <!-- Strategies Section -->
+    <div class="row">
+      {% for strategie in strategien %}
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+          <img
+            src="{% static 'images/' %}{{ strategie.home_image }}"
+            alt="Image for {{ strategie.titel }}"
+            class="card-img-top"
+            style="height: 200px; object-fit: cover; width: 100%;"
+          />
+          <div class="card-body">
+            <h5 class="card-title">
+              <a
+                href="{% url 'home' pk=strategie.id %}"
+                class="text-decoration-none text-dark"
+              >
+                {{ strategie.titel }}
+              </a>
+            </h5>
+            <p class="card-text">
+              <strong>Organisation:</strong> {{ strategie.organisation }}<br />
+              <strong>Kontakt:</strong> {{ strategie.kontakt }}<br />
+              <strong>Gültigkeit:</strong> {{ strategie.gueltigkeit_jahr_start }}
+              - {{ strategie.gueltigkeit_jahr_ende }}<br />
+            </p>
+            <p class="card-text text-muted">
+              {{ strategie.beschreibung_intern|truncatechars:150 }}
+            </p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if sicht == "themen" %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Kürzel</th>
+          <th scope="col">Thema</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for thema in themen %}
+          <tr>
+            <td>{{ thema.kuerzel }}</td>
+            <td>
+              <a
+                href="{% url 'home' pk=thema.id %}"
+                class="text-decoration-none text-dark"
+              >
+                {% if thema.ebene == 1 %}
+                  <strong>{{ thema.titel }}</strong>
+                {% elif thema.ebene == 2 %}
+                  <em>{{ thema.titel }}</em>
+                {% else %}
+                  {{ thema.titel }}
+                {% endif %}
+              </a>
+              {% if thema.business_objects_themen %}
+                <ul>
+                  {% for bu in thema.business_objects_themen.all %}
+                    <li>{{ bu.business_object.strategie.titel }}: {{ bu.business_object.typ }} "{{ bu.business_object.titel }}"</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  {% if sicht == "kennzahlen" %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Kennzahl</th>
+          <th scope="col">Thema</th>
+          <th scope="col">Unterthema</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for kennzahl in kennzahlen %}
+          <tr>
+            <td>
+              <a href="{% url 'kennzahl_detail' pk=kennzahl.id %}">
+                {{ kennzahl.titel }}
+              </a>
+              {% if kennzahl.business_objects_kennzahlen %}
+                <ul>
+                  {% for bu in kennzahl.business_objects_kennzahlen.all %}
+                    <li>{{ bu.business_object.strategie.titel }}: {{ bu.business_object.typ }} "{{ bu.business_object.titel }}"</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </td>
+            <td>{{ kennzahl.thema }}</td>
+            <td>{{ kennzahl.unterthema }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+{% endblock %}

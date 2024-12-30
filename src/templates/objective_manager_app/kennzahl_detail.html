@@ -1,0 +1,79 @@
+{% extends "base.html" %} 
+{% block title %}
+  {{kennzahl.titel}}
+{% endblock title %} 
+{% load custom_filters %} 
+
+{% block content %}
+<div class="container">
+  <!-- Back Button -->
+  <h3>Kennzahl: {{kennzahl.titel}}</h3>
+  <br />
+  <table class="table">
+    <tr>
+      <th>Kürzel</th>
+      <td>{{kennzahl.id}}</td>
+    </tr>
+    <tr>
+      <th>Titel</th>
+      <td>{{kennzahl.titel}}</td>
+    </tr>
+    <tr>
+      <th>Thema</th>
+      <td>{{kennzahl.thema}}</td>
+    </tr>
+    <tr>
+      <th>Unterthema</th>
+      <td>{{kennzahl.unterthema}}</td>
+    </tr>
+    <tr>
+      <th>Beschreibung</th>
+      <td>{{kennzahl.beschreibung}}</td>
+    </tr>
+  </table>
+  <br>
+  {% if kennzahl.url %}
+    <div class="embed-container mt-4">
+      <h5>Visualisierung</h5>
+      <iframe
+        src="{{ kennzahl.url }}"
+        width="100%"
+        height="600"
+        style="border: none;"
+        title="Kennzahl Visualisierung"
+        allowfullscreen
+      ></iframe>
+    </div>
+  {% else %}
+    <p class="text-muted">No visualization available for this Kennzahl.</p>
+  {% endif %}
+  <br />
+  <hr />
+  <br />
+  <h4>Zuordnung Strategie-Elemente (Ziele, Massnahmen)</h4>
+  <table class="table">
+    <tr>
+      <th>Strategie</th>
+      <th>Typ</th>
+      <th>Strategie-Element</th>
+    </tr>
+    {% for item in kennzahl.business_objects_kennzahlen.all %}
+    <tr>
+      <td>{{item.business_object.strategie.titel }}</td>
+      <td>{{item.business_object.typ}}</td>
+      <td>{{item.business_object.titel}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <a href="{% url 'create_business_object_kennzahl' kennzahl.pk %}" class="btn btn-primary">
+    Neue Zuordnung
+  </a>
+
+</div>
+
+<script>
+  function goBack() {
+    window.history.back();
+  }
+</script>
+{% endblock %}

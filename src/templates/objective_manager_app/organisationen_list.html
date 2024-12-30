@@ -19,7 +19,7 @@
                     <td>{{ organisation.departement }} ({{ organisation.departement_kuerzel }})</td>
                     <td>{{ organisation.dienststelle }} ({{ organisation.dienststelle_kuerzel }})</td>
                     <td>{{ organisation.bereich }} ({{ organisation.bereich_kuerzel }})</td>
-                    {% if request.user|is_in_group:"admin" %}
+                    {% if request.user|is_in_group:"admins" %}
                         <td><a href="{% url 'organisation_edit' organisation.pk %}"><i class="fas fa-edit"></i></a></td>
                     {% endif %}
                 </tr>

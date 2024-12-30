@@ -1,13 +1,4 @@
 /* styles.css */
-.form-group {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.form-group label {
-    margin-bottom: 5px; /* Adds some space between the label and the input */
-}
 
 .navbar-select {
     background-color: #28a745; /* Green background color */
@@ -50,13 +41,4 @@
 .navbar-select:focus {
     outline: none;
     box-shadow: none;
-}
-
-.top-aligned {
-    align-items: flex-start;
-  }
-
-.fas {
-    font-size: 1.5em; /* Adjust the size */
-    color: white; /* Adjust the color */
 }

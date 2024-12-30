@@ -11,7 +11,7 @@ from django.contrib import messages
 from login_account.forms import LoginForm
 from django.contrib.auth import login
 
-from objective_manager_app.models import Person
+from objective_manager_app.models import Person, Strategie
 from objective_manager_app.forms import PersonForm
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -21,6 +21,8 @@ from django.http import HttpResponse
 from .forms import LoginForm
 
 def user_login(request):
+    strategie = get_object_or_404(Strategie, id=request.session['strategie_id']) 
+
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -31,7 +33,7 @@ def user_login(request):
                 if user.is_active:
                     login(request, user)
                     messages.info(request, f"Willkommen {person.vorname}.")
-                    return redirect('home')
+                    return redirect('home', pk=strategie.pk)  # Pass `pk` to the redirect
                 else:
                     return HttpResponse('Disabled account')
             else:
@@ -41,6 +43,7 @@ def user_login(request):
 
     context = { 
         'form': form,
+        'strategie': strategie
     }
     return render(request, 'login_account/login.html', context)
 
@@ -48,6 +51,7 @@ def user_login(request):
 @login_required
 def user_logout(request):
     user = request.user
+    strategie = get_object_or_404(Strategie, id=request.session['strategie_id']) 
     try:
         person = Person.objects.get(user=user)
         logout(request)
@@ -55,7 +59,7 @@ def user_logout(request):
     except Person.DoesNotExist:
         logout(request)
         messages.info(request, f"Auf Wiedersehen.")
-    return redirect('home')  # Pass `pk` to the redirect
+    return redirect('home', pk=strategie.pk)  # Pass `pk` to the redirect
 
 @login_required
 def user_profile(request):

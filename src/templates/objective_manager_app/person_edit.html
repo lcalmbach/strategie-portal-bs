@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 
-{% block title %}Person Editieren{% endblock title %}
+{% block title %}Gleichstellung BS: Ziele und Massnahmen{% endblock title %}
 {% block content %}
 
 <div class="container">
@@ -15,7 +15,7 @@
         {% if form.instance.pk %}
             <button type="button" class="btn btn-danger" onclick="confirmDelete({{ form.instance.pk }})">Löschen</button>
         {% endif %}
-        <button type="button" class="btn btn-success" onclick="window.location.href='{% url 'organisation_create' %}'">Neu</button>
+        <button type="button" class="btn btn-success" onclick="window.location.href='{% url "organisation_create" %}'">Neu</button>
     </form>
 </div>
 

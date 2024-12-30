@@ -22,9 +22,8 @@
   <nav class="navbar navbar-expand-sm navbar-custom">
     <div class="container-fluid">
       <ul class="navbar-nav">
-        {% if request.user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'portal'%}">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'handlungsfelder_list' %}active{% endif %}" href="{% url 'handlungsfelder_list' %}">Handlungsfelder</a>
@@ -32,13 +31,21 @@
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'ziele_list' %}active{% endif %}" href="{% url 'ziele_list' %}">Ziele</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'massnahmen_list' %}active{% endif %}" href="{% url 'massnahmen_list' %}">Massnahmen</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'themen_list' %}active{% endif %}" href="{% url 'themen_list' %}">Themen</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'kennzahlen_list' %}active{% endif %}" href="{% url 'kennzahlen_list' %}">Kennzahlen</a>
+        </li>
+        {% if request.user|is_in_group:"operators" %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'plan_records_list' %}active{% endif %}" href="{% url 'plan_records_list' %}">Planung</a>
+        </li>
         {% endif %}
-        {% if request.user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'massnahmen_list' %}active{% endif %}" href="{% url 'massnahmen_list' %}">Massnahmen</a>
-          </li>
-        {% endif %}
-        {% if request.user|is_in_group:"fgs" %}
+        {% if request.user|is_in_group:"admins" %}
           <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'personen_list' %}active{% endif %}" href="{% url 'personen_list' %}">Personen</a>
           </li>
@@ -49,7 +56,7 @@
       </ul>
 
       <!-- Right-aligned items -->
-      <ul class="navbar-nav ms-auto top-aligned">
+      <ul class="navbar-nav ms-auto">
         {% if not request.user.is_authenticated %}
           <!-- User is not logged in -->
           <li class="nav-item">
@@ -58,17 +65,7 @@
         {% else %}
           <!-- User is logged in -->
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'login_account:profile' %}">
-              {{ request.user.first_name|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper }}
-            </a>
-          </li>
-          <li class="nav-item">
-            Rolle:
-            {% for group in request.user.groups.all %}
-              {% if group.name in "fgs mv sp" %}
-                {{ group.name }}
-              {% endif %}
-            {% endfor %}
+            <a class="nav-link" href="{% url 'login_account:profile' %}">{{request.user.first_name.0|upper}}{{request.user.last_name.0|upper}}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'login_account:logout' %}">Logout</a>
@@ -86,15 +83,9 @@
   <!-- Footer with version number -->
   <footer class="footer mt-auto py-3 bg-light">
     <div class="container text-center">
-      <span class="text-muted">&copy; Statistisches Amt Basel-Stadt<span style="float:right; font-size: smaller;">v0.0.9(22.10.2024)</span></span>
+      <span class="text-muted">&copy; Statistisches Amt Basel-Stadt<span style="float:right; font-size: smaller;">v0.0.7 (30.12.2024)</span></span>
     </div>
   </footer>
-  
-  <script>
-    function goBack() {
-      window.history.back();
-    }
-  </script>
 
   {% if messages %}
     <script>
@@ -110,5 +101,4 @@
     </script>
   {% endif %}
 </body>
-
 </html>

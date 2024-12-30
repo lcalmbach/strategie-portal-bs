@@ -11,7 +11,8 @@ from objective_manager_app.models import (
     Massnahme, 
     BusinessObjectTyp, 
     NeuBestehend,
-    Strategie
+    Strategie,
+    Kennzahl
 )
 from django.contrib.auth.models import User
 from faker import Faker
@@ -178,15 +179,28 @@ class Command(BaseCommand):
                     except Exception as e:
                         print(f"Error processing record {record}: {e}")
         
+        def import_kennzahlen():
+            Kennzahl.objects.all().delete()
+            filename = os.path.join(settings.BASE_DIR, 'objective_manager_app', 'data', 'kennzahlen.xlsx')
+            kennzahlen_df = pd.read_excel(filename)
+            for kennzahl in kennzahlen_df.itertuples():
+                Kennzahl.objects.create(
+                    id=kennzahl.id,
+                    titel=kennzahl.bezeichnung,
+                    beschreibung=kennzahl.beschreibung,
+                    thema=kennzahl.thema,
+                    unterthema=kennzahl.unterthema,
+                    url=kennzahl.url
+                )
 
         #generate_codes()
         #BusinessObject.objects.all().delete()
         #generate_themen()
         #generate_handlungsfelder()
         #generate_ziele()
-        generate_massnahmen()
+        #generate_massnahmen()
         #generate_personen()
         #generate_organisationen()
-        generate_org_massnahme_beziehung()
-
+        #generate_org_massnahme_beziehung()
+        import_kennzahlen()
         self.stdout.write(self.style.SUCCESS('Successfully generated fake data.'))

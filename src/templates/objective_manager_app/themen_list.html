@@ -1,0 +1,29 @@
+{% extends "base.html" %} 
+{% load custom_filters %}
+{% block title %}Ziele{% endblock title %} 
+{% block content %}
+    <div class="container">
+        <h1>Themen  ({{ themen|length }})</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Kürzel</th>
+                    <th>Titel</th>
+                    <th>Beschreibung</th>
+                    {% if request.user|is_in_group:"admins" %}
+                        <th>Edit</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for thema in themen %}
+                <tr>
+                  <td>{{ thema.kuerzel }}</td>
+                    <td>{{ thema.titel }}</td>
+                    <td>{{ thema.beschreibung }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

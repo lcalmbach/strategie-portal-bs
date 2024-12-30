@@ -1,45 +1,15 @@
 {% extends "base.html" %} 
 {% load crispy_forms_tags %}  <!-- Load Crispy Forms tags -->
-{% block title %}Rückmeldung{% endblock title %} 
+{% block title %}Planung{% endblock title %} 
 {% block content %}
 
 <div class="container">
-    <h2>Rückmeldung {{ plan_record.jahr }}</h2>
-    <br>
-    <table class="table">
-        <tr> 
-            <th>Massnahme:</th>
-            <td>{{ plan_record.massnahme.kuerzel }}</td>
-        </tr>
-        <tr> 
-            <th></th><td>{{ plan_record.massnahme }}</td>
-        </tr>
-        <tr>
-            <th>Messbarkeit der Umsetzung der Massnahme:</th>
-            <td>{{ plan_record.massnahme.mess_groesse }}</td>
-        <tr>
-        <tr>
-            <th>Handlungsfeld</th><td>{{plan_record.massnahme.vorgaenger.vorgaenger.kuerzel}} {{ plan_record.massnahme.vorgaenger.vorgaenger  }}
-                <a href="{% url 'handlungsfeld_detail' plan_record.massnahme.vorgaenger.vorgaenger.pk %}">
-                    <i class="fas fa-link"></i>
-                </a>
-            </td>
-        </tr>
-        <tr></tr>
-        <tr>
-            <th style="vertical-align: top;">Ziel</th>
-            <td>
-                {{ plan_record.massnahme.vorgaenger.kuerzel  }} {{ plan_record.massnahme.vorgaenger.beschreibung  }}
-                </br></br>&nbsp;
-            </td>
-        </tr>
-    </table>
+    <h1>Planung {{ plan_record.jahr }}</h1>
+    <b>Massnahme:</b> {{ plan_record.verantwortlich.massnahme }}<br>
     <form method="post">
         {% csrf_token %}
-        {% crispy form form.helper %}
-        <br>
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">Speichern</button>
     </form>
-    <div>Rückmeldungen mit dem Status "Erledigt" können durch die Massnahmenverantwortliche Person nicht mehr bearbeitet werden.</div>
 </div>
-
 {% endblock %}
