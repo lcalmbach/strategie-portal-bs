@@ -23,7 +23,7 @@
     <div class="container-fluid">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'portal'%}">Home</a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'index'%}">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'handlungsfelder_list' %}active{% endif %}" href="{% url 'handlungsfelder_list' %}">Handlungsfelder</a>
@@ -54,25 +54,6 @@
           </li>
         {% endif %}
       </ul>
-
-      <!-- Right-aligned items -->
-      <ul class="navbar-nav ms-auto">
-        {% if not request.user.is_authenticated %}
-          <!-- User is not logged in -->
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'login_account:login' %}">Login</a>
-          </li>
-        {% else %}
-          <!-- User is logged in -->
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'login_account:profile' %}">{{request.user.first_name.0|upper}}{{request.user.last_name.0|upper}}</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'login_account:logout' %}">Logout</a>
-          </li>
-        {% endif %}
-      </ul>
-      
     </div>
   </nav>
   <br>
@@ -83,7 +64,7 @@
   <!-- Footer with version number -->
   <footer class="footer mt-auto py-3 bg-light">
     <div class="container text-center">
-      <span class="text-muted">&copy; Statistisches Amt Basel-Stadt<span style="float:right; font-size: smaller;">v0.0.7 (30.12.2024)</span></span>
+      <span class="text-muted">&copy; Statistisches Amt Basel-Stadt<span style="float:right; font-size: smaller;">v0.0.8 (31.12.2024)</span></span>
     </div>
   </footer>
 

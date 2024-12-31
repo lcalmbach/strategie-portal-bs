@@ -38,7 +38,6 @@ from datetime import datetime
 
 from .planung import Planung
 
-
 class ObjectType(Enum):
     HANDLUNGSFELD = 2
     ZIEL = 3
@@ -57,31 +56,48 @@ def get_strategie(request):
     )
 
 
-def handlungsfelder_list(request):
-    handlungsfelder = Handlungsfeld.objects.filter(
-        strategie_id=request.session["strategie_id"]
-    )
-    context = {
-        "handlungsfelder": handlungsfelder,
-        "strategie": get_strategie(request),
-    }
-    return render(
-        request,
-        "objective_manager_app/handlungsfelder_list.html",
-        context,
-    )
+class HandlungsfeldListView(ListView):
+    model = Handlungsfeld
+    template_name = "objective_manager_app/handlungsfelder_list.html"
+    context_object_name = "handlungsfelder"
+
+    def get_context_data(self, **kwargs):
+        # Get the default context data
+        context = super().get_context_data(**kwargs)
+        # Add custom context
+        context["strategie_options"] = Strategie.objects.all()
+        context["strategie_filter"] = self.request.GET.get('strategie_filter', '')
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        strategie_filter = self.request.GET.get('strategie_filter', '')
+        kuerzel_filter = self.request.GET.get('kuerzel_filter', '')
+        titel_filter = self.request.GET.get('titel_filter', '')
+        beschreibung_filter = self.request.GET.get('beschreibung_filter', '')
+
+        if strategie_filter:
+            queryset = queryset.filter(strategie_id=strategie_filter)
+        if kuerzel_filter:
+            queryset = queryset.filter(kuerzel__icontains=kuerzel_filter)
+        if titel_filter:
+            queryset = queryset.filter(titel__icontains=titel_filter)
+        if beschreibung_filter:
+            queryset = queryset.filter(beschreibung__icontains=beschreibung_filter)
+
+        return queryset
 
 
-def ziele_list(request):
-    ziele = Ziel.objects.filter(strategie_id=request.session["strategie_id"])
-    context = {"ziele": ziele, "strategie": get_strategie(request)}
-    return render(request, "objective_manager_app/ziele_list.html", context)
+class ZieleListView(ListView):
+    model = Ziel
+    template_name = "objective_manager_app/ziele_list.html"
+    context_object_name = "ziele"
 
 
-def themen_list(request):
-    themen = Thema.objects.all()
-    context = {"themen": themen}
-    return render(request, "objective_manager_app/themen_list.html", context)
+class ThemenListView(ListView):
+    model = Thema
+    template_name = "objective_manager_app/themen_list.html"
+    context_object_name = "themen"
 
 
 class KennzahlenListView(ListView):
@@ -356,7 +372,7 @@ def plan_record_detail(request, pk):
 
 
 class PortalView(View):
-    template_name = "objective_manager_app/portal.html"
+    template_name = "objective_manager_app/index.html"
 
     def get(self, request):
         # Initialize context dictionary
@@ -371,29 +387,12 @@ class PortalView(View):
 
         return render(request, self.template_name, context)
 
-def home(request, pk):
+
+def strategie_detail(request):
     if request.method == "POST":
         request.session["strategie_id"] = request.POST.get("strategie_auswahl")
         strategie_auswahl = Strategie.objects.get(id=request.session["strategie_id"])
     else:
-        request.session["strategie_id"] = pk
-
-    strategie = get_object_or_404(Strategie, pk=pk)
-
-    return render(
-        request,
-        "objective_manager_app/home.html",
-        {"strategie": strategie},
-    )
-
-
-def home_detail(request):
-    if request.method == "POST":
-        request.session["strategie_id"] = request.POST.get("strategie_auswahl")
-        strategie_auswahl = Strategie.objects.get(id=request.session["strategie_id"])
-    else:
-        if not "strategie_id" in request.session:
-            request.session["strategie_id"] = 2
         strategie_auswahl = Strategie.objects.get(id=request.session["strategie_id"])
 
     strategieen = Strategie.objects.all()
@@ -419,7 +418,6 @@ def admin_detail(request):
     )
 
 
-@method_decorator(is_in_group_decorator("admins"), name="dispatch")
 class HandlungsfeldEditView(UpdateView):
     model = Handlungsfeld
     form_class = HandlungsfeldForm

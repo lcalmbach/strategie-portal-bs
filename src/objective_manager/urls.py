@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.shortcuts import redirect
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('objective_manager_app.urls')),
-    path('login/', include('login_account.urls')),
+    path('', lambda request: redirect('index/', permanent=True)),  # Redirect root to /index/
+    path('index/', include('objective_manager_app.urls')),  # Map /index/ to your app's URLs
 ]

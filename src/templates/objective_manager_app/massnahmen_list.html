@@ -8,6 +8,7 @@
             <table class="table">
                 <thead>
                     <tr>
+                        <th>Strategie</th>
                         <th>Ziel</th>
                         <th>Kürzel</th>
                         <th>Titel</th>
@@ -16,7 +17,17 @@
                         {% endif %}
                     </tr>
                     <tr>
-                        <th>
+                      <th>
+                        <select name="strategie_filter" class="form-control">
+                          <option value="">-- All Strategien --</option>
+                          {% for strategie in strategie_options %}
+                            <option value="{{ strategie.id }}" {% if strategie.id|stringformat:"s" == strategie_filter %}selected{% endif %}>
+                              {{ strategie.titel_kurz }}
+                            </option>
+                          {% endfor %}
+                      </select>
+                    </th>  
+                      <th>
                             <input type="text" name="filterZiel" value="{{ request.GET.filterZiel }}" placeholder="Filter Ziel">
                         </th>
                         <th>
@@ -34,7 +45,8 @@
                 <tbody>
                     {% for massnahme in massnahmen %}
                     <tr>
-                        <td>{{massnahme.vorgaenger.kuerzel}} {{massnahme.vorgaenger.titel}}</td>
+                      <td>{{massnahme.strategie}}</td>  
+                      <td>{{massnahme.vorgaenger.kuerzel}} {{massnahme.vorgaenger.titel}}</td>
                         <td><a href="{% url 'massnahme_detail' massnahme.pk %}">{{ massnahme.kuerzel }}</a></td>
                         <td>{{ massnahme.titel }}</td>
                         {% if request.user|is_in_group:"admins" %}

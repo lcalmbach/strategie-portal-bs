@@ -3,23 +3,14 @@ from django.views.generic.base import RedirectView
 from . import views
 
 urlpatterns = [
-    path("portal/", views.PortalView.as_view(), name="portal"),
-    path("strategie/<int:pk>/", views.home, name="home"),
-    path("datenstrategie/", RedirectView.as_view(url="/strategie/1/", permanent=True)),
-    path(
-        "gleichstellungsplan/",
-        RedirectView.as_view(url="/strategie/2/", permanent=True),
-    ),
-    path(
-        "klimaschutzstrategie",
-        RedirectView.as_view(url="/strategie/3/", permanent=True),
-    ),
-    path("stata-strategie", RedirectView.as_view(url="/strategie/4/", permanent=True)),
+    path('', views.PortalView.as_view(), name='index'),  # Root URL
+    path('index/', views.PortalView.as_view(), name='index'),  # /index/ URL
+    
     # Listen
-    path("handlungsfelder/", views.handlungsfelder_list, name="handlungsfelder_list"),
-    path("ziele/", views.ziele_list, name="ziele_list"),
+    path("handlungsfelder/", views.HandlungsfeldListView.as_view(), name="handlungsfelder_list"),
+    path("ziele/", views.ZieleListView.as_view(), name="ziele_list"),
     path("massnahmen/", views.massnahmen_list, name="massnahmen_list"),
-    path("themen/", views.themen_list, name="themen_list"),
+    path("themen/", views.ThemenListView.as_view(), name="themen_list"),
     path("kennzahlen/", views.KennzahlenListView.as_view(), name="kennzahlen_list"),
     path("plan_records/", views.plan_records_list, name="plan_records_list"),
     path("personen/", views.personen_list, name="personen_list"),

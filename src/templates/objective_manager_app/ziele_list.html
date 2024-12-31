@@ -7,7 +7,8 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Kürzel</th>
+                  <th>Strategie</th>  
+                  <th>Kürzel</th>
                     <th>Titel</th>
                     <th>Beschreibung</th>
                     {% if request.user|is_in_group:"admins" %}
@@ -18,6 +19,7 @@
             <tbody>
                 {% for ziel in ziele %}
                 <tr>
+                    <td>{{ ziel.strategie }}</td>
                     <td><a href="{% url 'ziel_detail' ziel.pk %}">{{ ziel.kuerzel }}</a></td>
                     <td>{{ ziel.titel }}</td>
                     <td>{{ ziel.beschreibung }}</td>

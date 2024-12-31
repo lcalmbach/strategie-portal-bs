@@ -25,7 +25,6 @@ class HandlungsfeldForm(forms.ModelForm):
             "jahr_start",
             "jahr_ende",
             "anmerkung_initialisierung",
-            "bestehende_massnahme",
         ]
 
 
@@ -38,7 +37,6 @@ class ZielForm(forms.ModelForm):
             "typ",
             "vorgaenger",
             "anmerkung_initialisierung",
-            "bestehende_massnahme",
         ]
 
 

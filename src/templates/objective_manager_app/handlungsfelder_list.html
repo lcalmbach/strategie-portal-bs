@@ -4,61 +4,111 @@
 {% block content %}
     <div class="container">
         <h1>Handlungsfelder ({{ handlungsfelder|length }})</h1>
-        <table class="table">
+        <form method="get" id="filter-form">
+          <table class="table">
             <thead>
-                <tr>
-                    <th>Kürzel</th>
-                    <th>Handlungsfeld</th>
-                    <th>Beschreibung</th>
-                    {% if request.user|is_in_group:"admins" %}
-                        <th>Actions</th>
-                    {% endif %}
-                </tr>
-            </thead>
-            <tbody>
-                {% for handlungsfeld in handlungsfelder %}
-                <tr>
+              <tr>
+                  <th>Strategie</th>  
+                  <th>Kürzel</th>
+                  <th>Handlungsfeld</th>
+                  <th>Beschreibung</th>
+                  {% if request.user|is_in_group:"admins" %}
+                      <th>Actions</th>
+                  {% endif %}
+              </tr>
+              <!-- Filter row -->
+              <tr>
+                  <th>
+                      <select name="strategie_filter" class="form-control" onchange="document.getElementById('filter-form').submit();">
+                          <option value="">-- All Strategien --</option>
+                          {% for strategie in strategie_options %}
+                              <option value="{{ strategie.id }}" {% if strategie.id|stringformat:"s" == strategie_filter %}selected{% endif %}>
+                                  {{ strategie.titel_kurz }}
+                              </option>
+                          {% endfor %}
+                      </select>
+                  </th>
+                  <th>
+                      <input 
+                          type="text" 
+                          name="kuerzel_filter" 
+                          value="{{ request.GET.kuerzel_filter }}" 
+                          placeholder="Filter Kürzel" 
+                          class="form-control"
+                          onchange="document.getElementById('filter-form').submit();"
+                      />
+                  </th>
+                  <th>
+                      <input 
+                          type="text" 
+                          name="titel_filter" 
+                          value="{{ request.GET.titel_filter }}" 
+                          placeholder="Filter Titel" 
+                          class="form-control"
+                          onchange="document.getElementById('filter-form').submit();"
+                      />
+                  </th>
+                  <th>
+                      <input 
+                          type="text" 
+                          name="beschreibung_filter" 
+                          value="{{ request.GET.beschreibung_filter }}" 
+                          placeholder="Filter Beschreibung" 
+                          class="form-control"
+                          onchange="document.getElementById('filter-form').submit();"
+                      />
+                  </th>
+                  {% if request.user|is_in_group:"admins" %}
+                      <th></th> <!-- Empty column for Actions -->
+                  {% endif %}
+              </tr>
+          </thead>
+              <tbody>
+                  {% for handlungsfeld in handlungsfelder %}
+                  <tr>
+                    <td>{{ handlungsfeld.strategie }}</td>  
                     <td>
-                        <a href="{% url 'handlungsfeld_detail' handlungsfeld.pk %}">{{ handlungsfeld.kuerzel }}</a>
-                    </td>
-                    <td>{{ handlungsfeld.titel }}</td>
-                    <td>{{ handlungsfeld.beschreibung }}</td>
-                    {% if request.user|is_in_group:"admins" %}
-                        <td>
-                            <a href="{% url 'handlungsfeld_edit' handlungsfeld.pk %}" class="btn btn-link">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <!-- Button to trigger modal -->
-                            <button type="button" class="btn btn-link text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ handlungsfeld.pk }}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                            <!-- Modal -->
-                            <div class="modal fade" id="deleteModal{{ handlungsfeld.pk }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ handlungsfeld.pk }}" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="deleteModalLabel{{ handlungsfeld.pk }}">Confirm Delete</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            Are you sure you want to delete "{{ handlungsfeld.titel }}"?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <form method="post" action="{% url 'handlungsfeld_delete' handlungsfeld.pk %}" style="display:inline;">
-                                                {% csrf_token %}
-                                                <button type="submit" class="btn btn-danger">Delete</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                          <a href="{% url 'handlungsfeld_detail' handlungsfeld.pk %}">{{ handlungsfeld.kuerzel }}</a>
+                      </td>
+                      <td>{{ handlungsfeld.titel }}</td>
+                      <td>{{ handlungsfeld.beschreibung }}</td>
+                      {% if request.user|is_in_group:"admins" %}
+                          <td>
+                              <a href="{% url 'handlungsfeld_edit' handlungsfeld.pk %}" class="btn btn-link">
+                                  <i class="fas fa-edit"></i>
+                              </a>
+                              <!-- Button to trigger modal -->
+                              <button type="button" class="btn btn-link text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ handlungsfeld.pk }}">
+                                  <i class="fas fa-trash"></i>
+                              </button>
+                              <!-- Modal -->
+                              <div class="modal fade" id="deleteModal{{ handlungsfeld.pk }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ handlungsfeld.pk }}" aria-hidden="true">
+                                  <div class="modal-dialog">
+                                      <div class="modal-content">
+                                          <div class="modal-header">
+                                              <h5 class="modal-title" id="deleteModalLabel{{ handlungsfeld.pk }}">Confirm Delete</h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                              Are you sure you want to delete "{{ handlungsfeld.titel }}"?
+                                          </div>
+                                          <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                              <form method="post" action="{% url 'handlungsfeld_delete' handlungsfeld.pk %}" style="display:inline;">
+                                                  {% csrf_token %}
+                                                  <button type="submit" class="btn btn-danger">Delete</button>
+                                              </form>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </td>
+                      {% endif %}
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+        </form>
         <button type="button" class="btn btn-success" onclick="window.location.href='{% url "handlungsfeld_create" %}'">Neues Handlungsfeld</button>
     </div>
 

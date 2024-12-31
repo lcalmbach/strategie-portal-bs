@@ -81,7 +81,7 @@
           <div class="card-body">
             <h5 class="card-title">
               <a
-                href="{% url 'home' pk=strategie.id %}"
+                href="{% url 'index' %}"
                 class="text-decoration-none text-dark"
               >
                 {{ strategie.titel }}
@@ -117,7 +117,7 @@
             <td>{{ thema.kuerzel }}</td>
             <td>
               <a
-                href="{% url 'home' pk=thema.id %}"
+                href="{% url 'index' %}"
                 class="text-decoration-none text-dark"
               >
                 {% if thema.ebene == 1 %}

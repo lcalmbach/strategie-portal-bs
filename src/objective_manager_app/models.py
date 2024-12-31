@@ -10,7 +10,7 @@ class CodeKategorie(models.Model):
     beschreibung = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.kategorie
+        return self.titel
 
 
 class Organisation(models.Model):
@@ -57,11 +57,6 @@ class Person(models.Model):
 class BusinessObjectTypManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(kategorie_id=1)
-
-
-class NeuBestehendManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(kategorie_id=2)
 
 
 class RolleManager(models.Manager):
@@ -126,22 +121,6 @@ class BusinessObject(models.Model):
     jahr_ende = models.IntegerField(
         verbose_name="Jahr Ende", default=datetime.now().year
     )
-    anmerkung_initialisierung = models.TextField(
-        verbose_name="Pol. Vorstoss", null=True, blank=True
-    )
-    mess_groesse = models.CharField(
-        max_length=200, verbose_name="Messbarkeit", blank=True, null=True
-    )
-    # messbarkeit = models.CharField(max_length=200, verbose_name="Messbarkeit")
-    bestehende_massnahme = models.ForeignKey(
-        "NeuBestehend",
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        default=5,
-        related_name="bestehende_massnahme",
-        verbose_name="Bestehende/Neue Massnahme",
-    )
 
     objects = models.Manager()
     handlungsfelder = HandlungsfeldManager()
@@ -196,13 +175,6 @@ class BusinessObjectTyp(Code):
         proxy = True
 
 
-class NeuBestehend(Code):
-    objects = NeuBestehendManager()
-
-    class Meta:
-        proxy = True
-
-
 class Handlungsfeld(BusinessObject):
     objects = HandlungsfeldManager()
 
@@ -226,12 +198,12 @@ class Massnahme(BusinessObject):
 
 class Kennzahl(models.Model):
     titel = models.CharField(max_length=200, verbose_name="Titel")
-    beschreibung = models.TextField(max_length=1000, verbose_name="Beschreibung")
+    beschreibung = models.TextField(max_length=2000, verbose_name="Beschreibung")
     thema = models.CharField(
         max_length=200, verbose_name="Thema", null=True, blank=True
     )
     unterthema = models.CharField(
-        max_length=200, verbose_name="Thema", null=True, blank=True
+        max_length=200, verbose_name="Unterthema", null=True, blank=True
     )
     url = models.CharField(max_length=1000, verbose_name="URL")
 
