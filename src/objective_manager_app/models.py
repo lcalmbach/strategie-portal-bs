@@ -95,7 +95,7 @@ class MassnahmeManager(models.Manager):
 
 
 class BusinessObject(models.Model):
-    strategie = models.ForeignKey("Strategie", on_delete=models.CASCADE)
+    strategie = models.ForeignKey("Strategie", on_delete=models.CASCADE, related_name="strategie_business_objects")
     typ = models.ForeignKey(
         "BusinessObjectTyp", on_delete=models.CASCADE, related_name="typ"
     )
@@ -103,7 +103,7 @@ class BusinessObject(models.Model):
         "self", on_delete=models.CASCADE, null=True, blank=True
     )
     kuerzel = models.CharField(max_length=10)
-    titel = models.CharField(max_length=200, verbose_name="Titel")
+    titel = models.CharField(max_length=500, verbose_name="Titel")
     beschreibung = models.TextField(verbose_name="Beschreibung")
     erstellt_am = models.DateTimeField(auto_now_add=True, verbose_name="Erstellt am")
     erstellt_von = models.ForeignKey(

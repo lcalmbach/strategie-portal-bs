@@ -81,7 +81,7 @@
           <div class="card-body">
             <h5 class="card-title">
               <a
-                href="{% url 'index' %}"
+                href="{% url 'strategie_detail' pk=strategie.pk %}"
                 class="text-decoration-none text-dark"
               >
                 {{ strategie.titel }}
@@ -104,6 +104,7 @@
   {% endif %}
 
   {% if sicht == "themen" %}
+    <h2 class="text-center mb-4">Strategie Ziele und Massnahmen nach Thema</h2>
     <table class="table">
       <thead>
         <tr>
@@ -111,6 +112,7 @@
           <th scope="col">Thema</th>
         </tr>
       </thead>
+      
       <tbody>
         {% for thema in themen %}
           <tr>
@@ -143,11 +145,12 @@
   {% endif %}
 
   {% if sicht == "kennzahlen" %}
+    <h2 class="text-center mb-4">Strategie Ziele und Massnahmen nach Kennzahlen</h2>
     <table class="table">
       <thead>
         <tr>
           <th scope="col">Kennzahl</th>
-          <th scope="col">Thema</th>
+          <th scope="col">Kennzahl-Thema</th>
           <th scope="col">Unterthema</th>
         </tr>
       </thead>
