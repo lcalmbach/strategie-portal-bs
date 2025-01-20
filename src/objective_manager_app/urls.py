@@ -9,7 +9,7 @@ urlpatterns = [
     # Listen
     path("handlungsfelder/", views.HandlungsfeldListView.as_view(), name="handlungsfelder_list"),
     path("ziele/", views.ZieleListView.as_view(), name="ziele_list"),
-    path("massnahmen/", views.massnahmen_list, name="massnahmen_list"),
+    path("massnahmen/", views.MassnahmenListView.as_view(), name="massnahmen_list"),
     path("themen/", views.ThemenListView.as_view(), name="themen_list"),
     path("kennzahlen/", views.KennzahlenListView.as_view(), name="kennzahlen_list"),
     path("plan_records/", views.plan_records_list, name="plan_records_list"),
@@ -21,9 +21,10 @@ urlpatterns = [
     ),
     path(
         "handlungsfeld/<int:pk>/",
-        views.handlungsfeld_detail,
+        views.HandlungsfeldDetailView.as_view(),
         name="handlungsfeld_detail",
     ),
+    path("strategie/<int:pk>/", views.StrategieDetailView.as_view(), name="strategie_detail"),
     path("ziel/<int:pk>/", views.ziel_detail, name="ziel_detail"),
     path("massnahme/<int:pk>/", views.massnahme_detail, name="massnahme_detail"),
     path("plan_record/<int:pk>/", views.plan_record_detail, name="plan_record_detail"),

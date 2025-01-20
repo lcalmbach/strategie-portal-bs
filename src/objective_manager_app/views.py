@@ -93,11 +93,71 @@ class ZieleListView(ListView):
     template_name = "objective_manager_app/ziele_list.html"
     context_object_name = "ziele"
 
+    def get(self, request, *args, **kwargs):
+        # Fetch all strategies for the filter dropdown
+        aktuelle_strategien = Strategie.objects.all()
+
+        # Base queryset for Ziel
+        ziele = Ziel.objects.all()
+
+        # Retrieve filter parameters from the GET request
+        strategie_id = request.GET.get("strategie")
+        kuerzel = request.GET.get("kuerzel")
+        titel = request.GET.get("titel")
+        beschreibung = request.GET.get("beschreibung")
+
+        # Apply filters if parameters are provided
+        if strategie_id:
+            ziele = ziele.filter(strategie_id=strategie_id)
+        if kuerzel:
+            ziele = ziele.filter(kuerzel__icontains=kuerzel)
+        if titel:
+            ziele = ziele.filter(titel__icontains=titel)
+        if beschreibung:
+            ziele = ziele.filter(beschreibung__icontains=beschreibung)
+
+        # Context for rendering the template
+        context = {
+            "ziele": ziele,
+            "aktuelle_strategien": aktuelle_strategien,
+        }
+        return render(request, self.template_name, context)
+
 
 class ThemenListView(ListView):
     model = Thema
     template_name = "objective_manager_app/themen_list.html"
     context_object_name = "themen"
+
+    def get(self, request, *args, **kwargs):
+        # Fetch all strategies for the filter dropdown
+        aktuelle_strategien = Strategie.objects.all()
+
+        # Base queryset for Ziel
+        themen = Thema.objects.all()
+
+        # Retrieve filter parameters from the GET request
+        kuerzel = request.GET.get("kuerzel")
+        titel = request.GET.get("titel")
+        beschreibung = request.GET.get("beschreibung")
+
+        # Apply filters if parameters are provided
+    
+        if kuerzel:
+            themen = themen.filter(kuerzel__icontains=kuerzel)
+        if titel:
+            themen = themen.filter(titel__icontains=titel)
+        if beschreibung:
+            themen = themen.filter(beschreibung__icontains=beschreibung)
+
+        # Context for rendering the template
+        context = {
+            "themen": themen
+        }
+        return render(request, self.template_name, context)
+
+
+
 
 
 class KennzahlenListView(ListView):
@@ -105,59 +165,46 @@ class KennzahlenListView(ListView):
     template_name = "objective_manager_app/kennzahlen_list.html"
     context_object_name = "kennzahlen"
 
+
+
+class MassnahmenListView(ListView):
+    model = Massnahme
+    template_name = "objective_manager_app/massnahmen_list.html"
+    context_object_name = "massnahmen"
+
     def get_context_data(self, **kwargs):
+        # Get the default context data
         context = super().get_context_data(**kwargs)
-        context["strategie"] = get_strategie(self.request)
+        # Add custom context
+        context["strategie_options"] = Strategie.objects.all()
         return context
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Get filter values from the request
+        filter_ziel = self.request.GET.get("filterZiel", "")
+        filter_kuerzel = self.request.GET.get("filterKuerzel", "")
+        filter_titel = self.request.GET.get("filterTitel", "")
+        filter_beschreibung = self.request.GET.get("filterBeschreibung", "")
 
+        # Apply additional filters if provided
+        if filter_ziel:
+            queryset = queryset.filter(
+                vorgaenger__kuerzel__icontains=filter_ziel
+            ) | queryset.filter(vorgaenger__titel__icontains=filter_ziel)
 
-def massnahmen_list(request):
-    # Retrieve the strategy ID from the session
-    strategie_auswahl_id = request.session.get("strategie_id", None)
-    strategie_auswahl = (
-        Strategie.objects.get(id=strategie_auswahl_id) if strategie_auswahl_id else None
-    )
+        if filter_kuerzel:
+            queryset = queryset.filter(kuerzel__icontains=filter_kuerzel)
 
-    # Base queryset filtered by strategie_id
-    massnahmen = Massnahme.objects.filter(strategie_id=strategie_auswahl_id)
+        if filter_titel:
+            queryset = queryset.filter(titel__icontains=filter_titel)
 
-    # Get filter values from the request
-    filter_ziel = request.GET.get("filterZiel", "")
-    filter_kuerzel = request.GET.get("filterKuerzel", "")
-    filter_titel = request.GET.get("filterTitel", "")
-    filter_beschreibung = request.GET.get("filterBeschreibung", "")
+        if filter_beschreibung:
+            queryset = queryset.filter(text__icontains=filter_beschreibung)
 
-    # Apply additional filters if provided
-    if filter_ziel:
-        massnahmen = massnahmen.filter(
-            vorgaenger__kuerzel__icontains=filter_ziel
-        ) | massnahmen.filter(vorgaenger__titel__icontains=filter_ziel)
-
-    if filter_kuerzel:
-        massnahmen = massnahmen.filter(kuerzel__icontains=filter_kuerzel)
-
-    if filter_titel:
-        massnahmen = massnahmen.filter(titel__icontains=filter_titel)
-
-    if filter_beschreibung:
-        massnahmen = massnahmen.filter(text__icontains=filter_beschreibung)
-
-    # Prepare the context with the filtered queryset
-    context = {
-        "massnahmen": massnahmen,
-        "strategie": strategie_auswahl,
-        "filterZiel": filter_ziel,
-        "filterKuerzel": filter_kuerzel,
-        "filterTitel": filter_titel,
-        "filterBeschreibung": filter_beschreibung,
-    }
-
-    return render(
-        request,
-        "objective_manager_app/massnahmen_list.html",
-        context,
-    )
-
+        return queryset
+    
 
 def personen_list(request):
     personen = Person.objects.all()
@@ -264,19 +311,25 @@ class KennzahlDetailView(DetailView):
         return context
 
 
-def handlungsfeld_detail(request, pk):
-    handlungsfeld = get_object_or_404(Handlungsfeld, pk=pk)
 
-    ziele = BusinessObject.objects.filter(typ_id=3, vorgaenger=handlungsfeld)
-    massnahmen = BusinessObject.objects.filter(typ_id=4, vorgaenger__in=ziele)
-    # print(massnahmen)
-    context = {
-        "handlungsfeld": handlungsfeld,
-        "ziele": ziele,
-        "massnahmen": massnahmen,
-        "strategie": handlungsfeld.strategie,
-    }
-    return render(request, "objective_manager_app/handlungsfeld_detail.html", context)
+class HandlungsfeldDetailView(DetailView):
+    model = Handlungsfeld
+    template_name = "objective_manager_app/handlungsfeld_detail.html"
+    context_object_name = "handlungsfeld"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        handlungsfeld = self.get_object()
+
+        ziele = BusinessObject.objects.filter(typ_id=3, vorgaenger=handlungsfeld)
+        massnahmen = BusinessObject.objects.filter(typ_id=4, vorgaenger__in=ziele)
+
+        context.update({
+            "ziele": ziele,
+            "massnahmen": massnahmen,
+            "strategie": handlungsfeld.strategie,
+        })
+        return context
 
 
 def ziel_detail(request, pk):
@@ -387,20 +440,42 @@ class PortalView(View):
 
         return render(request, self.template_name, context)
 
+class StrategieDetailView(View):
+    template_name = "objective_manager_app/strategie_detail.html"
 
-def strategie_detail(request):
-    if request.method == "POST":
-        request.session["strategie_id"] = request.POST.get("strategie_auswahl")
-        strategie_auswahl = Strategie.objects.get(id=request.session["strategie_id"])
-    else:
-        strategie_auswahl = Strategie.objects.get(id=request.session["strategie_id"])
+    def get(self, request, *args, **kwargs):
+        strategie_auswahl = get_object_or_404(Strategie, id=kwargs.get("pk"))
+        
+        # Fetch related objects
+        handlungsfelder = Handlungsfeld.objects.filter(strategie=strategie_auswahl)
+        ziele = Ziel.objects.filter(strategie=strategie_auswahl)
+        massnahmen = Massnahme.objects.filter(strategie=strategie_auswahl)
+        personen = Massnahme.objects.filter(strategie=strategie_auswahl)  # Is `personen` correctly set here?
 
-    strategieen = Strategie.objects.all()
-    return render(
-        request,
-        "objective_manager_app/home.html",
-        {"strategie_auswahl": strategie_auswahl, "strategieen": strategieen},
-    )
+        # Prepare context
+        context = {
+            "strategie": strategie_auswahl,
+            "handlungsfelder": handlungsfelder,
+            "ziele": ziele,
+            "massnahmen": massnahmen,
+            "personen": personen,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        strategie_id = request.POST.get("strategie_auswahl")
+        if strategie_id:
+            request.session["strategie_id"] = strategie_id
+            strategie_auswahl = get_object_or_404(Strategie, id=strategie_id)
+        else:
+            return render(request, self.template_name, {"error": "No strategie selected."})
+
+        strategieen = Strategie.objects.all()
+        context = {
+            "strategie_auswahl": strategie_auswahl,
+            "strategieen": strategieen,
+        }
+        return render(request, self.template_name, context)
 
 
 def admin_detail(request):

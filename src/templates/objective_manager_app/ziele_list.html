@@ -3,17 +3,41 @@
 {% block title %}Ziele{% endblock title %} 
 {% block content %}
     <div class="container">
-        <h1>Ziele  ({{ ziele|length }})</h1>
+        <h1>Ziele ({{ ziele|length }})</h1>
         <table class="table">
             <thead>
                 <tr>
                   <th>Strategie</th>  
                   <th>Kürzel</th>
-                    <th>Titel</th>
-                    <th>Beschreibung</th>
-                    {% if request.user|is_in_group:"admins" %}
-                        <th>Edit</th>
-                    {% endif %}
+                  <th>Titel</th>
+                  <th>Beschreibung</th>
+                  {% if request.user|is_in_group:"admins" %}
+                      <th>Edit</th>
+                  {% endif %}
+                </tr>
+                <tr>
+                  <th>
+                      <select name="strategie" id="strategie" class="form-select" form="filter-form" onchange="submitFilters()">
+                          <option value="">Alle Strategien</option>
+                          {% for strategie in aktuelle_strategien %}
+                              <option value="{{ strategie.id }}" {% if request.GET.strategie == strategie.id|stringformat:"s" %}selected{% endif %}>
+                                  {{ strategie.name }}
+                              </option>
+                          {% endfor %}
+                      </select>
+                  </th>
+                  <th>
+                      <input type="text" name="kuerzel" id="kuerzel" class="form-control" form="filter-form" value="{{ request.GET.kuerzel }}" onchange="submitFilters()">
+                  </th>
+                  <th>
+                      <input type="text" name="titel" id="titel" class="form-control" form="filter-form" value="{{ request.GET.titel }}" onchange="submitFilters()">
+                  </th>
+                  <th>
+                    <input type="text" name="beschreibung" id="beschreibung" class="form-control" form="filter-form" value="{{ request.GET.beschreibung }}" onchange="submitFilters()">
+                  </th>
+                  {% if request.user|is_in_group:"admins" %}
+                      <th></th>
+                  {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -30,5 +54,15 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <!-- Hidden filter form for submission -->
+        <form method="get" action="" id="filter-form"></form>
     </div>
+
+    <script>
+        // JavaScript function to submit the form when a filter changes
+        function submitFilters() {
+            document.getElementById('filter-form').submit();
+        }
+    </script>
 {% endblock %}
